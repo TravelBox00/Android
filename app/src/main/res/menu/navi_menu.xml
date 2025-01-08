@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_bottom_navi_home"
+        android:title="HOME"/>
+
+    <item
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_bottom_navi_search"
+        android:title="SEARCH"/>
+
+    <item
+        android:id="@+id/postFragment"
+        android:icon="@drawable/ic_bottom_navi_post"
+        android:title="POST"/>
+
+    <item
+        android:id="@+id/calendarFragment"
+        android:icon="@drawable/ic_bottom_navi_calendar"
+        android:title="CALENDAR"/>
+
+    <item
+        android:id="@+id/myFragment"
+        android:icon="@drawable/ic_bottom_navi_mypage"
+        android:title="MY"/>
+
+
+
+</menu>
