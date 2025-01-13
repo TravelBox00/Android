@@ -1,3 +1,12 @@
+## ⚙️ Android Studio version
+- Koala 사용
+- targetSDK : 34
+- minSDK : 24
+- Emulator & Device 활용
+
+## 📁 Library
+- BottomNavigationView : 하단바 연결 시 활용
+
 ## 📌 Convention
 ### Branch Naming Convention
 - main
@@ -6,6 +15,14 @@
 - hotfix/Issue#-feature
 - refactor/Issue#-feature
 
+### Issue Convention
+- 담당자를 명시합니다.
+[예시]
+  [#1] 하단바 Fragment 연결
+    TODO
+      [ ] BottomNavigationView 작성하기
+      [ ] MainActivity, Fragment에 연결하기
+ 
 ### 🎯 Commit Convention
 | 태그이름   | 내용                                                                      |
 | ---------- | ------------------------------------------------------------------------- |
