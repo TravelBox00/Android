@@ -1,5 +1,5 @@
 ## ⚙️ Android Studio version
-- Koala 사용
+- Iguana 사용
 - targetSDK : 34
 - minSDK : 24
 - Emulator & Device 활용
