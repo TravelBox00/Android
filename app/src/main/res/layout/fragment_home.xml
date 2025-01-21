@@ -1,14 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.view.home.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="home" />
+        android:fillViewport="true">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TravelBox"
+                android:textColor="@color/green_main"
+                style="@style/bold24"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/banner_list"
+                android:layout_width="320dp"
+                android:layout_height="170dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:layout_gravity="center_horizontal"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layout_constraintStart_toStartOf="@id/tv_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                android:orientation="horizontal"/>
+
+
+
+        <!--    <androidx.viewpager2.widget.ViewPager2-->
+        <!--        android:id="@+id/slide"-->
+        <!--        android:layout_width="wrap_content"-->
+        <!--        android:layout_height="150dp"-->
+        <!--        android:layout_marginTop="20dp"-->
+        <!--        app:layout_constraintStart_toStartOf="parent"-->
+        <!--        app:layout_constraintTop_toBottomOf="@id/title"-->
+        <!--        app:layout_constraintBottom_toBottomOf="@+id/title">-->
+
+
+        <!--    </androidx.viewpager2.widget.ViewPager2>-->
+
+
+
+
+            <LinearLayout
+                android:id="@+id/round_main"
+                android:background="@drawable/style_round_background"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/banner_list">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/style_search"
+                    android:padding="3dp">
+
+
+                    <EditText
+                        android:id="@+id/et_search"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="10dp"
+                        android:hint="“도쿄 디즈니랜드”를 검색해보세요."
+                        android:background="@android:color/transparent"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/gray1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/iv_search" />
+
+
+                    <ImageView
+                        android:id="@+id/iv_search"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_search"
+                        android:layout_marginEnd="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp">
+
+
+                    <TextView
+                        android:id="@+id/tv_travel_record"
+                        android:layout_width="150dp"
+                        android:layout_height="180dp"
+                        android:background="@drawable/style_rounded_contents"
+                        android:text="추억이 머무는,\n여행 기록"
+                        android:padding="10dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_style"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginStart="20dp"
+                        android:background="@drawable/style_rounded_contents"
+                        android:drawableTop="@drawable/ic_bottom_navi_mypage"
+                        android:gravity="bottom|center_horizontal"
+                        android:padding="10dp"
+                        android:paddingTop="15dp"
+                        android:text="코디"
+                        app:layout_constraintStart_toEndOf="@id/tv_travel_record"
+                        app:layout_constraintTop_toTopOf="@id/tv_travel_record" />
+
+                    <TextView
+                        android:id="@+id/tv_place"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/style_rounded_contents"
+                        android:text="여행지"
+                        android:padding="10dp"
+                        android:gravity="bottom|center_horizontal"
+                        android:layout_marginStart="20dp"
+                        app:layout_constraintStart_toEndOf="@id/tv_style"
+                        app:layout_constraintTop_toTopOf="@id/tv_travel_record"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_souvenir"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/style_rounded_contents"
+                        android:text="기념품"
+                        android:padding="10dp"
+                        android:gravity="bottom|center_horizontal"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintStart_toEndOf="@id/tv_travel_record"
+                        app:layout_constraintTop_toBottomOf="@id/tv_style"/>
+
+                    <TextView
+                        android:id="@+id/tv_song"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/style_rounded_contents"
+                        android:text="노래"
+                        android:padding="10dp"
+                        android:gravity="bottom|center_horizontal"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintStart_toEndOf="@id/tv_souvenir"
+                        app:layout_constraintTop_toBottomOf="@id/tv_style"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp">
+
+                    <!-- TextView와 ImageView 직접 배치 -->
+                    <TextView
+                        android:id="@+id/tv_best_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="인기 게시물"
+                        style="@style/semibold18"
+                        android:textColor="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="16dp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_back_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_back_button"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="4dp"
+                        app:layout_constraintStart_toEndOf="@id/tv_best_post"
+                        app:layout_constraintTop_toTopOf="@id/tv_best_post"/>
+
+                    <ImageView
+                        android:id="@+id/iv_post_one"
+                        android:layout_width="170dp"
+                        android:layout_height="170dp"
+                        android:background="@color/gray1"
+                        app:layout_constraintStart_toStartOf="@id/tv_best_post"
+                        app:layout_constraintTop_toBottomOf="@id/tv_best_post"
+                        android:layout_marginTop="10dp"/>
+
+
+                    <ImageView
+                        android:id="@+id/iv_post_two"
+                        android:layout_width="170dp"
+                        android:layout_height="170dp"
+                        android:background="@color/gray1"
+                        android:layout_marginStart="20dp"
+                        app:layout_constraintStart_toEndOf="@id/iv_post_one"
+                        app:layout_constraintTop_toBottomOf="@id/tv_best_post"
+                        android:layout_marginTop="10dp"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
