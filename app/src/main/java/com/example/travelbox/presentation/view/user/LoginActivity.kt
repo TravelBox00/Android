@@ -1,0 +1,71 @@
+package com.example.travelbox.presentation.view.user
+
+import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.example.travelbox.R
+import com.example.travelbox.databinding.ActivityLoginBinding
+import com.example.travelbox.presentation.view.MainActivity
+
+class LoginActivity : AppCompatActivity() {
+
+    private lateinit var passwordET: EditText
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var viewPasswordIv: ImageView
+    private lateinit var hidePasswordIv: ImageView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // View Binding 초기화
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        passwordET = findViewById(R.id.pwd_ET)
+        viewPasswordIv = findViewById(R.id.show_pwd_IV)
+        hidePasswordIv = findViewById(R.id.hide_pwd_IV)
+
+        // 비밀번호 보기/숨기기 기능 설정
+        hidePasswordIv.setOnClickListener {
+            passwordET.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            hidePasswordIv.visibility = ImageView.GONE
+            viewPasswordIv.visibility = ImageView.VISIBLE
+        }
+
+        viewPasswordIv.setOnClickListener {
+            passwordET.transformationMethod = PasswordTransformationMethod.getInstance()
+            viewPasswordIv.visibility = ImageView.GONE
+            hidePasswordIv.visibility = ImageView.VISIBLE
+        }
+
+//        // 아이디 찾기 텍스트뷰 클릭 리스너
+//        binding.textView.setOnClickListener {
+//            startActivity(Intent(this, SearchmainActivity::class.java))
+//        }
+
+        // 로그인 버튼 클릭 리스너
+        binding.loginBtn.setOnClickListener {
+            val id = binding.idET.text.toString()
+            val password = binding.pwdET.text.toString()
+
+            if (id.isNotEmpty() && password.isNotEmpty()) {
+                // 로그인 성공 예시
+                Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            } else {
+                // 로그인 실패 예시
+                Toast.makeText(this, "로그인 실패: 아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
