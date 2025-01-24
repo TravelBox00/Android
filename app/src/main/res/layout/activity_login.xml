@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".presentation.view.user.LoginActivity">
+
+    <ImageView
+        android:id="@+id/back_btn_IV"
+        android:layout_width="15dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_back_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="15dp">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/login_TV"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="54.5dp"
+        android:fontFamily="@font/pretendard_semibold"
+        android:text="ID와 비밀번호를\n입력해주세요."
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_btn_IV"></TextView>
+
+    <EditText
+        android:id="@+id/id_ET"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="35dp"
+        android:fontFamily="@font/pretendard_regular"
+        android:hint="ID"
+        android:textColor="@color/gray3"
+        android:inputType="text"
+        android:paddingTop="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_TV" />
+
+    <EditText
+        android:id="@+id/pwd_ET"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/pretendard_regular"
+        android:hint="비밀번호"
+        android:textColor="@color/gray3"
+        android:inputType="textPassword"
+        android:paddingTop="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/id_ET" />
+
+    <ImageView
+        android:id="@+id/hide_pwd_IV"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ic_pwd_hide"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="2dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/pwd_ET"
+        app:layout_constraintEnd_toEndOf="@+id/pwd_ET"
+        app:layout_constraintTop_toTopOf="@+id/pwd_ET" />
+
+    <ImageView
+        android:id="@+id/show_pwd_IV"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ic_pwd_show"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="2dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/pwd_ET"
+        app:layout_constraintEnd_toEndOf="@+id/pwd_ET"
+        app:layout_constraintTop_toTopOf="@+id/pwd_ET" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="아이디 · 비밀번호 찾기"
+        android:textColor="@color/gray3"
+        app:layout_constraintEnd_toEndOf="@+id/pwd_ET"
+        app:layout_constraintTop_toBottomOf="@+id/pwd_ET" />
+
+    <Button
+        android:id="@+id/login_btn"
+        android:layout_width="352dp"
+        android:layout_height="68dp"
+        android:layout_marginBottom="67dp"
+        android:background="@drawable/btn_radius_4"
+        android:fontFamily="@font/pretendard_regular"
+        android:text="로그인"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+</androidx.constraintlayout.widget.ConstraintLayout>
