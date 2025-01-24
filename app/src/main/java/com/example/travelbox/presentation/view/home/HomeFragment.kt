@@ -1,5 +1,7 @@
 package com.example.travelbox.presentation.view.home
 
+import android.content.Intent
+import android.content.Intent.getIntent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -97,7 +99,7 @@ class HomeFragment : Fragment() {
         }
 
         // 배너 양 옆에 배너가 보이도록 패딩 설정
-        mBanner.setPadding(pageMargin, 0, pageMargin, 0)
+        mBanner.setPadding(pageMargin*2, 0, pageMargin*2, 0)
         mBanner.clipToPadding = false
 
 
@@ -117,6 +119,14 @@ class HomeFragment : Fragment() {
                 super.onPageSelected(position)
             }
         })
+
+
+        binding.tvBestPost.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, BestPostFragment())  // BestPostFragment로 전환
+                .addToBackStack(null)  // 뒤로가기 시 이전 화면으로 돌아가기 가능
+                .commit()
+        }
 
 
 
