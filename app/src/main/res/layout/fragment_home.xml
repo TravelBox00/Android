@@ -190,7 +190,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp">
 
-                    <!-- TextView와 ImageView 직접 배치 -->
+
                     <TextView
                         android:id="@+id/tv_best_post"
                         android:layout_width="wrap_content"

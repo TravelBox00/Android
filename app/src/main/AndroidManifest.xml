@@ -13,6 +13,9 @@
         android:theme="@style/Theme.TravelBox"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.view.home.BestPostActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.view.MainActivity"
             android:exported="false" />
         <activity
