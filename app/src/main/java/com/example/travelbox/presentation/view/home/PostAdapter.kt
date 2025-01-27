@@ -1,5 +1,6 @@
 package com.example.travelbox.presentation.view.home
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,11 @@ class PostAdapter(private val itemList: MutableList<PostRecyclerModel> ) :
 
             val binding: ItemGridPostBinding = ItemGridPostBinding.inflate(LayoutInflater.from(viewgroup.context), viewgroup, false)
 
+
+
+
+
+
             return PostViewHolder(binding)
         }
 
@@ -54,8 +60,15 @@ class PostAdapter(private val itemList: MutableList<PostRecyclerModel> ) :
 
 
                 binding.imageArea.setImageResource(data.image)
-                binding.tvDate.text = data.date
+                binding.tvId.text = data.id
                 binding.tvPostTitle.text = data.title
+
+
+
+
+
+
+
             }
 
         }

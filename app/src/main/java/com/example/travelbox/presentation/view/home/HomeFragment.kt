@@ -121,10 +121,21 @@ class HomeFragment : Fragment() {
         })
 
 
+        // 인기 게시물 클릭 시
+
         binding.tvBestPost.setOnClickListener {
             parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, BestPostFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+
+        // 뒤로 가기
+        binding.ivBackButton.setOnClickListener {
+            parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, BestPostFragment())  // BestPostFragment로 전환
-                .addToBackStack(null)  // 뒤로가기 시 이전 화면으로 돌아가기 가능
+                .addToBackStack(null)
                 .commit()
         }
 
@@ -140,6 +151,7 @@ class HomeFragment : Fragment() {
     }
 
 
+    // 폰트 배치, 스타일 설정
     private fun setTextStyle() {
         val content = binding.tvTravelRecord.text.toString()
         val spannableString = SpannableString(content)
