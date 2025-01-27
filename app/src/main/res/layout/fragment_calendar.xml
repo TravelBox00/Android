@@ -1,14 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.view.calendar.CalendarFragment">
+    android:orientation="vertical"
+    android:background="@color/white">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- 상단 네비게이션 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="calendar" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
 
-</FrameLayout>
+        <!-- 뒤로가기 버튼 -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back"
+            android:contentDescription="@string/app_name"
+            android:layout_marginEnd="8dp" />
+
+        <!-- 제목 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="캘린더"
+            style="@style/bold20"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- 년도 텍스트 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/black"
+        style="@style/bold24" />
+
+    <!-- 월 탭 -->
+    <LinearLayout
+        android:id="@+id/monthTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="JAN"
+            style="@style/bold16"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/green_main" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FEB"
+            style="@style/bold16"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/gray2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MAR"
+            style="@style/bold16"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/gray2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="APR"
+            style="@style/bold16"
+            android:textColor="@color/gray2" />
+    </LinearLayout>
+
+    <!-- 캘린더 뷰 -->
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mcv_selectionColor="@color/green_main"
+        app:mcv_showOtherDates="all"
+        app:mcv_dateTextAppearance="@style/regular14" />
+
+    <!-- 플로팅 버튼 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addEventButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        app:backgroundTint="@color/green_main" />
+</LinearLayout>

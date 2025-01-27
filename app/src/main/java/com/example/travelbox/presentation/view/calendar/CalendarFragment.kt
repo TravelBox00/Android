@@ -1,56 +1,65 @@
 package com.example.travelbox.presentation.view.calendar
 
+import android.graphics.Color
 import android.os.Bundle
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.travelbox.R
 import com.example.travelbox.databinding.FragmentCalendarBinding
-import com.example.travelbox.databinding.FragmentHomeBinding
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CalendarFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CalendarFragment : Fragment() {
-    lateinit var binding : FragmentCalendarBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private lateinit var binding: FragmentCalendarBinding
+    private var selectedDate: CalendarDay? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentCalendarBinding.inflate(inflater, container, false)
+
+        // 오늘 날짜 데코레이터 추가
+        binding.calendarView.addDecorator(TodayDecorator())
+
+        // 날짜 선택 리스너 설정
+        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected ->
+            selectedDate = date
+            binding.calendarView.invalidateDecorators() // 데코레이터 갱신
+            binding.calendarView.addDecorator(SelectedDateDecorator(date))
+
+            val selectedDateString = "${date.year}-${date.month + 1}-${date.day}"
+            Toast.makeText(requireContext(), "선택한 날짜: $selectedDateString", Toast.LENGTH_SHORT).show()
+        })
+
+        // 월 변경 이벤트 처리
+        binding.calendarView.setOnMonthChangedListener { widget, date ->
+            updateMonthTabs(date.month)
+        }
+
+        // 플로팅 버튼 클릭 리스너
+        binding.addEventButton.setOnClickListener {
+            Toast.makeText(requireContext(), "이벤트 추가 버튼 클릭", Toast.LENGTH_SHORT).show()
+        }
+
         return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CalendarFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CalendarFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    // 현재 월에 맞게 탭 스타일 업데이트
+    private fun updateMonthTabs(currentMonth: Int) {
+        val months = listOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
+
+        // 자식 뷰를 순회하며 업데이트
+        for (i in 0 until binding.monthTabs.childCount) {
+            val textView = binding.monthTabs.getChildAt(i) as TextView
+            if (i == currentMonth - 1) {
+                textView.setTextColor(Color.parseColor("#007151")) // 초록색
+            } else {
+                textView.setTextColor(Color.parseColor("#61646B")) // 회색
             }
+        }
     }
 }
