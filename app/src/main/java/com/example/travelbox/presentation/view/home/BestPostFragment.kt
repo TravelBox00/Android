@@ -1,5 +1,6 @@
 package com.example.travelbox.presentation.view.home
 
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.TextUtils.replace
@@ -51,6 +52,10 @@ class BestPostFragment : Fragment() {
                 .replace(R.id.main_frm, homeFragment)
                 .commit()
         }
+
+
+
+
         return binding.root
 
 
@@ -62,17 +67,35 @@ class BestPostFragment : Fragment() {
 
         val itemList = mutableListOf<PostRecyclerModel>()
 
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "2025.01.25.", "해유관에서 물고기랑" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex2, "2025.01.25.", "여우 신사는 처음이지?" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "2025.01.26.", "물고기랑22" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "2025.01.27.", "물고기랑33" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "2025.01.26.", "물고기랑22" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "2025.01.27.", "물고기랑44" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "2025.01.26.", "물고기랑55" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "2025.01.27.", "물고기랑66" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@way1234", "해유관에서 물고기랑" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex2, "@way1234", "여우 신사는 처음이지?" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@jopeng1234", "물고기랑22" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@jopeng1234", "물고기랑33" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@jopeng1234", "물고기랑22" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@w1nner", "물고기랑44" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@w1nner", "물고기랑55" ))
+        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@w1nner", "물고기랑66" ))
 
 
         val adapter = PostAdapter(itemList)
+
+        // 클릭 리스너 설정
+        adapter.setItemClickListener(object : PostAdapter.onItemClickListener{
+
+            override fun onItemClick(position: Int) {
+                val selectedItem = itemList[position]
+
+                val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
+                    putExtra("image", selectedItem.image)
+                    putExtra("id", selectedItem.id)
+                    putExtra("title", selectedItem.title)
+                }
+
+                startActivity(intent)
+            }
+        })
+
+
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 2)
 
