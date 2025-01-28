@@ -13,10 +13,13 @@
         android:theme="@style/Theme.TravelBox"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.view.user.LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.view.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.view.user.LoginActivity"
+            android:name=".presentation.view.user.SignupActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
