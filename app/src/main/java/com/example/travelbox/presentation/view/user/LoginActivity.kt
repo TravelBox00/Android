@@ -64,10 +64,7 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.pwdET.text.toString()
 
             if (id.isNotEmpty() && password.isNotEmpty()) {
-                // 로그인 성공 예시
-                Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, MainActivity::class.java))
-                finish()
             } else {
                 // 로그인 실패 예시
                 Toast.makeText(this, "로그인 실패: 아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()

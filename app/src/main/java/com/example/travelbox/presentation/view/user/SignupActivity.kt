@@ -1,5 +1,6 @@
 package com.example.travelbox.presentation.view.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -31,6 +32,10 @@ class SignupActivity : AppCompatActivity() {
         passwordET = binding.pwdET
         confirmPasswordET = binding.pwdCheckET
         pwdUnmatchTV = binding.pwdUnmatchTV
+
+        binding.duplicationBtn.setOnClickListener {
+            binding.idavailable.visibility = TextView.VISIBLE
+        }
 
         // 비밀번호 보기/숨기기 기능 설정
         setupPasswordToggle(passwordET, binding.showPwdIV, binding.hidePwdIV)
@@ -67,7 +72,7 @@ class SignupActivity : AppCompatActivity() {
             if (name.isNotEmpty() && id.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
                 if (password == confirmPassword) {
                     // 회원가입 성공 예시
-                    Toast.makeText(this, "회원가입 성공", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, SignUpSuccessActivity::class.java))
                 } else {
                     Toast.makeText(this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
                 }
