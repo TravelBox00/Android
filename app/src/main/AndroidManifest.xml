@@ -19,6 +19,9 @@
             android:name=".presentation.view.user.SignupActivity"
             android:exported="false" />
         <activity
+            android:name=".presentation.view.home.DetailPostActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.view.user.LoginActivity"
             android:exported="false" />
         <activity
