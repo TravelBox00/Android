@@ -1,58 +1,77 @@
-package com.example.travelbox.presentation.view.my
+package com.example.mypage
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import com.example.travelbox.R
-import com.example.travelbox.databinding.FragmentHomeBinding
 import com.example.travelbox.databinding.FragmentMypageBinding
+import com.example.travelbox.presentation.view.my.ScrapFragment
+import com.example.travelbox.presentation.view.my.CommentFragment
+import com.example.travelbox.presentation.view.my.ProfileEditFragment
+import com.google.android.material.tabs.TabLayoutMediator
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MypageFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MypageFragment : Fragment() {
-
-    lateinit var binding : FragmentMypageBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private var _binding: FragmentMypageBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentMypageBinding.inflate(inflater, container, false)
+    ): View {
+        // 뷰 바인딩 초기화
+        _binding = FragmentMypageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MypageFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MypageFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupViewPagerAndTabs()
+
+        // 버튼 클릭 리스너 설정
+        binding.root.findViewById<Button>(R.id.scrapButton).setOnClickListener {
+            replaceFragment(ScrapFragment())
+        }
+
+        binding.root.findViewById<Button>(R.id.commentButton).setOnClickListener {
+            replaceFragment(CommentFragment())
+        }
+
+        binding.root.findViewById<Button>(R.id.profileEditButton).setOnClickListener {
+            replaceFragment(ProfileEditFragment())
+        }
+    }
+
+    private fun setupViewPagerAndTabs() {
+        val viewPager = binding.viewPager
+        val tabLayout = binding.tabLayout
+
+        val pagerAdapter = MypagePagerAdapter(this)
+        viewPager.adapter = pagerAdapter
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = "여행 기록"
+                1 -> tab.text = "기념품"
+                2 -> tab.text = "여행지"
+                3 -> tab.text = "여행 코디"
             }
+        }.attach()
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        parentFragmentManager.commit {
+            replace(R.id.fragmentContainer, fragment)
+            addToBackStack(null) // 뒤로 가기 지원
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
