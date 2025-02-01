@@ -1,0 +1,35 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:clipChildren="false">
+
+    <!-- FAB 버튼 (메인) -->
+    <ImageView
+        android:id="@+id/fabMain"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/ic_add"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- 왼쪽 위 아이콘 (스케줄) -->
+    <ImageView
+        android:id="@+id/fabSchedule"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/ic_schedule"
+        android:visibility="gone"/>
+
+    <!-- 오른쪽 위 아이콘 (포스트) -->
+    <ImageView
+        android:id="@+id/fabPost"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/ic_post"
+        android:visibility="gone"/>
+</FrameLayout>
