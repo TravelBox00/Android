@@ -95,13 +95,7 @@ class CalendarFragment : Fragment() {
                 .replace(R.id.fab_menu_container, FabMenuFragment())
                 .commit()
         }
-        binding.fabSchedule.setOnClickListener {
-            val selectedDate = this.selectedDate ?: CalendarDay.today() // 기본값: 오늘 날짜
-            val action = CalendarFragmentDirections.actionCalendarFragmentToScheduleFragment(
-                selectedDate.year, selectedDate.month, selectedDate.day
-            )
-            findNavController().navigate(action)
-        }
+
         return binding.root
     }
 

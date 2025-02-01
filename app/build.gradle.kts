@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("androidx.navigation.safeargs.kotlin")
+
+
 }
 
 android {
@@ -63,5 +64,4 @@ dependencies {
     // Calendar
     implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
     implementation ("com.jakewharton.threetenabp:threetenabp:1.4.4")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
 }

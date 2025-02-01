@@ -1,135 +1,50 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- 헤더 (초록색 배경) -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- 상단 헤더 -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/green_main"
-        android:padding="16dp">
+        android:background="@color/green_main">
 
-        <!-- 뒤로가기 버튼 -->
         <ImageView
-            android:id="@+id/backButton"
+            android:id="@+id/btnBack"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_back_white"
-            android:contentDescription="뒤로가기"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_alignParentStart="true"/>
 
-        <!-- 제목 -->
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="일정"
-            android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_centerInParent="true"/>
 
-        <!-- 체크 버튼 -->
         <ImageView
-            android:id="@+id/checkButton"
+            android:id="@+id/btnCheck"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_check"
-            android:contentDescription="완료"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
 
-    <!-- 선택한 날짜 (월 표시) -->
+    <!-- 선택한 날짜 표시 -->
     <TextView
-        android:id="@+id/monthText"
-        android:layout_width="match_parent"
+        android:id="@+id/tvSelectedDate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="JAN"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:padding="8dp"/>
+        android:layout_gravity="center"/>
 
-    <!-- 캘린더 -->
+    <!-- MaterialCalendarView -->
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/scheduleCalendarView"
+        android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:mcv_selectionColor="@null"
-        app:mcv_showOtherDates="all"
-        app:mcv_dateTextAppearance="@style/regular14"
-        app:mcv_tileWidth="48dp"
-        app:mcv_tileHeight="48dp"
-        app:mcv_headerTextAppearance="@null"
-        app:mcv_weekDayTextAppearance="@style/CustomWeekDayText"
-        app:mcv_leftArrow="@null"
-        app:mcv_rightArrow="@null"/>
-
-    <!-- 여행 정보 입력 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- 여행 이름 입력 -->
-        <EditText
-            android:id="@+id/tripTitleInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="여행의 이름을 입력하세요"
-            android:background="@null"
-            android:textSize="16sp"
-            android:padding="8dp"/>
-
-        <!-- 기간 선택 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
-            android:paddingVertical="8dp">
-
-            <TextView
-                android:id="@+id/startDate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="2025.01.05 일"
-                android:textSize="16sp"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/endDate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="날짜 선택"
-                android:textSize="16sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <!-- 설명 입력 -->
-        <EditText
-            android:id="@+id/descriptionInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="설명을 입력하세요."
-            android:background="@null"
-            android:textSize="16sp"
-            android:minHeight="100dp"
-            android:padding="8dp"/>
-    </LinearLayout>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -1,68 +1,57 @@
-package com.example.travelbox.presentation.view.schedule
-
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import com.example.travelbox.databinding.FragmentScheduleBinding
-import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import org.threeten.bp.format.DateTimeFormatter
-import java.util.Locale
-
-class ScheduleFragment : Fragment() {
-
-    private lateinit var binding: FragmentScheduleBinding
-    private val args: ScheduleFragmentArgs by navArgs()
-    private var selectedStartDate: CalendarDay? = null
-    private var selectedEndDate: CalendarDay? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentScheduleBinding.inflate(inflater, container, false)
-
-        // 날짜 기본값 설정
-        val selectedDate = CalendarDay.from(args.year, args.month, args.day)
-        binding.scheduleCalendarView.selectedDate = selectedDate
-        selectedStartDate = selectedDate
-
-        // 월 표시
-        binding.monthText.text = selectedDate.month.toString().uppercase(Locale.getDefault())
-
-        // 뒤로가기 버튼
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        // 기간 선택 리스너
-        binding.startDate.setOnClickListener {
-            selectedStartDate = binding.scheduleCalendarView.selectedDate
-            binding.startDate.text = formatDate(selectedStartDate!!)
-        }
-
-        binding.endDate.setOnClickListener {
-            selectedEndDate = binding.scheduleCalendarView.selectedDate
-            binding.endDate.text = formatDate(selectedEndDate!!)
-        }
-
-        // 일정 저장 (체크 버튼)
-        binding.checkButton.setOnClickListener {
-            Toast.makeText(requireContext(), "일정이 저장되었습니다!", Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
-        }
-
-        return binding.root
-    }
-
-    private fun formatDate(date: CalendarDay): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd E", Locale.getDefault())
-        return date.date.format(formatter)
-    }
-}
+//package com.example.travelbox.presentation.view.calendar
+//
+//import android.os.Bundle
+//import android.view.LayoutInflater
+//import android.view.View
+//import android.view.ViewGroup
+//import androidx.fragment.app.Fragment
+//import com.example.travelbox.databinding.FragmentScheduleBinding
+//
+//class ScheduleFragment : Fragment() {
+//
+//    private lateinit var binding: FragmentScheduleBinding
+//
+//    override fun onCreateView(
+//        inflater: LayoutInflater, container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View {
+//        binding = FragmentScheduleBinding.inflate(inflater, container, false)
+//
+//        setupHeader()
+//        setupUI()
+//
+//        return binding.root
+//    }
+//
+//    /**
+//     * ✅ 상단 헤더 설정 (뒤로가기 버튼 기능 포함)
+//     */
+//    private fun setupHeader() {
+//        binding.backButton.setOnClickListener {
+//            requireActivity().onBackPressedDispatcher.onBackPressed()
+//        }
+//    }
+//
+//    /**
+//     * ✅ 선택한 날짜를 UI에 표시
+//     */
+//    private fun setupUI() {
+//        // `Bundle`에서 전달된 날짜 데이터 가져오기
+//        val year = arguments?.getInt("year", 0) ?: 0
+//        val month = arguments?.getInt("month", 0) ?: 0
+//        val day = arguments?.getInt("day", 0) ?: 0
+//
+//        // 상단 월 표시
+//        val monthNames = listOf(
+//            "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+//            "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+//        )
+//        binding.monthTextView.text = monthNames[month - 1] // 월 텍스트 설정
+//
+//        // 캘린더에서 선택된 날짜 표시
+//        binding.calendarView.selectedDate = org.threeten.bp.LocalDate.of(year, month, day)
+//
+//        // 일정 날짜 설정
+//        binding.dateTextView.text = String.format("%04d.%02d.%02d", year, month, day)
+//    }
+//}
