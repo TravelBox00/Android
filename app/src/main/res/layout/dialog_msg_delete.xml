@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/transparent"
+    android:gravity="center">
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/dialog_msg_delete"
+        android:layout_width="180dp"
+        android:layout_height="30dp"
+        android:backgroundTint="#ECECEC"
+        android:layout_gravity="center_vertical"
+        app:cardCornerRadius="5dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/medium12"
+            android:textColor="@color/gray1"
+            android:text="댓글이 삭제되었습니다." />
+
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
