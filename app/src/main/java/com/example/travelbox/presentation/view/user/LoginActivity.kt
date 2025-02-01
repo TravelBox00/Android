@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.view.MotionEvent
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
@@ -35,16 +36,21 @@ class LoginActivity : AppCompatActivity() {
         hidePasswordIv = findViewById(R.id.hide_pwd_IV)
 
         // 비밀번호 보기/숨기기 기능 설정
-        hidePasswordIv.setOnClickListener {
-            passwordET.transformationMethod = HideReturnsTransformationMethod.getInstance()
-            hidePasswordIv.visibility = ImageView.GONE
-            viewPasswordIv.visibility = ImageView.VISIBLE
-        }
+        hidePasswordIv.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> { // 버튼을 누르면 비밀번호 표시
+                    passwordET.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                    hidePasswordIv.visibility = ImageView.GONE
+                    viewPasswordIv.visibility = ImageView.VISIBLE
+                }
 
-        viewPasswordIv.setOnClickListener {
-            passwordET.transformationMethod = PasswordTransformationMethod.getInstance()
-            viewPasswordIv.visibility = ImageView.GONE
-            hidePasswordIv.visibility = ImageView.VISIBLE
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> { // 버튼을 뗐을 때 비밀번호 숨김
+                    passwordET.transformationMethod = PasswordTransformationMethod.getInstance()
+                    viewPasswordIv.visibility = ImageView.GONE
+                    hidePasswordIv.visibility = ImageView.VISIBLE
+                }
+            }
+            true
         }
 
 //        // 아이디 찾기 텍스트뷰 클릭 리스너
@@ -58,10 +64,7 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.pwdET.text.toString()
 
             if (id.isNotEmpty() && password.isNotEmpty()) {
-                // 로그인 성공 예시
-                Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, MainActivity::class.java))
-                finish()
             } else {
                 // 로그인 실패 예시
                 Toast.makeText(this, "로그인 실패: 아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()
