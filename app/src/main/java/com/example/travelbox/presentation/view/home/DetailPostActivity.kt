@@ -83,13 +83,6 @@ class DetailPostActivity : AppCompatActivity() {
 
 
 
-
-
-
-
-
-
-
     }
 
 
