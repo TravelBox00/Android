@@ -108,7 +108,7 @@
                     android:layout_height="35dp"
                     android:layout_weight="1"
                     android:text="여행 기록"
-                    android:textSize="14sp"
+                    style="@style/medium14"
                     android:textColor="#ACACAC"
                     android:background="@drawable/btn_category"/>
 
@@ -119,7 +119,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text="기념품"
-                    android:textSize="14sp"
+                    style="@style/medium14"
                     android:textColor="#ACACAC"
                     android:background="@drawable/btn_category"/>
 
@@ -130,7 +130,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text="여행지"
-                    android:textSize="14sp"
+                    style="@style/medium14"
                     android:textColor="#ACACAC"
                     android:background="@drawable/btn_category"/>
 
@@ -141,7 +141,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text="여행 코디"
-                    android:textSize="14sp"
+                    style="@style/medium14"
                     android:textColor="#ACACAC"
                     android:background="@drawable/btn_category"/>
             </LinearLayout>
@@ -283,7 +283,7 @@
                 android:layout_height="150dp"
                 android:layout_marginTop="20dp"
                 android:padding="20dp"
-                android:textSize="12sp"
+                style="@style/medium12"
                 android:background="@drawable/style_info_background"
                 app:layout_constraintTop_toBottomOf="@id/etSong"
                 app:layout_constraintStart_toStartOf="parent"

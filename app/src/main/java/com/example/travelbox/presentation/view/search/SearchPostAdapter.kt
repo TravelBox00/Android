@@ -49,7 +49,7 @@ class SearchPostAdapter(private val itemList: MutableList<SearchRecyclerModel>) 
 
         fun bind(data: SearchRecyclerModel) {
             binding.imageArea.setImageResource(data.image)
-            binding.tvDate.text = data.date
+            binding.tvId.text = data.date
             binding.tvPostTitle.text = data.title
         }
 
