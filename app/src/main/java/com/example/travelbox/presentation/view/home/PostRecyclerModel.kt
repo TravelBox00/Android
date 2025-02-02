@@ -2,7 +2,14 @@ package com.example.travelbox.presentation.view.home
 
 data class PostRecyclerModel(
     val image: Int,
-    val date : String,
+    val id : String,
     val title: String
 
+)
+
+
+data class CommentRecyclerModel(
+
+    val commentId : String,
+    val content : String
 )

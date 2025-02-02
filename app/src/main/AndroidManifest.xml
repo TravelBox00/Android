@@ -12,14 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelBox"
         tools:targetApi="31">
+
         <activity
-            android:name=".presentation.view.home.BestPostActivity"
+            android:name=".presentation.view.home.DetailPostActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.view.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.view.user.LoginActivity"
+            android:name=".presentation.view.IntroActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +28,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presentation.view.user.LoginActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".presentation.view.user.SignupActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".presentation.view.user.SignUpSuccessActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".presentation.view.home.FilterActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
