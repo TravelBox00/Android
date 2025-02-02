@@ -17,13 +17,13 @@
             android:orientation="vertical">
 
 
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TravelBox"
-                android:textColor="@color/green_main"
-                style="@style/bold24"
+
+
+            <ImageView
+                android:id="@+id/iv_logo"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:src="@drawable/iv_logo"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -33,15 +33,15 @@
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/banner_list"
-                android:layout_width="320dp"
+                android:layout_width="match_parent"
                 android:layout_height="170dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:background="@color/white"
                 android:layout_gravity="center_horizontal"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                app:layout_constraintStart_toStartOf="@id/tv_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="@id/iv_logo"
+                app:layout_constraintTop_toBottomOf="@id/iv_logo"
                 android:orientation="horizontal"/>
 
 
@@ -121,6 +121,8 @@
                         android:layout_width="150dp"
                         android:layout_height="180dp"
                         android:background="@drawable/style_rounded_contents"
+                        android:drawableBottom="@drawable/iv_travel_record"
+                        android:drawablePadding="-10dp"
                         android:text="추억이 머무는,\n여행 기록"
                         android:padding="10dp"
                         android:layout_marginStart="20dp"
@@ -134,10 +136,13 @@
                         android:layout_height="80dp"
                         android:layout_marginStart="20dp"
                         android:background="@drawable/style_rounded_contents"
-                        android:drawableTop="@drawable/ic_bottom_navi_mypage"
+                        android:drawableTop="@drawable/iv_style"
+                        android:drawablePadding="-10dp"
                         android:gravity="bottom|center_horizontal"
                         android:padding="10dp"
                         android:paddingTop="15dp"
+                        android:textColor="@color/black"
+                        style="@style/semibold12"
                         android:text="코디"
                         app:layout_constraintStart_toEndOf="@id/tv_travel_record"
                         app:layout_constraintTop_toTopOf="@id/tv_travel_record" />
@@ -147,6 +152,10 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:background="@drawable/style_rounded_contents"
+                        android:drawableTop="@drawable/iv_place"
+                        android:drawablePadding="-10dp"
+                        android:textColor="@color/black"
+                        style="@style/semibold12"
                         android:text="여행지"
                         android:padding="10dp"
                         android:gravity="bottom|center_horizontal"
@@ -160,6 +169,10 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:background="@drawable/style_rounded_contents"
+                        android:drawableTop="@drawable/iv_shopping"
+                        android:drawablePadding="-10dp"
+                        android:textColor="@color/black"
+                        style="@style/semibold12"
                         android:text="기념품"
                         android:padding="10dp"
                         android:gravity="bottom|center_horizontal"
@@ -170,16 +183,20 @@
 
                     <TextView
                         android:id="@+id/tv_song"
+                        style="@style/semibold12"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:background="@drawable/style_rounded_contents"
-                        android:text="노래"
-                        android:padding="10dp"
-                        android:gravity="bottom|center_horizontal"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
+                        android:background="@drawable/style_rounded_contents"
+                        android:drawableTop="@drawable/iv_music"
+                        android:drawablePadding="-20dp"
+                        android:gravity="bottom|center_horizontal"
+                        android:padding="10dp"
+                        android:text="노래"
+                        android:textColor="@color/black"
                         app:layout_constraintStart_toEndOf="@id/tv_souvenir"
-                        app:layout_constraintTop_toBottomOf="@id/tv_style"/>
+                        app:layout_constraintTop_toBottomOf="@id/tv_style" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
