@@ -1,14 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.view.calendar.CalendarFragment">
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:paddingBottom="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- 상단 네비게이션 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- 뒤로가기 버튼 -->
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- 캘린더 제목 -->
+        <TextView
+            android:id="@+id/calendarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="캘린더"
+            android:textColor="@color/black"
+            style="@style/bold20"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 연도 텍스트 -->
     <TextView
+        android:id="@+id/yearText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="2025"
+        android:textColor="@color/black"
+        style="@style/bold24" />
+
+    <!-- 월 탭 -->
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:id="@+id/monthTabs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- JAN ~ DEC -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JAN"
+                android:textColor="@color/green_main"
+                android:layout_marginEnd="16dp"
+                android:textSize="18sp"
+                android:gravity="center"
+                style="@style/bold16" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FEB"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MAR"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="APR"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MAY"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JUN"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JUL"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AUG"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SEP"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OCT"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NOV"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DEC"
+                android:textColor="@color/gray2"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                style="@style/bold16" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- 캘린더 뷰 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/calendar_border"
+        android:padding="8dp"
+        android:paddingBottom="2dp"
+        android:orientation="vertical">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:mcv_selectionColor="@null"
+            app:mcv_showOtherDates="all"
+            app:mcv_dateTextAppearance="@style/regular14"
+            app:mcv_tileWidth="48dp"
+            app:mcv_tileHeight="48dp"
+            app:mcv_headerTextAppearance="@null"
+            app:mcv_weekDayTextAppearance="@style/CustomWeekDayText"
+            app:mcv_leftArrow="@null"
+            app:mcv_rightArrow="@null"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fab_menu_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="calendar" />
+        android:layout_alignParentBottom="true"
+        android:clipChildren="false"
+        android:layout_marginBottom="24dp"
+        android:clickable="true">
 
-</FrameLayout>
+        <include layout="@layout/fab_menu"/>
+    </FrameLayout>
+
+
+
+
+
+</LinearLayout>
