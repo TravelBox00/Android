@@ -31,8 +31,6 @@
             android:name=".presentation.view.calendar.ScheduleActivity"
             android:exported="true"
             android:theme="@style/Theme.TravelBox"/>
-
-
     </application>
 
 </manifest>

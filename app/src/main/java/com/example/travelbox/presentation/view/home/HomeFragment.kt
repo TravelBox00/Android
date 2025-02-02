@@ -3,6 +3,7 @@ package com.example.travelbox.presentation.view.home
 import android.content.Intent
 import android.content.Intent.getIntent
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
@@ -20,16 +21,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.travelbox.R
 import com.example.travelbox.databinding.FragmentHomeBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
 
     lateinit var binding : FragmentHomeBinding
@@ -59,7 +51,6 @@ class HomeFragment : Fragment() {
 
 
 
-
         mBanner = binding.bannerList
         bannerAdapter = BannerAdapter(this, 3)
         mBanner.adapter = bannerAdapter
@@ -68,57 +59,31 @@ class HomeFragment : Fragment() {
         mBanner.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
         // 배너 시작지점 설정
-        mBanner.setCurrentItem(1)
+        mBanner.setCurrentItem(1, false)   // 애니메이션 설정x
 
 
         // 페이지 한 개씩 미리 로드
         mBanner.offscreenPageLimit = 3
 
 
+        // 배너가 양옆으로 보이도록 설정
+        mBanner.clipToPadding = false
+        mBanner.clipChildren = false
+
 
 
         // 페이지 전환 애니메이션 및 캐러셀 효과
-        val pageMargin = resources.getDimensionPixelOffset(R.dimen.pageMargin)
-        val pageOffset = resources.getDimensionPixelOffset(R.dimen.offset)
-
-        mBanner.setPageTransformer { page, position ->
-            val myOffset = position * -(2 * pageOffset + pageMargin)
-            if (position < -1) {
-                page.setTranslationX(-myOffset)
-            } else if (position <= 1) {
-                val scaleFactor = Math.max(0.7f, 1 - Math.abs(position - 0.14285715f))
-                page.setTranslationX(myOffset)
-                page.setScaleY(scaleFactor)
-                page.setAlpha(scaleFactor)
-            } else {
-                page.setAlpha(0f)
-                page.setTranslationX(myOffset)
-            }
+        val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
+        val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
+        mBanner.setPadding(offsetPx, 0, offsetPx, 0)
 
 
-        }
+        // 배너 간격 조정
+        addBannerSpacing(pageMarginPx)
 
-        // 배너 양 옆에 배너가 보이도록 패딩 설정
-        mBanner.setPadding(pageMargin*2, 0, pageMargin*2, 0)
-        mBanner.clipToPadding = false
+        // 배너 전환 애니메이션
+        setBannerAnimation()
 
-
-        mBanner.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                // 페이지가 스크롤 될 때 이벤트 처리
-                if (positionOffsetPixels == 0) {
-                    mBanner.setCurrentItem(position)
-                }
-            }
-
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-            }
-        })
 
 
         // 인기 게시물 클릭 시
@@ -131,7 +96,7 @@ class HomeFragment : Fragment() {
         }
 
 
-        // 뒤로 가기
+        // 뒤로 가기 버튼
         binding.ivBackButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, BestPostFragment())  // BestPostFragment로 전환
@@ -142,12 +107,34 @@ class HomeFragment : Fragment() {
 
 
 
-
-
-
-
         return binding.root
 
+    }
+
+    // 배너 간격 조정
+    private fun addBannerSpacing(pageMarginPx: Int) {
+        val recyclerView = mBanner.getChildAt(0) as RecyclerView
+        recyclerView.apply {
+            val itemDecoration = object : RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(
+                    outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                ) {
+                    outRect.left = pageMarginPx / 2
+                    outRect.right = pageMarginPx / 2
+                }
+            }
+            addItemDecoration(itemDecoration)
+        }
+    }
+
+    // 배너 전환 애니메이션
+
+    private fun setBannerAnimation() {
+        mBanner.setPageTransformer { page, position ->
+            val scaleFactor = 0.85f + (1 - Math.abs(position)) * 0.15f
+            page.scaleY = scaleFactor
+            page.alpha = scaleFactor
+        }
     }
 
 

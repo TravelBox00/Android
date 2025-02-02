@@ -53,6 +53,12 @@ class BestPostFragment : Fragment() {
                 .commit()
         }
 
+        // 필터 버튼 클릭
+        binding.ivFilter.setOnClickListener {
+            val intent = Intent(requireContext(), FilterActivity::class.java)
+            startActivity(intent)
+        }
+
 
 
 
