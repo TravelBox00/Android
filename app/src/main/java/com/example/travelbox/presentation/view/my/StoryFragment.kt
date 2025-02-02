@@ -1,5 +1,3 @@
-package com.example.travelbox.presentation.view.my
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,11 +5,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.travelbox.databinding.FragmentStoryBinding
-import com.example.travelbox.databinding.FragmentTravelHistoryBinding
+import com.example.travelbox.presentation.view.my.StoryAdapter
 
-class TravelHistoryFragment : Fragment() {
+class StoryFragment : Fragment() {
 
-    private var _binding: FragmentTravelHistoryBinding? = null
+    private var _binding: FragmentStoryBinding? = null
     private val binding get() = _binding!!
 
     // 이미지를 담을 리스트 (예시로 URL 넣음)
@@ -28,7 +26,7 @@ class TravelHistoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentTravelHistoryBinding.inflate(inflater, container, false)
+        _binding = FragmentStoryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -38,9 +36,9 @@ class TravelHistoryFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val adapter = HistoryAdapter(imageList)
-        binding.recyclerHistory.layoutManager = GridLayoutManager(requireContext(), 3)
-        binding.recyclerHistory.adapter = adapter
+        val adapter = StoryAdapter(imageList)
+        binding.recyclerStory.layoutManager = GridLayoutManager(requireContext(), 3)
+        binding.recyclerStory.adapter = adapter
     }
 
     override fun onDestroyView() {

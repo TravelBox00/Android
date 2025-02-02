@@ -3,6 +3,7 @@ package com.example.mypage
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.travelbox.presentation.view.my.MypageTabFragment
+import com.example.travelbox.presentation.view.my.TravelHistoryFragment
 import com.example.travelbox.presentation.view.my.TravelStylingFragment
 
 class MypagePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
@@ -10,7 +11,7 @@ class MypagePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> MypageTabFragment.newInstance(position)
+            0 -> TravelHistoryFragment()
             1 -> MypageTabFragment.newInstance(position)
             2 -> MypageTabFragment.newInstance(position)
             3 -> TravelStylingFragment()
