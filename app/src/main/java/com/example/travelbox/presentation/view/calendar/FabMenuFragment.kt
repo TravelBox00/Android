@@ -2,13 +2,17 @@ package com.example.travelbox.presentation.view.calendar
 
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
-import android.view.animation.AccelerateDecelerateInterpolator
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.Fragment
+import com.example.travelbox.R
 import com.example.travelbox.databinding.FabMenuBinding
+
 
 class FabMenuFragment : Fragment() {
 
@@ -22,6 +26,7 @@ class FabMenuFragment : Fragment() {
         binding = FabMenuBinding.inflate(inflater, container, false)
 
         setupFabMenu()
+        setupFabClickListeners()
 
         return binding.root
     }
@@ -40,6 +45,20 @@ class FabMenuFragment : Fragment() {
             isFabOpen = !isFabOpen
         }
     }
+
+    private fun setupFabClickListeners() {
+        binding.fabSchedule.setOnClickListener {
+            Log.d("FabMenuFragment", "✅ fabSchedule 버튼 클릭됨!")
+            println("스케쥴 버튼 클릭됨")
+            val intent = Intent(requireContext(), ScheduleActivity::class.java)
+            startActivity(intent)
+        }
+
+
+    }
+
+
+
 
     private fun openFabMenu(schedule: View, post: View, mainFab: View) {
         schedule.visibility = View.VISIBLE

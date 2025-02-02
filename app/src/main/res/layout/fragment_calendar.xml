@@ -211,7 +211,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:clipChildren="false"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="24dp"
+        android:clickable="true">
 
         <include layout="@layout/fab_menu"/>
     </FrameLayout>

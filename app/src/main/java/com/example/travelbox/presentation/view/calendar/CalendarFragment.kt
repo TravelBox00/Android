@@ -2,6 +2,7 @@ package com.example.travelbox.presentation.view.calendar
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -95,13 +96,28 @@ class CalendarFragment : Fragment() {
                 .replace(R.id.fab_menu_container, FabMenuFragment())
                 .commit()
         }
+        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
+            selectedDate = date
+            binding.calendarView.invalidateDecorators()
+
+            Toast.makeText(
+                requireContext(),
+                "선택한 날짜: ${date.year}-${date.month}-${date.day}",
+                Toast.LENGTH_SHORT
+            ).show()
+        })
+
+        if (savedInstanceState == null) {
+
+            childFragmentManager.beginTransaction()
+                .replace(R.id.fab_menu_container, FabMenuFragment())
+                .commit()
+        }
 
         return binding.root
     }
 
-    /**
-     * 선택된 월 탭의 스타일을 업데이트하고 나머지는 초기화합니다.
-     */
+
     private fun updateMonthTabs(selectedMonth: Int) {
         binding.monthTabs.children.forEachIndexed { index, view ->
             val monthView = view as TextView
