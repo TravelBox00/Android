@@ -28,7 +28,6 @@ class MypageTabFragment : Fragment() {
         val binding = FragmentMypageTabBinding.inflate(inflater, container, false)
         val position = arguments?.getInt(ARG_POSITION) ?: 0
         // 각 탭에 대한 내용 설정
-        // 예: position에 따라 다른 데이터를 보여줄 수 있습니다.
         return binding.root
     }
 }

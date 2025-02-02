@@ -1,60 +1,60 @@
-package com.example.travelbox.presentation.view.my
-
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.travelbox.R
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.travelbox.databinding.FragmentCommentBinding
+import com.example.travelbox.presentation.view.my.adapter.Comment
+import com.example.travelbox.presentation.view.my.adapter.CommentAdapter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CommentFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CommentFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentCommentBinding? = null
+    private val binding get() = _binding!!
+
+    // Comment 데이터 리스트
+    private val commentList = listOf(
+        Comment(
+            userId = "USER1",
+            commentText = "댓글 내용입니다.",
+            profileImageUrl = "https://example.com/user1.jpg",
+            myId = "USER2",
+            myCommentText = "댓글 내용",
+            myProfileImageUrl = "https://example.com/user2.jpg"  // URL
+        ),
+        Comment(
+            userId = "USER3",
+            commentText = "다른 댓글",
+            profileImageUrl = "https://example.com/user3.jpg",  //URL
+            myId = "USER4",
+            myCommentText = "응답 댓글",
+            myProfileImageUrl = "https://example.com/user4.jpg"  //URL
+        )
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_comment, container, false)
+        _binding = FragmentCommentBinding.inflate(inflater, container, false)
+        setupRecyclerView()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CommentFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CommentFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun setupRecyclerView() {
+        val adapter = CommentAdapter(commentList, onEdit = { position ->
+            // 댓글 수정 처리 로직
+        }, onDelete = { position ->
+            // 댓글 삭제 처리 로직
+        })
+        binding.recyclerComments.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerComments.adapter = adapter
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
