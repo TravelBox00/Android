@@ -1,107 +1,58 @@
-package com.example.mypage
+package com.example.travelbox.presentation.view.my
 
-import CommentFragment
-import FollowingFragment
-import InformationFragment
-import StoryFragment
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.travelbox.R
+import com.example.travelbox.databinding.FragmentHomeBinding
 import com.example.travelbox.databinding.FragmentMypageBinding
-import com.example.travelbox.presentation.view.my.FollowerFragment
-import com.example.travelbox.presentation.view.my.ScrapFragment
-import com.google.android.material.tabs.TabLayoutMediator
 
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
+/**
+ * A simple [Fragment] subclass.
+ * Use the [MypageFragment.newInstance] factory method to
+ * create an instance of this fragment.
+ */
 class MypageFragment : Fragment() {
-    private var _binding: FragmentMypageBinding? = null
-    private val binding get() = _binding!!
+
+    lateinit var binding : FragmentMypageBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentMypageBinding.inflate(inflater, container, false)
+    ): View? {
+        binding = FragmentMypageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupButtonListeners()
-        setupViewPagerAndTabs()
-    }
-
-    private fun setupButtonListeners() {
-        //게시글
-        binding.storyBtn.setOnClickListener {
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.main_frm, StoryFragment()) // 'fragment_container'는 이동할 컨테이너의 ID입니다.
-            fragmentTransaction.addToBackStack(null) // 뒤로 가기 스택에 추가
-            fragmentTransaction.commit()
-        }
-        //팔로워
-        binding.followerBtn.setOnClickListener {
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.main_frm, FollowerFragment())
-            fragmentTransaction.addToBackStack(null) // 뒤로 가기
-            fragmentTransaction.commit()
-        }
-        //팔로잉
-        binding.followingBtn.setOnClickListener {
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.main_frm, FollowingFragment())
-            fragmentTransaction.addToBackStack(null) // 뒤로 가기
-            fragmentTransaction.commit()
-        }
-        //스크랩
-        binding.scrapButton.setOnClickListener {
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.main_frm, ScrapFragment())
-            fragmentTransaction.addToBackStack(null) // 뒤로 가기
-            fragmentTransaction.commit()
-        }
-        //나의 댓글
-        binding.commentButton.setOnClickListener {
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.main_frm, CommentFragment())
-            fragmentTransaction.addToBackStack(null) // 뒤로 가기
-            fragmentTransaction.commit()
-        }
-        //회원정보 수정
-        binding.profileEditButton.setOnClickListener {
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.main_frm, InformationFragment())
-            fragmentTransaction.addToBackStack(null) // 뒤로 가기
-            fragmentTransaction.commit()
-        }
-
-
-
-
-    }
-
-    private fun setupViewPagerAndTabs() {
-        // ViewPager2 Adapter 설정
-        val pagerAdapter = MypagePagerAdapter(this)
-        binding.viewPager.adapter = pagerAdapter
-
-        // TabLayout과 ViewPager2 연결
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when (position) {
-                0 -> tab.text = "여행 기록"
-                1 -> tab.text = "기념품"
-                2 -> tab.text = "여행지"
-                3 -> tab.text = "여행 코디"
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment MypageFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            MypageFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
             }
-        }.attach()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
