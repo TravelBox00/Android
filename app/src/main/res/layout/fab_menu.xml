@@ -1,9 +1,10 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="bottom"
-    android:clipChildren="false">
+    android:clipChildren="false"
+    android:clickable="false"> <!-- ✅ 기존 clickable="true" 제거 -->
 
     <!-- FAB 버튼 (메인) -->
     <ImageView
@@ -22,7 +23,8 @@
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal|bottom"
         android:src="@drawable/ic_schedule"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:clickable="true"/>
 
     <!-- 오른쪽 위 아이콘 (포스트) -->
     <ImageView
@@ -31,5 +33,6 @@
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal|bottom"
         android:src="@drawable/ic_post"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:clickable="true"/>
 </FrameLayout>

@@ -28,4 +28,3 @@ class SelectedDateDecorator(private val selectedDate: CalendarDay) : DayViewDeco
         }
     }
 }
-

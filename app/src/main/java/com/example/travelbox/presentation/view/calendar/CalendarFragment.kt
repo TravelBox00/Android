@@ -1,5 +1,6 @@
 package com.example.travelbox.presentation.view.calendar
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -28,7 +29,8 @@ import android.text.style.UnderlineSpan
 class CalendarFragment : Fragment() {
 
     private lateinit var binding: FragmentCalendarBinding
-    private var selectedDate: CalendarDay? = null
+    private var selectedDate: CalendarDay = CalendarDay.today()  // ✅ 기본값: 오늘 날짜
+
 
     private val months = listOf(
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -92,7 +94,10 @@ class CalendarFragment : Fragment() {
             // ✅ 새로운 선택된 날짜에 회색 원 적용
             selectedDate = date
             binding.calendarView.addDecorator(SelectedDateDecorator(date))
-
+            val intent = Intent(requireContext(), ScheduleActivity::class.java).apply {
+                putExtra("selected_date", "${date.year}.${date.month}.${date.day}")
+            }
+            startActivity(intent)
             // ✅ 즉시 반영
             binding.calendarView.invalidateDecorators()
 
@@ -105,33 +110,52 @@ class CalendarFragment : Fragment() {
 
 
 
-        if (savedInstanceState == null) {
-            childFragmentManager.beginTransaction()
-                .replace(R.id.fab_menu_container, FabMenuFragment())
-                .commit()
-        }
+//        if (savedInstanceState == null) {
+//            childFragmentManager.beginTransaction()
+//                .replace(R.id.fab_menu_container, FabMenuFragment())
+//                .commit()
+//        }
+//        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
+//            selectedDate = date
+//            binding.calendarView.invalidateDecorators()
+//
+//            Toast.makeText(
+//                requireContext(),
+//                "선택한 날짜: ${date.year}-${date.month}-${date.day}",
+//                Toast.LENGTH_SHORT
+//            ).show()
+//        })
+        // ✅ 날짜 선택 이벤트 핸들러 (Intent 실행 X)
         binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
-            selectedDate = date
+            selectedDate = date  // ✅ 날짜 저장만 함
             binding.calendarView.invalidateDecorators()
-
-            Toast.makeText(
-                requireContext(),
-                "선택한 날짜: ${date.year}-${date.month}-${date.day}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
         })
 
         if (savedInstanceState == null) {
-
             childFragmentManager.beginTransaction()
-                .replace(R.id.fab_menu_container, FabMenuFragment())
+                .replace(R.id.fab_menu_container, FabMenuFragment { openScheduleActivity() })  // ✅ 콜백 추가
                 .commit()
         }
+
+
+
+//        if (savedInstanceState == null) {
+//
+//            childFragmentManager.beginTransaction()
+//                .replace(R.id.fab_menu_container, FabMenuFragment())
+//                .commit()
+//        }
 
         return binding.root
     }
 
-
+    private fun openScheduleActivity() {
+        val intent = Intent(requireContext(), ScheduleActivity::class.java).apply {
+            putExtra("selected_date", "${selectedDate.year}.${selectedDate.month}.${selectedDate.day}")
+        }
+        startActivity(intent)
+    }
 
 
     private fun updateMonthTabs(selectedMonth: Int) {

@@ -14,10 +14,10 @@ import com.example.travelbox.R
 import com.example.travelbox.databinding.FabMenuBinding
 
 
-class FabMenuFragment : Fragment() {
+class FabMenuFragment(private val onScheduleClick: () -> Unit) : Fragment() {
 
     private lateinit var binding: FabMenuBinding
-    private var isFabOpen = false
+    private var isFabOpen = false  // ✅ FAB 상태 저장
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,13 +48,12 @@ class FabMenuFragment : Fragment() {
 
     private fun setupFabClickListeners() {
         binding.fabSchedule.setOnClickListener {
-            Log.d("FabMenuFragment", "✅ fabSchedule 버튼 클릭됨!")
-            println("스케쥴 버튼 클릭됨")
-            val intent = Intent(requireContext(), ScheduleActivity::class.java)
-            startActivity(intent)
+            if (isFabOpen) {  // ✅ FAB이 열린 상태에서만 실행
+                onScheduleClick()
+                closeFabMenu(binding.fabSchedule, binding.fabPost, binding.fabMain)
+                isFabOpen = false  // ✅ FAB 상태 닫힘으로 변경
+            }
         }
-
-
     }
 
 
