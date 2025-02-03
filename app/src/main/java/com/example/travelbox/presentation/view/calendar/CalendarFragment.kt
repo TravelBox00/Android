@@ -1,6 +1,7 @@
 package com.example.travelbox.presentation.view.calendar
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
@@ -19,6 +20,10 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import org.threeten.bp.DayOfWeek
 import java.util.Locale
 import androidx.navigation.fragment.findNavController
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
 
 class CalendarFragment : Fragment() {
 
@@ -77,13 +82,19 @@ class CalendarFragment : Fragment() {
             }
         }
 
-        // ✅ 캘린더 날짜 선택 리스너 (선택한 날짜는 회색 원 배경 + 검은색 텍스트)
         binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
-            selectedDate?.let { binding.calendarView.removeDecorators() } // 기존 선택 제거
+            // ✅ 기존 선택된 날짜 스타일 제거 (오늘 날짜 데코레이터 유지)
+            binding.calendarView.removeDecorators()
+
+            // ✅ 오늘 날짜 데코레이터는 항상 유지
+            binding.calendarView.addDecorator(TodayDecorator())
+
+            // ✅ 새로운 선택된 날짜에 회색 원 적용
             selectedDate = date
             binding.calendarView.addDecorator(SelectedDateDecorator(date))
-            binding.calendarView.addDecorator(TodayDecorator()) // 오늘 날짜는 계속 유지
-            binding.calendarView.invalidateDecorators() // 즉시 적용
+
+            // ✅ 즉시 반영
+            binding.calendarView.invalidateDecorators()
 
             Toast.makeText(
                 requireContext(),
@@ -91,6 +102,9 @@ class CalendarFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         })
+
+
+
         if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
                 .replace(R.id.fab_menu_container, FabMenuFragment())
@@ -118,25 +132,33 @@ class CalendarFragment : Fragment() {
     }
 
 
+
+
     private fun updateMonthTabs(selectedMonth: Int) {
         binding.monthTabs.children.forEachIndexed { index, view ->
-            val monthView = view as TextView
+            val monthTextView = view as TextView
+            val monthText = months[index]  // JAN, FEB, ...
+
             if (index == selectedMonth) {
-                // 선택된 월 스타일
-                monthView.setTextColor(Color.BLACK)
-                monthView.textSize = 18f
-                monthView.setPadding(0, 0, 0, 8)
-                monthView.background = null
-                monthView.setBackgroundColor(Color.TRANSPARENT)
+                // ✅ 선택된 월 (검은색 + 굵은 글씨 + #00A879 밑줄)
+                val spannableString = SpannableString(monthText).apply {
+                    setSpan(ForegroundColorSpan(Color.BLACK), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    setSpan(UnderlineSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) // 기본 밑줄
+                }
+
+                monthTextView.text = spannableString
+                monthTextView.setTypeface(null, Typeface.BOLD)
+                monthTextView.textSize = 18f
             } else {
-                // 선택되지 않은 월 스타일
-                monthView.setTextColor(Color.parseColor("#61646B"))
-                monthView.textSize = 14f
-                monthView.setPadding(0, 0, 0, 0)
-                monthView.background = null
+                // ✅ 기본 월 스타일 (회색, 일반 글씨)
+                monthTextView.text = monthText
+                monthTextView.setTextColor(Color.parseColor("#61646B"))
+                monthTextView.setTypeface(null, Typeface.NORMAL)
+                monthTextView.textSize = 14f
             }
         }
     }
+
 
     /**
      * 선택된 월이 HorizontalScrollView의 중앙에 오도록 스크롤합니다.
