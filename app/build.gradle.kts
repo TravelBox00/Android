@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
 
-    
+
 }
 
 android {
@@ -54,11 +54,20 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // BottomNavigation
-    implementation("com.google.android.material:material:1.2.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation ("com.github.bumptech.glide:glide:4.15.1")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
+
+
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
+
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
+
+    // Calendar
+    implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.4")
+
+
 
 
 }

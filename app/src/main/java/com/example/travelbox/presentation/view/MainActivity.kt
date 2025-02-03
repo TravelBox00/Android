@@ -6,11 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import com.example.mypage.MypageFragment
 import com.example.travelbox.R
 import com.example.travelbox.databinding.ActivityMainBinding
 import com.example.travelbox.presentation.view.calendar.CalendarFragment
 import com.example.travelbox.presentation.view.home.HomeFragment
+import com.example.travelbox.presentation.view.my.MypageFragment
 import com.example.travelbox.presentation.view.post.PostFragment
 import com.example.travelbox.presentation.view.search.SearchFragment
 
@@ -70,5 +70,6 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.main_frm, fragment)
             .commit()
     }
+
 
 }
