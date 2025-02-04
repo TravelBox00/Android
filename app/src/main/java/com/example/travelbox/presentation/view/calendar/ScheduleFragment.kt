@@ -1,64 +1,165 @@
 package com.example.travelbox.presentation.view.calendar
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.travelbox.databinding.FragmentScheduleBinding
+import com.example.travelbox.presentation.view.calendar.decorators.RangeDecorator
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.WeekDayFormatter
+import java.util.Calendar
 import org.threeten.bp.DayOfWeek
 
 class ScheduleFragment : Fragment() {
 
     private lateinit var binding: FragmentScheduleBinding
-    private val months = listOf(
-        "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-    )
+    private val months = listOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
+
+    private var startDate: CalendarDay? = null
+    private var endDate: CalendarDay? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentScheduleBinding.inflate(inflater, container, false)
 
-        // ✅ 뒤로가기 버튼 클릭 시 이전 화면으로 돌아가기
+        // ✅ 뒤로가기 버튼
         binding.backButton.setOnClickListener {
             requireActivity().finish()
         }
 
-        // ✅ Intent로 전달받은 날짜 가져오기 (없으면 오늘 날짜)
+        // ✅ Intent에서 전달받은 날짜 가져오기
         val selectedDateString = arguments?.getString("selected_date") ?: getTodayDateString()
         val dateParts = selectedDateString.split(".")
         val selectedDate = if (dateParts.size == 3) {
-            CalendarDay.from(
-                dateParts[0].toInt(), // year
-                dateParts[1].toInt(), // month
-                dateParts[2].toInt()  // day
-            )
+            CalendarDay.from(dateParts[0].toInt(), dateParts[1].toInt(), dateParts[2].toInt())
         } else {
-            CalendarDay.today() // 기본값: 오늘 날짜
+            CalendarDay.today()
         }
 
-        // ✅ 선택된 날짜 설정
-        binding.selectedDateTextView.text = selectedDateString
+        // ✅ 선택한 날짜에 따라 월 타이틀 업데이트
+        updateMonthTitle(selectedDate.month)
 
-        // ✅ Intent에서 받은 월을 표시
-        val monthIndex = selectedDate.month - 1
-        binding.monthTitle.text = months[monthIndex]  // 예: JAN, FEB
+        // ✅ 기본적으로 캘린더에서 선택한 날짜를 출발일로 설정
+        startDate = selectedDate
+        endDate = selectedDate
+        updateSelectedDateUI()
 
-        // ✅ 캘린더 설정 (선택한 날짜 강조 + 요일 포맷 적용 + 헤더 제거)
-        setupCalendarView(selectedDate)
+        // ✅ 캘린더 설정 및 선택한 날짜 즉시 반영
+        setupCalendarView()
+        updateCalendarSelection(selectedDate)
+
+        // ✅ 출발일 선택
+        binding.startDatePicker.setOnClickListener {
+            showDatePicker(true)
+        }
+
+        // ✅ 종료일 선택
+        binding.endDatePicker.setOnClickListener {
+            showDatePicker(false)
+        }
+
+        // ✅ 캘린더 스와이프 시 월 제목 변경
+        binding.scheduleCalendarView.setOnMonthChangedListener(OnMonthChangedListener { _, date ->
+            updateMonthTitle(date.month)
+        })
 
         return binding.root
     }
 
-    private fun setupCalendarView(selectedDate: CalendarDay) {
+    /**
+     * ✅ 월 타이틀 업데이트 함수
+     */
+    private fun updateMonthTitle(month: Int) {
+        binding.monthTitle.text = months[month - 1]
+    }
+
+    /**
+     * ✅ 날짜 선택 기능 추가 (출발일 or 종료일)
+     */
+    private fun showDatePicker(isStartDate: Boolean) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+            val newDate = CalendarDay.from(selectedYear, selectedMonth + 1, selectedDay)
+
+            if (isStartDate) {
+                startDate = newDate
+                if (endDate != null && startDate!!.isAfter(endDate!!)) {
+                    Toast.makeText(requireContext(), "출발일은 종료일보다 앞서야 합니다.", Toast.LENGTH_SHORT).show()
+                    startDate = null
+                }
+            } else {
+                endDate = newDate
+                if (startDate != null && endDate!!.isBefore(startDate!!)) {
+                    Toast.makeText(requireContext(), "종료일은 출발일보다 이후여야 합니다.", Toast.LENGTH_SHORT).show()
+                    endDate = null
+                }
+            }
+
+            updateSelectedDateUI()
+            updateCalendarSelection(startDate)
+            updateMonthTitle(newDate.month) // ✅ 선택된 날짜 기준으로 월 타이틀 업데이트
+        }, year, month, day).show()
+    }
+
+    /**
+     * ✅ 선택한 날짜 UI 업데이트
+     */
+    private fun updateSelectedDateUI() {
+        binding.startDatePicker.text = startDate?.let { "${it.year}.${it.month}.${it.day}" } ?: "출발일 선택"
+        binding.endDatePicker.text = endDate?.let { "${it.year}.${it.month}.${it.day}" } ?: "종료일 선택"
+
+        if (startDate != null && endDate != null) {
+            updateCalendarRange()
+        }
+    }
+
+    /**
+     * ✅ 캘린더에서 선택한 날짜 즉시 반영
+     */
+    private fun updateCalendarSelection(selectedDate: CalendarDay?) {
+        if (selectedDate != null) {
+            binding.scheduleCalendarView.selectedDate = selectedDate
+            binding.scheduleCalendarView.currentDate = selectedDate
+            binding.scheduleCalendarView.invalidateDecorators()
+        }
+    }
+
+    /**
+     * ✅ 캘린더에 범위 선택 적용
+     */
+    private fun updateCalendarRange() {
+        val calendarView: MaterialCalendarView = binding.scheduleCalendarView
+        calendarView.removeDecorators() // 기존 데코레이터 제거
+
+        // ✅ 출발일과 종료일 범위 적용
+        if (startDate != null && endDate != null) {
+            calendarView.addDecorator(RangeDecorator(startDate!!, endDate!!))
+        }
+        // ✅ 캘린더 설정 (터치 비활성화 + 헤더 숨김)
+        calendarView.setOnDateChangedListener(null)
+        calendarView.setTitleFormatter { "" } // 헤더 제거
+        calendarView.topbarVisible = false
+        calendarView.invalidateDecorators()
+    }
+
+    /**
+     * ✅ 캘린더의 요일 포맷 설정 (S, M, T, W, T, F, S)
+     */
+    private fun setupCalendarView() {
         val calendarView: MaterialCalendarView = binding.scheduleCalendarView
 
-        // ✅ 요일 변경 (CalendarFragment와 동일하게 설정)
         val customWeekFormatter = WeekDayFormatter { dayOfWeek ->
             when (dayOfWeek) {
                 DayOfWeek.SUNDAY -> "S"
@@ -72,23 +173,10 @@ class ScheduleFragment : Fragment() {
             }
         }
         calendarView.setWeekDayFormatter(customWeekFormatter)
-
-        // ✅ 캘린더 설정 (터치 비활성화 + 헤더 숨김)
-        calendarView.isClickable = false
-        calendarView.isFocusable = false
-        calendarView.setOnDateChangedListener(null)
-        calendarView.setTitleFormatter { "" } // 헤더 제거
-        calendarView.topbarVisible = false
-        // ✅ 헤더 숨기기 적용
-        calendarView.setTitleFormatter { "" }
-        calendarView.topbarVisible = false
-
-        // ✅ 선택한 날짜를 `SelectedDateDecorator`로 꾸미기
-        calendarView.addDecorator(SelectedDateDecorator(selectedDate))
     }
 
     private fun getTodayDateString(): String {
-        val today = CalendarDay.today()
-        return "${today.year}.${today.month}.${today.day}"
+        val today = Calendar.getInstance()
+        return "${today.get(Calendar.YEAR)}.${today.get(Calendar.MONTH) + 1}.${today.get(Calendar.DAY_OF_MONTH)}"
     }
 }
