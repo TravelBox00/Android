@@ -1,15 +1,16 @@
 package com.example.travelbox.presentation.view.home
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.ItemGridPostBinding
-import kotlinx.coroutines.NonDisposableHandle.parent
 
-class PostAdapter(private val itemList: MutableList<PostRecyclerModel> ) :
+
+class PostAdapter(private val itemList: List<PostItem>) :
         RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
         interface onItemClickListener {
@@ -56,16 +57,17 @@ class PostAdapter(private val itemList: MutableList<PostRecyclerModel> ) :
         inner class PostViewHolder(private val binding: ItemGridPostBinding)
             : RecyclerView.ViewHolder(binding.root) {
 
-            fun bind(data : PostRecyclerModel) {
+            fun bind(data: PostItem) {
 
+                // 인기 게시물 이미지
+                Glide.with(binding.root.context)
+                    .load(data.imageURL)  // 데이터로 받은 URL
+                    .placeholder(R.drawable.post_ex1)  // 로딩 중일 때 보여줄 이미지
+                    .error(R.drawable.post_ex1)  // 에러 시 표시할 이미지
+                    .into(binding.imageArea)  // 이미지뷰에 로드
 
-                binding.imageArea.setImageResource(data.image)
-                binding.tvId.text = data.id
-                binding.tvPostTitle.text = data.title
-
-
-
-
+                binding.tvId.text = data.threadId.toString()
+                binding.tvPostTitle.text = data.postTitle
 
 
 

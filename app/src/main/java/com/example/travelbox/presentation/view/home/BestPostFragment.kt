@@ -3,14 +3,18 @@ package com.example.travelbox.presentation.view.home
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.text.TextUtils.replace
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.databinding.FragmentBestPostBinding
 import com.example.travelbox.databinding.FragmentHomeBinding
 
@@ -40,9 +44,10 @@ class BestPostFragment : Fragment() {
     ): View? {
         binding = FragmentBestPostBinding.inflate(inflater, container, false)
 
+        //ApiNetwork.init(requireContext())
 
-        // recylcer 함수 호출
-        postGridRecycler()
+        // 인기 게시물 조회 함수 호출
+        getPopularPost(1, 20)
 
 
         // 뒤로 가기 버튼 클릭 시
@@ -69,49 +74,53 @@ class BestPostFragment : Fragment() {
     }
 
 
-    private fun postGridRecycler() {
 
-        val itemList = mutableListOf<PostRecyclerModel>()
+    // 인기 게시물 조회
+    private fun getPopularPost(page : Int, limit : Int) {
+        HomeRepository.getPopularPost(page, limit)
+        { result ->
 
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@way1234", "해유관에서 물고기랑" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex2, "@way1234", "여우 신사는 처음이지?" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@jopeng1234", "물고기랑22" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@jopeng1234", "물고기랑33" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@jopeng1234", "물고기랑22" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@w1nner", "물고기랑44" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@w1nner", "물고기랑55" ))
-        itemList.add(PostRecyclerModel(R.drawable.post_ex1, "@w1nner", "물고기랑66" ))
+            if (result != null) {
+                Log.d("BestPostFragment", "데이터 조회 성공 :$result")
+
+                // 게시물 어댑터 생성
+                val adapter = PostAdapter(result)
+
+                adapter.setItemClickListener(object : PostAdapter.onItemClickListener{
+
+                    override fun onItemClick(position: Int) {
+                        val selectedItem = result[position]
+
+                        val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
+                            putExtra("image", selectedItem.imageURL)
+                            putExtra("id", selectedItem.threadId)
+                            putExtra("title", selectedItem.postTitle)
+                        }
+
+                        startActivity(intent)
+                    }
+                })
 
 
-        val adapter = PostAdapter(itemList)
+                binding.recyclerview.adapter = adapter
+                binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        // 클릭 리스너 설정
-        adapter.setItemClickListener(object : PostAdapter.onItemClickListener{
 
-            override fun onItemClick(position: Int) {
-                val selectedItem = itemList[position]
+                binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
+                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                        outRect.bottom = 35 // 아이템 간의 간격 35dp
+                    }
+                })
 
-                val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
-                    putExtra("image", selectedItem.image)
-                    putExtra("id", selectedItem.id)
-                    putExtra("title", selectedItem.title)
-                }
 
-                startActivity(intent)
+
+            } else {
+                Log.e("BestPostFragment", "데이터 조회 실패")
             }
-        })
-
-
-        binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 2)
-
-
-        binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                outRect.bottom = 35 // 아이템 간의 간격 35dp
-            }
-        })
+        }
     }
+
+
 
 
 }
