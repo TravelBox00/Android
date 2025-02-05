@@ -11,21 +11,23 @@ import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
 
 class TodayDecorator : DayViewDecorator {
+    private val today = CalendarDay.today()
+
     override fun shouldDecorate(day: CalendarDay?): Boolean {
-        return day == CalendarDay.today() // 오늘 날짜인지 확인
+        return day == today
     }
 
     override fun decorate(view: DayViewFacade?) {
-        view?.addSpan(ForegroundColorSpan(Color.WHITE)) // 텍스트 색상: 흰색
-        view?.addSpan(StyleSpan(Typeface.BOLD)) // 볼드 유지
-        view?.setBackgroundDrawable(createSmallCircleDrawable("#00A879")) // ✅ 작은 초록색 원 적용
+        view?.addSpan(ForegroundColorSpan(Color.WHITE)) // 오늘 날짜 흰색 글씨
+        view?.addSpan(StyleSpan(Typeface.BOLD)) // 볼드 처리
+        view?.setBackgroundDrawable(createCircleDrawable("#008F63")) // ✅ 오늘 날짜는 초록색 원
     }
 
-    private fun createSmallCircleDrawable(color: String): GradientDrawable {
+    private fun createCircleDrawable(color: String): GradientDrawable {
         return GradientDrawable().apply {
             shape = GradientDrawable.OVAL
             setColor(Color.parseColor(color))
-            setSize(30, 30) // ✅ 크기 줄이기
+            setSize(30, 30) // ✅ 원 크기 조정
         }
     }
 }
