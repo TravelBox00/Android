@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.travelbox.R
+import com.example.travelbox.data.repository.auth.AuthRepository
 import com.example.travelbox.databinding.ActivityLoginBinding
 import com.example.travelbox.presentation.view.MainActivity
 
@@ -64,10 +65,30 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.pwdET.text.toString()
 
             if (id.isNotEmpty() && password.isNotEmpty()) {
-                startActivity(Intent(this, MainActivity::class.java))
+                //startActivity(Intent(this, MainActivity::class.java))
+
+                // 로그인 api 호출
+                login(id, password)
             } else {
                 // 로그인 실패 예시
                 Toast.makeText(this, "로그인 실패: 아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
+    // 로그인
+    private fun login(id: String, password: String) {
+        AuthRepository.login(id, password) { isSuccess ->
+            runOnUiThread {
+                if (isSuccess) {
+                    Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                } else {
+                    Toast.makeText(this, "로그인 실패: 아이디 또는 비밀번호를 확인하세요.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
