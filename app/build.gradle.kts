@@ -1,9 +1,17 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
 
 
 }
+
+val localProperties = Properties().apply {
+    load(FileInputStream(File(rootDir, "local.properties")))
+}
+val baseUrl = localProperties.getProperty("BASE_URL") ?: "http://43.203.244.171:3000"
 
 android {
     namespace = "com.example.travelbox"
@@ -16,11 +24,18 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+        buildConfigField("String", "BASE_URL", baseUrl)
     }
 
     buildTypes {
+
         release {
+
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -83,6 +98,7 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.13.0")
 
 
 
