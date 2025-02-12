@@ -11,20 +11,30 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.travelbox.R
+import com.example.travelbox.data.repository.home.HomeRepository
+import com.example.travelbox.data.repository.home.HomeRepository.Companion.getPopularPost
 import com.example.travelbox.databinding.FragmentHomeBinding
+import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
 
 class HomeFragment : Fragment() {
 
     lateinit var binding : FragmentHomeBinding
+    private lateinit var sharedViewModel: PostSharedViewModel
 
     private lateinit var bannerAdapter: BannerAdapter
     private lateinit var mBanner: ViewPager2
@@ -45,9 +55,22 @@ class HomeFragment : Fragment() {
     ): View? {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-
+        sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
 
         setTextStyle()
+
+        getPopularPost(1, 20)
+
+
+
+
+        // 인기게시물 이미지
+        sharedViewModel.topImages.observe(viewLifecycleOwner) { images ->
+            if (images.size >= 2) {
+                loadImage(binding.ivPostOne, images[0])
+                loadImage(binding.ivPostTwo, images[1])
+            }
+        }
 
 
 
@@ -107,6 +130,8 @@ class HomeFragment : Fragment() {
 
 
 
+
+
         return binding.root
 
     }
@@ -134,6 +159,42 @@ class HomeFragment : Fragment() {
             val scaleFactor = 0.85f + (1 - Math.abs(position)) * 0.15f
             page.scaleY = scaleFactor
             page.alpha = scaleFactor
+        }
+    }
+
+
+
+    // 인기 게시물 2개 가져오기
+    private fun loadImage(imageView: ImageView, url: String) {
+
+        // 코너 라운드
+        val options = RequestOptions()
+            .transform(RoundedCorners(20))
+
+            Glide.with(this)
+                .load(url)
+                .apply(options)
+                .override(imageView.width, imageView.height) // 로딩 중 배경
+                .error(R.drawable.ic_post) // 오류 발생 시 이미지
+                .into(imageView)
+
+
+
+    }
+
+
+
+    private fun getPopularPost(page: Int, limit: Int) {
+        HomeRepository.getPopularPost(page, limit)
+        { result ->
+            if (result != null && result.size >= 2) {
+                Log.d("HomeFragment", "데이터 조회 성공 :$result")
+
+                val topImages = listOf(result[0].imageURL, result[1].imageURL)
+                sharedViewModel.setTopImages(topImages)
+            } else {
+                Log.e("HomeFragment", "데이터 부족 또는 실패")
+            }
         }
     }
 
