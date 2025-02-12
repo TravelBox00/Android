@@ -8,15 +8,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.R
-import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.databinding.FragmentBestPostBinding
-import com.example.travelbox.databinding.FragmentHomeBinding
+import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,8 +78,14 @@ class BestPostFragment : Fragment() {
         HomeRepository.getPopularPost(page, limit)
         { result ->
 
-            if (result != null) {
+//            if (result != null) {
+//                Log.d("BestPostFragment", "데이터 조회 성공 :$result")
+            if (result != null && result.size >= 2) {
                 Log.d("BestPostFragment", "데이터 조회 성공 :$result")
+
+                val topImages = listOf(result[0].imageURL, result[1].imageURL)
+                val sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
+                sharedViewModel.setTopImages(topImages)
 
                 // 게시물 어댑터 생성
                 val adapter = PostAdapter(result)
@@ -93,9 +97,13 @@ class BestPostFragment : Fragment() {
 
                         val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
                             putExtra("image", selectedItem.imageURL)
+
+                            // 닉네임으로 바꿔야 함
                             putExtra("id", selectedItem.threadId)
                             putExtra("title", selectedItem.postTitle)
+                            putExtra("threadId", selectedItem.threadId)
                         }
+
 
                         startActivity(intent)
                     }

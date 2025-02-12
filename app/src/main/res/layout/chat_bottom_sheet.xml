@@ -30,7 +30,7 @@
 
 
     <TextView
-        android:id="@+id/detailId"
+        android:id="@+id/tv_bottom_detailId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -43,7 +43,7 @@
 
 
     <TextView
-        android:id="@+id/detailTitle"
+        android:id="@+id/tv_bottom_detailTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="일본 오랜만에 오는데 너무 좋다"
@@ -51,8 +51,8 @@
         android:textColor="@color/black"
         android:paddingTop="4dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="@id/detailId"
-        app:layout_constraintTop_toBottomOf="@id/detailId" />
+        app:layout_constraintStart_toStartOf="@id/tv_bottom_detailId"
+        app:layout_constraintTop_toBottomOf="@id/tv_bottom_detailId" />
 
     <View
         android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginBottom="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detailTitle"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_bottom_detailTitle"/>
 
 
 
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="20dp"
-        app:layout_constraintTop_toBottomOf="@id/detailTitle"
+        app:layout_constraintTop_toBottomOf="@id/tv_bottom_detailTitle"
         app:layout_constraintBottom_toTopOf="@id/comment_input_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
