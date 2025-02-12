@@ -17,4 +17,13 @@ interface HomeInterface {
         ) : Call<List<PostItem>>
 
 
+    // 인기(특정) 게시글 댓글 조회
+    @GET("/comment/show")
+    fun getPostComment(
+
+        @Query("threadId") threadId : Int
+
+    ) : Call<PostCommentResponse>
+
+
 }

@@ -93,9 +93,13 @@ class BestPostFragment : Fragment() {
 
                         val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
                             putExtra("image", selectedItem.imageURL)
+
+                            // 닉네임으로 바꿔야 함
                             putExtra("id", selectedItem.threadId)
                             putExtra("title", selectedItem.postTitle)
+                            putExtra("threadId", selectedItem.threadId)
                         }
+
 
                         startActivity(intent)
                     }

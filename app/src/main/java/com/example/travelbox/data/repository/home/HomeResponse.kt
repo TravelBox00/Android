@@ -14,3 +14,18 @@ data class PostItem(
     val imageURL: String?,
     val totalEngagement: Int?
 )
+
+
+data class PostCommentResponse(
+    val isSuccess: Boolean,
+    val result : List<Comment>
+
+)
+
+
+data class Comment(
+    val commentId: Int,
+    val commentContent: String?,
+    val commentVisible: String?,
+    val commenterNickname: String?
+)

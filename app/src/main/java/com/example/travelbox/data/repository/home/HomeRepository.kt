@@ -48,6 +48,41 @@ class HomeRepository {
             })
         }
 
+
+        // 특정 게시물 댓글 조회
+        fun getPostComment(threadId: Int, callback: (PostCommentResponse?) -> Unit) {
+
+            val call = homeService.getPostComment(threadId)
+
+            call.enqueue(object : Callback<PostCommentResponse> {
+                override fun onResponse(
+                    call: Call<PostCommentResponse>,
+                    response: Response<PostCommentResponse>
+                ) {
+                    if (response.isSuccessful) {
+
+                        // 통신 성공
+                        Log.d("게시물 댓글 조회", "통신 성공 ${response.code()} ")
+                        callback(response.body())
+
+                    } else {
+                        // 통신 실패
+                        val error = response.errorBody()?.toString()
+                        Log.e("게시물 댓글 조회", "통신 실패 $error")
+                        callback(null)
+
+                    }
+                }
+
+                override fun onFailure(call: Call<PostCommentResponse>, t: Throwable) {
+
+                    // 통신 실패
+                    Log.w("게시물 댓글 조회", "통신 실패: ${t.message}")
+                    callback(null)
+                }
+            })
+        }
+
     }
 
 }
