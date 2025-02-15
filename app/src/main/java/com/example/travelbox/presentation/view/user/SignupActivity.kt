@@ -6,14 +6,20 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.travelbox.R
+import com.example.travelbox.data.repository.auth.AuthRepository
 import com.example.travelbox.databinding.ActivitySignupBinding
+import kotlinx.coroutines.launch
 
 class SignupActivity : AppCompatActivity() {
 
@@ -34,7 +40,65 @@ class SignupActivity : AppCompatActivity() {
         pwdUnmatchTV = binding.pwdUnmatchTV
 
         binding.duplicationBtn.setOnClickListener {
-            binding.idavailable.visibility = TextView.VISIBLE
+            val userTag = binding.idET.text.toString().trim() // 공백 제거
+
+            if (userTag.isEmpty()) {
+                Toast.makeText(this, "아이디를 입력하세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            Log.d("SignupActivity", "중복 확인 요청 ID: $userTag") // 입력한 ID 로그 출력
+
+            AuthRepository.duplicate(userTag) { isAvailable ->
+                runOnUiThread {
+                    Log.d("SignupActivity", "중복 확인 결과: $isAvailable") // 서버 응답 로그
+
+                    if (isAvailable) {
+                        binding.idavailable.visibility = View.VISIBLE
+                        binding.idUnavailable.visibility = View.GONE
+                    } else {
+                        binding.idUnavailable.visibility = View.VISIBLE
+                        binding.idavailable.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+
+        binding.idET.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                binding.idavailable.visibility = View.GONE
+                binding.idUnavailable.visibility = View.GONE
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.signupBtn.setOnClickListener {
+            val name = binding.nameET.text.toString()
+            val id = binding.idET.text.toString()
+            val password = binding.pwdET.text.toString()
+            val confirmPassword = binding.pwdCheckET.text.toString()
+
+            if (name.isNotEmpty() && id.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
+                if (password == confirmPassword) {
+                    AuthRepository.signUp(id, password, name) { isSuccess ->
+                        runOnUiThread {
+                            if (isSuccess) {
+                                Toast.makeText(this, "회원가입 성공!", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, SignUpSuccessActivity::class.java))
+                            } else {
+                                Toast.makeText(this, "회원가입 실패. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "모든 필드를 입력하세요", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // 비밀번호 보기/숨기기 기능 설정
@@ -47,39 +111,21 @@ class SignupActivity : AppCompatActivity() {
                 val password = passwordET.text.toString()
                 val confirmPassword = confirmPasswordET.text.toString()
 
-                if (password == confirmPassword) {
-                    pwdUnmatchTV.visibility = TextView.GONE
+                if (password.isEmpty() || confirmPassword.isEmpty()) {
+                    pwdUnmatchTV.visibility = View.GONE
+                } else if (password == confirmPassword) {
+                    pwdUnmatchTV.visibility = View.GONE
                 } else {
-                    pwdUnmatchTV.visibility = TextView.VISIBLE
+                    pwdUnmatchTV.visibility = View.VISIBLE
                 }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
 
         passwordET.addTextChangedListener(textWatcher)
         confirmPasswordET.addTextChangedListener(textWatcher)
-
-        // 회원가입 버튼 클릭 리스너
-        binding.signupBtn.setOnClickListener {
-            val name = binding.nameET.text.toString()
-            val id = binding.idET.text.toString()
-            val password = binding.pwdET.text.toString()
-            val confirmPassword = binding.pwdCheckET.text.toString()
-
-            if (name.isNotEmpty() && id.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
-                if (password == confirmPassword) {
-                    // 회원가입 성공 예시
-                    startActivity(Intent(this, SignUpSuccessActivity::class.java))
-                } else {
-                    Toast.makeText(this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "모든 필드를 입력하세요", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private fun setupPasswordToggle(editText: EditText, showIcon: ImageView, hideIcon: ImageView) {

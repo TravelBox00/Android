@@ -76,8 +76,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-
     // 로그인
     private fun login(id: String, password: String) {
         AuthRepository.login(id, password) { isSuccess ->
