@@ -58,7 +58,7 @@ class CommentFragment : Fragment() {
                 }
             } else {
                 // 실패 시 메시지 처리
-                Log.e("CommentFragment", "댓글을 불러오는 데 실패했습니다.")
+                Log.e("CommentFragment", "댓글을 불러오는데 실패했습니다.")
                 binding.noCommentsMessage.visibility = View.VISIBLE  // 실패 시에도 메시지 표시
             }
         }
