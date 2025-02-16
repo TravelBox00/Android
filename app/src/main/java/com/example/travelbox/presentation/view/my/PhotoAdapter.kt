@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.R
 
+//여행 코디
 
 //데이터
 data class PhotoItem(val imageResId: Int, val title: String)

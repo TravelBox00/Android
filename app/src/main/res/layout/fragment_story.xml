@@ -10,4 +10,12 @@
         android:id="@+id/recycler_story"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/noPostsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="게시글이 존재하지 않습니다."
+        android:textSize="16sp"
+        android:textColor="#999999"
+        android:visibility="gone"/>
 </LinearLayout>
