@@ -31,6 +31,7 @@ import com.example.travelbox.databinding.FragmentHomeBinding
 import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
 
+
 class HomeFragment : Fragment() {
 
     lateinit var binding : FragmentHomeBinding

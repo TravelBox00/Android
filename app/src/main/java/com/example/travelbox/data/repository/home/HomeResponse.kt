@@ -15,7 +15,7 @@ data class PostItem(
     val totalEngagement: Int?
 )
 
-
+// 댓글 작성
 data class PostCommentResponse(
     val isSuccess: Boolean,
     val result : List<Comment>
@@ -38,4 +38,18 @@ data class CommentAddResponse(
 
 data class Result(
     val commentId: Int
+)
+
+
+// 지역 필터
+data class RegionFilterResponse(
+    val result : List<PostData>,
+    val isSuccess: Boolean
+)
+
+data class PostData(
+    val threadId: Int?,
+    val postImageURL: String?,
+    val postTitle: String?,
+    val postDate: String?
 )
