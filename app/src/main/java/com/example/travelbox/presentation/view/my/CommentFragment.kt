@@ -50,7 +50,7 @@ class CommentFragment : Fragment() {
                 commentList.addAll(comments)
                 adapter.notifyDataSetChanged()
 
-                // 댓글이 없을 경우 "작성한 댓글이 없습니다." 텍스트 표시
+                // 댓글이 없을 경우
                 if (commentList.isEmpty()) {
                     binding.noCommentsMessage.visibility = View.VISIBLE
                 } else {
