@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -41,6 +42,9 @@ class DetailPostActivity : AppCompatActivity() {
         val imageResId = intent.getIntExtra("image", R.drawable.post_ex1)  // 기본값 설정
         val id = intent.getStringExtra("id") ?: "No Id"
         val title = intent.getStringExtra("title") ?: "No Title"
+
+
+
 
         // 데이터 설정
         binding.detailImage.setImageResource(imageResId)

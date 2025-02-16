@@ -83,6 +83,43 @@ class HomeRepository {
             })
         }
 
+        // 지역 필터 검색
+        fun regionFilterSearch(category : String, region : String, callback : (RegionFilterResponse?) -> Unit) {
+
+            val call = homeService.regionFilter(category, region)
+
+            call.enqueue(object : Callback<RegionFilterResponse> {
+                override fun onResponse(
+                    call: Call<RegionFilterResponse>,
+                    response: Response<RegionFilterResponse>
+                ) {
+                    if (response.isSuccessful) {
+
+                        // 통신 성공
+                        Log.d("게시물 댓글 조회", "통신 성공 ${response.code()} ")
+                        callback(response.body())
+
+                    } else {
+                        // 통신 실패
+                        val error = response.errorBody()?.string()
+                        Log.e("게시물 댓글 조회", "통신 실패 $error")
+                        callback(null)
+
+                    }
+                }
+
+                override fun onFailure(call: Call<RegionFilterResponse>, t: Throwable) {
+
+                    // 통신 실패
+                    Log.w("게시물 댓글 조회", "통신 실패1: ${t.message}")
+                    callback(null)
+                }
+            })
+
+
+
+        }
+
     }
 
 }
