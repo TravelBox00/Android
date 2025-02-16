@@ -12,9 +12,12 @@ class HistoryAdapter (private val imageList: List<String>) : androidx.recyclervi
 
         fun bind(imageUrl: String) {
             // Glide로 이미지 로드
+            /*
             Glide.with(binding.imageView.context)
                 .load(imageUrl)
                 .into(binding.imageView)
+
+             */
         }
     }
 
