@@ -49,6 +49,47 @@ class AuthRepository {
             })
         }
 
+        // Access Token 재발급
+        fun refreshAccessToken(userTag: String, callback: (Boolean) -> Unit) {
+            val refreshToken = ApiNetwork.getRefreshToken()
+
+            if (refreshToken.isNullOrEmpty()) {
+                Log.e("AuthRepository", "토큰 없음. 재발급 불가")
+                callback(false)
+                return
+            }
+
+            val request = RefreshTokenRequest(userTag, refreshToken)
+
+            service.refreshAccessToken(request).enqueue(object : Callback<RefreshTokenResponse> {
+                override fun onResponse(call: Call<RefreshTokenResponse>, response: Response<RefreshTokenResponse>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()?.result
+                        if (result != null) {
+                            Log.d("AuthRepository", "Access Token 재발급 성공")
+
+                            // 새 토큰 저장
+                            ApiNetwork.saveAccessToken(result.accessToken)
+                            ApiNetwork.saveRefreshToken(result.refreshToken)
+
+                            callback(true)
+                        } else {
+                            Log.e("AuthRepository", "Access Token 재발급 응답이 비어 있음")
+                            callback(false)
+                        }
+                    } else {
+                        Log.e("AuthRepository", "Access Token 재발급 실패: ${response.errorBody()?.string()}")
+                        callback(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<RefreshTokenResponse>, t: Throwable) {
+                    Log.e("AuthRepository", "Access Token 재발급 요청 실패: ${t.message}")
+                    callback(false)
+                }
+            })
+        }
+
         // 로그아웃
         fun logout(callback: (Boolean) -> Unit) {
             service.logout().enqueue(object : Callback<LogoutResponse> {
@@ -57,6 +98,11 @@ class AuthRepository {
                         val result = response.body()
                         if (result?.isSuccess == true) {
                             Log.d("AuthRepository", "로그아웃 성공")
+
+                            // 저장된 토큰 삭제
+                            ApiNetwork.saveAccessToken("")
+                            ApiNetwork.saveRefreshToken("")
+
                             callback(true)
                         } else {
                             Log.e("AuthRepository", "로그아웃 실패: 응답값 없음")
