@@ -97,7 +97,6 @@ class CalendarFragment : Fragment() {
         return binding.root
     }
     private fun setupCalendar() {
-        binding.calendarView.setSelectionMode(0) // ✅ 기본 선택 효과 제거
 
         // ✅ 오늘 날짜 데코레이터 추가
         binding.calendarView.addDecorator(TodayDecorator(requireContext()))
@@ -111,7 +110,10 @@ class CalendarFragment : Fragment() {
             binding.calendarView.addDecorator(TodayDecorator(requireContext())) // ✅ 오늘 날짜 유지
             binding.calendarView.addDecorator(SelectedDateDecorator(requireContext(), selectedDate)) // ✅ 선택한 날짜 적용
 
-            binding.calendarView.invalidateDecorators() // ✅ 즉시 반영
+            // ✅ 즉시 반영
+            binding.calendarView.invalidateDecorators()
+
+            // ✅ 선택한 날짜 Toast 메시지 출력
             Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
         })
     }
