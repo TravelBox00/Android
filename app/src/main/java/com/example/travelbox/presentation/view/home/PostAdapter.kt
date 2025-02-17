@@ -1,11 +1,13 @@
 package com.example.travelbox.presentation.view.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.repository.home.PostData
 import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.ItemGridPostBinding
 
@@ -70,11 +72,34 @@ class PostAdapter(private val itemList: List<PostItem>) :
                 binding.tvPostTitle.text = data.postTitle
 
 
+                // 메달 아이콘 표시
+
+                when (position) {
+                    0 -> {
+                        binding.ivMedal.visibility = View.VISIBLE
+                        binding.ivMedal.setImageResource(R.drawable.ic_gold_medal) // 금메달
+                    }
+
+                    1 -> {
+                        binding.ivMedal.visibility = View.VISIBLE
+                        binding.ivMedal.setImageResource(R.drawable.ic_silver_medal) // 은메달
+                    }
+
+                    2 -> {
+                        binding.ivMedal.visibility = View.VISIBLE
+                        binding.ivMedal.setImageResource(R.drawable.ic_bronze_medal) // 동메달
+                    }
+
+                    else -> {
+                        binding.ivMedal.visibility = View.GONE  // 메달 없음
+                    }
+
+
+                }
 
             }
 
+
         }
-
-
 
 }

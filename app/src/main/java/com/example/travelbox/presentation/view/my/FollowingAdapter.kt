@@ -32,11 +32,13 @@ class FollowingAdapter(
 
                 btnFollow.apply {
                     text = if (item.isFollowing) "Following" else "Follow"
+                    /*
                     setBackgroundTintList(
                         context.getColorStateList(
                             if (item.isFollowing) android.R.color.darker_gray else android.R.color.holo_blue_light
                         )
                     )
+                     */
 
                     setOnClickListener {
                         onFollowButtonClick(item)  // 여기서 클릭 시 액션을 수행

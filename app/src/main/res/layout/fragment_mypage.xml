@@ -128,30 +128,76 @@
             <!-- 버튼 섹션 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp">
 
-                <Button
+                <LinearLayout
                     android:id="@+id/scrapButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="스크랩" />
-
-                <Button
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:background="@drawable/border_background"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/book"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="스크랩"/>
+                </LinearLayout>
+                <LinearLayout
                     android:id="@+id/commentButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="나의 댓글" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:background="@drawable/border_background"
 
-                <Button
+                    android:layout_weight="1">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/proicons_chat"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="나의 댓글"/>
+                </LinearLayout>
+                <LinearLayout
                     android:id="@+id/profileEditButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="회원 정보 수정" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:background="@drawable/border_background"
+
+                    android:layout_weight="1">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/group"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="회원 정보 수정"/>
+                </LinearLayout>
+
             </LinearLayout>
 
             <!-- TabLayout 추가 -->

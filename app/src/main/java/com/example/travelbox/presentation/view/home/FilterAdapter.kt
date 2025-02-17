@@ -14,7 +14,18 @@ class FilterAdapter(private val items: List<String>, private val onItemClick: (S
     private var selectedPosition = RecyclerView.NO_POSITION  // 선택된 항목 인덱스
 
 
-    inner class ViewHolder(private val binding: com.example.travelbox.databinding.ItemFilterBinding) : RecyclerView.ViewHolder(binding.root){
+//    private var selectedItem: String? = null
+//
+//
+//
+//    // 선택된 항목 리턴
+//    fun getSelectedItem(): String? {
+//        return selectedItem
+//    }
+
+
+
+    inner class ViewHolder(private val binding: ItemFilterBinding) : RecyclerView.ViewHolder(binding.root){
 
         fun bind(item: String, position: Int) {
             binding.tvFilter.text = item
