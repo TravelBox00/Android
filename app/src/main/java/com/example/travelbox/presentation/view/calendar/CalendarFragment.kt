@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.calendar.CalendarRepository
 import com.example.travelbox.databinding.FragmentCalendarBinding
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
@@ -26,6 +28,7 @@ class CalendarFragment : Fragment() {
 
     private lateinit var binding: FragmentCalendarBinding
     private var selectedDate: CalendarDay = CalendarDay.today()  // ✅ 기본값: 오늘 날짜
+    private var userTag: String? = null // ✅ 로그인한 유저의 userTag
 
     private val months = listOf(
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -39,7 +42,7 @@ class CalendarFragment : Fragment() {
         binding = FragmentCalendarBinding.inflate(inflater, container, false)
 
         AndroidThreeTen.init(requireContext())
-
+        userTag = ApiNetwork.getUserTag()
         // ✅ 요일 변경: '일' → 'S', '월' → 'M' 등으로 변경
         val customWeekFormatter = WeekDayFormatter { dayOfWeek ->
             when (dayOfWeek) {
@@ -53,6 +56,7 @@ class CalendarFragment : Fragment() {
                 else -> "?"
             }
         }
+
         binding.calendarView.setWeekDayFormatter(customWeekFormatter)
         // ✅ 현재 날짜에 맞게 연도와 월 초기화
         val today = CalendarDay.today()
@@ -78,6 +82,7 @@ class CalendarFragment : Fragment() {
                 scrollToMonth(index)
                 binding.calendarView.currentDate = CalendarDay.from(today.year, index + 1, 1)
             }
+
         }
 
 //        // ✅ 날짜 선택 이벤트
@@ -94,6 +99,11 @@ class CalendarFragment : Fragment() {
                 .commit()
         }
 
+        binding.calendarView.setOnMonthChangedListener(OnMonthChangedListener { _, date ->
+            if (userTag != null) {
+                fetchUserCalendarEvents(date.year, date.month)
+            }
+        })
         return binding.root
     }
     private fun setupCalendar() {
@@ -189,5 +199,22 @@ class CalendarFragment : Fragment() {
         val monthView = binding.monthTabs.getChildAt(monthIndex)
         val scrollToX = monthView.left - (binding.horizontalScrollView.width - monthView.width) / 2
         binding.horizontalScrollView.smoothScrollTo(scrollToX, 0)
+    }
+    private fun fetchUserCalendarEvents(year: Int, month: Int) {
+        if (userTag == null) return
+
+        val formattedDate = "$year-${String.format("%02d", month)}-01" // YYYY-MM-DD 형식
+
+        CalendarRepository.getUserCalendarEvents(userTag!!, formattedDate) { events ->
+            if (events != null) {
+                Log.d("CalendarFragment", "불러온 일정 개수: ${events.size}")
+
+                // ✅ 기존 데코레이터 유지하면서 일정 데코레이터만 추가
+                binding.calendarView.addDecorator(CalendarEventsDecorator(events))
+                binding.calendarView.invalidateDecorators()
+            } else {
+                Log.e("CalendarFragment", "일정 데이터를 가져오지 못함")
+            }
+        }
     }
 }

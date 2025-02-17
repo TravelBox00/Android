@@ -82,5 +82,27 @@ class CalendarRepository {
                 }
             })
         }
+        // ✅ 일정 조회 API 추가
+        fun getUserCalendarEvents(userTag: String, date: String, callback: (List<CalendarQueryEvent>?) -> Unit) {
+            service.getUserCalendarEvents(userTag, date).enqueue(object : Callback<CalendarQueryResponse> {
+                override fun onResponse(
+                    call: Call<CalendarQueryResponse>,
+                    response: Response<CalendarQueryResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("CalendarRepository", "일정 조회 성공: ${response.body()?.result}")
+                        callback(response.body()?.result)
+                    } else {
+                        Log.e("CalendarRepository", "일정 조회 실패: ${response.errorBody()?.string()}")
+                        callback(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<CalendarQueryResponse>, t: Throwable) {
+                    Log.e("CalendarRepository", "네트워크 오류: ${t.message}")
+                    callback(null)
+                }
+            })
+        }
     }
 }
