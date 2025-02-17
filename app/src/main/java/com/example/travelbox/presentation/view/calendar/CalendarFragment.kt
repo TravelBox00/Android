@@ -54,14 +54,17 @@ class CalendarFragment : Fragment() {
             }
         }
         binding.calendarView.setWeekDayFormatter(customWeekFormatter)
+        // ✅ 현재 날짜에 맞게 연도와 월 초기화
+        val today = CalendarDay.today()
+        updateYearAndMonth(today.year, today.month)
+        // ✅ 캘린더 설정
+        setupCalendar()
 
         // ✅ 헤더 숨기기 적용
         binding.calendarView.setTitleFormatter { "" }
         binding.calendarView.topbarVisible = false
 
-        // ✅ 현재 날짜에 맞게 연도와 월 초기화
-        val today = CalendarDay.today()
-        updateYearAndMonth(today.year, today.month)
+
 
         // ✅ 캘린더에서 월이 변경될 때 연도와 월 업데이트
         binding.calendarView.setOnMonthChangedListener(OnMonthChangedListener { _, date ->
@@ -77,12 +80,12 @@ class CalendarFragment : Fragment() {
             }
         }
 
-        // ✅ 날짜 선택 이벤트
-        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
-            selectedDate = date  // ✅ 선택한 날짜 저장
-            binding.calendarView.invalidateDecorators()
-            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
-        })
+//        // ✅ 날짜 선택 이벤트
+//        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
+//            selectedDate = date  // ✅ 선택한 날짜 저장
+//            binding.calendarView.invalidateDecorators()
+//            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
+//        })
 
         // ✅ Fab 버튼 클릭 시 스케줄 이동 설정
         if (savedInstanceState == null) {
@@ -93,7 +96,25 @@ class CalendarFragment : Fragment() {
 
         return binding.root
     }
+    private fun setupCalendar() {
+        binding.calendarView.setSelectionMode(0) // ✅ 기본 선택 효과 제거
 
+        // ✅ 오늘 날짜 데코레이터 추가
+        binding.calendarView.addDecorator(TodayDecorator(requireContext()))
+
+        // ✅ 날짜 선택 이벤트 리스너
+        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
+            selectedDate = date  // ✅ 선택한 날짜 저장
+
+            // ✅ 기존 데코레이터 제거 후 다시 추가
+            binding.calendarView.removeDecorators()
+            binding.calendarView.addDecorator(TodayDecorator(requireContext())) // ✅ 오늘 날짜 유지
+            binding.calendarView.addDecorator(SelectedDateDecorator(requireContext(), selectedDate)) // ✅ 선택한 날짜 적용
+
+            binding.calendarView.invalidateDecorators() // ✅ 즉시 반영
+            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
+        })
+    }
     /**
      * ✅ Fab 버튼에서 스케줄 버튼 클릭 시 실행되는 함수
      * 선택한 날짜를 Intent로 `ScheduleActivity`에 전달

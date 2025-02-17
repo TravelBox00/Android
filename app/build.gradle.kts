@@ -11,7 +11,7 @@ plugins {
 val localProperties = Properties().apply {
     load(FileInputStream(File(rootDir, "local.properties")))
 }
-val baseUrl = localProperties.getProperty("BASE_URL") ?: "http://43.203.244.171:3000"
+val baseUrl = localProperties.getProperty("BASE_URL") ?: "http://13.125.105.186:3000"
 
 android {
     namespace = "com.example.travelbox"
@@ -26,7 +26,6 @@ android {
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
 
         buildConfigField("String", "BASE_URL", baseUrl)
     }
