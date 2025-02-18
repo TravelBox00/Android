@@ -10,3 +10,46 @@ data class LoginResult(
     val accessToken: String,
     val refreshToken: String
 )
+
+data class RefreshTokenResponse(
+    val result: RefreshTokenResult?,
+    val isSuccess: Boolean
+)
+
+data class RefreshTokenResult(
+    val accessToken: String,
+    val refreshToken: String
+)
+
+data class LogoutResponse(
+    val isSuccess: Boolean
+)
+
+data class SignUpResponse(
+    val result: SignUpResult?,
+    val isSuccess: Boolean
+)
+
+data class SignUpResult(
+    val userTag: String
+)
+
+data class DuplicateResponse(
+    val result: Boolean,  // Boolean으로 변경!
+    val isSuccess: Boolean
+)
+
+data class ModifyResponse(
+    val isSuccess: Boolean
+)
+
+data class UserInformaResponse(
+    val result: UserInformaResult?,
+    val isSuccess: Boolean
+)
+
+data class UserInformaResult(
+    val userId: String,
+    val email: String,
+    val name: String
+)
