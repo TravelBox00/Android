@@ -1,9 +1,11 @@
 package com.example.travelbox.data.repository.auth
 
+import com.example.travelbox.data.repository.my.UserInfoResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -38,4 +40,14 @@ interface AuthInterface {
     fun duplicate(
         @Path("userTag") userTag: String
     ): Call<DuplicateResponse>
+
+    // 사용자 정보 수정
+    @PATCH("/users/modify")
+    fun modify(
+        @Body request: ModifyRequest
+    ): Call<ModifyResponse>
+
+    // 사용자 정보 조회
+    @GET("/users/info")
+    fun userInfo() : Call<UserInformaResponse>
 }

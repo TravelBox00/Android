@@ -174,6 +174,55 @@ class AuthRepository {
             })
         }
 
+        // 사용자 정보 수정
+        fun modify(userTag: String, userPassword: String?, userNickname: String?, callback: (Boolean) -> Unit) {
+            val request = ModifyRequest(userTag, userPassword, userNickname)
+
+            service.modify(request).enqueue(object : Callback<ModifyResponse> {
+                override fun onResponse(
+                    call: Call<ModifyResponse>,
+                    response: Response<ModifyResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val result = response.body()?.isSuccess
+                        Log.d("AuthRepository", "사용자 정보 수정 성공: $result")
+                        callback(result == true)
+                    } else {
+                        Log.e("AuthRepository", "사용자 정보 수정 실패: ${response.errorBody()?.string()}")
+                        callback(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<ModifyResponse>, t: Throwable) {
+                    Log.e("AuthRepository", "사용자 정보 수정 요청 실패: ${t.message}")
+                    callback(false)
+                }
+            })
+        }
+
+        // 사용자 정보 조회
+        fun UserInfo(callback: (UserInformaResult?) -> Unit) {
+            service.userInfo().enqueue(object : Callback<UserInformaResponse> {
+                override fun onResponse(
+                    call: Call<UserInformaResponse>,
+                    response: Response<UserInformaResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val result = response.body()?.result
+                        Log.d("AuthRepository", "사용자 정보 조회 성공: $result")
+                        callback(result)
+                    } else {
+                        Log.e("AuthRepository", "사용자 정보 조회 실패: ${response.errorBody()?.string()}")
+                        callback(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<UserInformaResponse>, t: Throwable) {
+                    Log.e("AuthRepository", "사용자 정보 조회 요청 실패: ${t.message}")
+                    callback(null)
+                }
+            })
+        }
     }
 }
 

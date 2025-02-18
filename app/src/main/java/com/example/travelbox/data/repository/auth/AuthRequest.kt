@@ -16,3 +16,8 @@ data class SignUpRequest(
     val userNickname: String
 )
 
+data class ModifyRequest(
+    val userTag: String,
+    val userPassword: String?,
+    val userNickname: String?
+)
