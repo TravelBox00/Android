@@ -7,10 +7,10 @@ import retrofit2.http.Query
 interface SearchInterface {
 
     // 시간별 검색된 게시물 반환
-    @GET("/search")
-    fun getSearchTimePost(
-        @Query("word") word: String
-    ): Call<SearchResponse>
+//    @GET("/search")
+//    fun getSearchTimePost(
+//        @Query("word") word: String
+//    ): Call<SearchResponse>
 
     // 검색어 입력 시 자동완성 단어 반환
     @GET("/search/word")
@@ -30,5 +30,5 @@ interface SearchInterface {
     fun getSearchPost(
         @Query("searchKeyword") searchKeyword: String,
         @Query("offset") offset: Int
-    ): Call<ThreadSearchResponse>
+    ): Call<List<ThreadPost>>
 }

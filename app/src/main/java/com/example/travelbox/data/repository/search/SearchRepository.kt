@@ -12,29 +12,29 @@ class SearchRepository {
         private val searchService = ApiNetwork.createService(SearchInterface::class.java)
     }
 
-    // 시간별 검색된 게시물 요청
-    fun getSearchTimePost(word: String, callback: (SearchResponse?) -> Unit) {
-        searchService.getSearchTimePost(word).enqueue(object : Callback<SearchResponse> {
-
-            override fun onResponse(
-                call: Call<SearchResponse>,
-                response: Response<SearchResponse>
-            ) {
-                if (response.isSuccessful) {
-                    callback(response.body())
-                } else {
-                    Log.e("SearchRepository", "getSearchTimePost 실패: ${response.code()}")
-                    callback(null)
-                }
-            }
-
-            override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                Log.e("SearchRepository", "getSearchTimePost 통신 실패: ${t.message}", t)
-                callback(null)
-            }
-
-        })
-    }
+//    // 시간별 검색된 게시물 요청
+//    fun getSearchTimePost(word: String, callback: (SearchResponse?) -> Unit) {
+//        searchService.getSearchTimePost(word).enqueue(object : Callback<SearchResponse> {
+//
+//            override fun onResponse(
+//                call: Call<SearchResponse>,
+//                response: Response<SearchResponse>
+//            ) {
+//                if (response.isSuccessful) {
+//                    callback(response.body())
+//                } else {
+//                    Log.e("SearchRepository", "getSearchTimePost 실패: ${response.code()}")
+//                    callback(null)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
+//                Log.e("SearchRepository", "getSearchTimePost 통신 실패: ${t.message}", t)
+//                callback(null)
+//            }
+//
+//        })
+//    }
 
     // 검색어 자동완성 요청
     fun getSearchWord(word: String, callback: (AutoCompleteResponse?) -> Unit) {
@@ -89,27 +89,27 @@ class SearchRepository {
     }
 
     // 검색어에 따른 게시물 조회 요청
-    fun getSearchPost(searchKeyword: String, offset: Int, callback: (ThreadSearchResponse?) -> Unit) {
+    fun getSearchPost(searchKeyword: String, offset: Int, callback: (List<ThreadPost>?) -> Unit) {
         searchService.getSearchPost(searchKeyword, offset)
-            .enqueue(object : Callback<ThreadSearchResponse> {
+            .enqueue(object : Callback<List<ThreadPost>> {
 
                 override fun onResponse(
-                    call: Call<ThreadSearchResponse>,
-                    response: Response<ThreadSearchResponse>
+                    call: Call<List<ThreadPost>>,
+                    response: Response<List<ThreadPost>>
                 ) {
                     if (response.isSuccessful) {
-                        callback(response.body())
+                        callback(response.body())  // 바로 리스트 사용
                     } else {
                         Log.e("SearchRepository", "getSearchPost 실패: ${response.code()}")
                         callback(null)
                     }
                 }
 
-                override fun onFailure(call: Call<ThreadSearchResponse>, t: Throwable) {
+                override fun onFailure(call: Call<List<ThreadPost>>, t: Throwable) {
                     Log.e("SearchRepository", "getSearchPost 통신 실패: ${t.message}", t)
                     callback(null)
                 }
-
             })
     }
+
 }

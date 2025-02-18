@@ -125,29 +125,20 @@ class SearchFragment : Fragment() {
         }
     }
 
-
-
-
-    // ** 개발중 **
     private fun searchForPosts(searchKeyword: String) {
-        searchRepository.getSearchPost(searchKeyword, 0) { response  ->
-            //if (threadPosts != null && threadPosts.isNotEmpty()) {
-                //postViewModel.setPosts(threadPosts)
-                val threadPosts = response?.posts ?: emptyList()
+        searchRepository.getSearchPost(searchKeyword, 0) { threadPosts ->
+            val posts = threadPosts ?: emptyList()
+            searchPostViewModel.setPosts(posts)
 
-                searchPostViewModel.setPosts(threadPosts)
+            val searchPostFragment = SearchPostFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, searchPostFragment)
+                .addToBackStack(null)
+                .commit()
 
-                val searchPostFragment = SearchPostFragment()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, searchPostFragment)
-                    .addToBackStack(null)
-                    .commit()
-
-                if (threadPosts == null || threadPosts.isEmpty()) {
-                    Toast.makeText(requireContext(), "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-                }
-            //}
-            // else { Toast.makeText(requireContext(), "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show() }
+            if (posts.isEmpty()) {
+                Toast.makeText(requireContext(), "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

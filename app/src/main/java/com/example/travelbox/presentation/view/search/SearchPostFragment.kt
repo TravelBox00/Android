@@ -42,7 +42,7 @@ class SearchPostFragment : Fragment() {
         binding = FragmentSearchPostBinding.inflate(inflater, container, false)
         searchPostViewModel = ViewModelProvider(requireActivity()).get(SearchPostViewModel::class.java)
 
-        // 뒤로 가기 버튼 클릭 시
+        // 뒤로 가기 버튼 클릭 리스너
         binding.ivBack.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, SearchFragment())
