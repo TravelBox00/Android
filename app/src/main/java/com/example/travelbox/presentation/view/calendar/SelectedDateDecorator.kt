@@ -1,30 +1,26 @@
 package com.example.travelbox.presentation.view.calendar
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.GradientDrawable
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
+import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
+import com.example.travelbox.R
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
 
-class SelectedDateDecorator(private val selectedDate: CalendarDay) : DayViewDecorator {
+class SelectedDateDecorator(context: Context, private val selectedDate: CalendarDay) : DayViewDecorator {
+    private val drawable: Drawable? = ContextCompat.getDrawable(context, R.drawable.selected_circle)
+
     override fun shouldDecorate(day: CalendarDay?): Boolean {
-        return day == selectedDate // 선택된 날짜인지 확인
+        return day == selectedDate
     }
 
     override fun decorate(view: DayViewFacade?) {
-        view?.addSpan(ForegroundColorSpan(Color.BLACK)) // 텍스트 색상 유지 (검은색)
-        view?.addSpan(StyleSpan(Typeface.BOLD)) // 볼드 유지
-        view?.setBackgroundDrawable(createSmallCircleDrawable("#DADADA")) // ✅ 작은 회색 원 배경 적용
-    }
-
-    private fun createSmallCircleDrawable(color: String): GradientDrawable {
-        return GradientDrawable().apply {
-            shape = GradientDrawable.OVAL
-            setColor(Color.parseColor(color))
-            setSize(30, 30) // ✅ 바깥 원이 커지지 않도록 작은 원으로 설정
-        }
+        drawable ?: return  // ✅ drawable이 null이면 함수 종료
+        view?.setBackgroundDrawable(drawable) // ✅ 회색 원 적용
+        view?.addSpan(android.text.style.ForegroundColorSpan(Color.BLACK)) // ✅ 검은색 텍스트
+        view?.addSpan(android.text.style.StyleSpan(Typeface.BOLD)) // ✅ 볼드 처리
     }
 }

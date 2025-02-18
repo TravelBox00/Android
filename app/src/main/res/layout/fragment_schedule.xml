@@ -1,46 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.view.calendar.ScheduleFragment">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <!-- 상단 헤더 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/green_main">
+        android:background="@color/green_main"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
         <!-- 뒤로가기 버튼 -->
         <ImageView
             android:id="@+id/backButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="뒤로가기"
             android:src="@drawable/ic_back_white"
-            android:layout_marginStart="16dp"
-            android:layout_centerVertical="true"
-            android:contentDescription="뒤로가기" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- 일정 텍스트 -->
+        <!-- 제목 (일정) -->
         <TextView
+            android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="일정"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:layout_centerInParent="true"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- 체크 아이콘 -->
+        <!-- 확인 버튼 -->
         <ImageView
             android:id="@+id/checkButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="확인"
             android:src="@drawable/ic_check"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="확인" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- 선택한 월 (중앙 정렬) -->
+    <TextView
+        android:id="@+id/monthTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="JAN"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:paddingTop="16dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="8dp" />
+
+    <!-- 캘린더 뷰 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/calendar_border"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/scheduleCalendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:mcv_dateTextAppearance="@style/regular14"
+            app:mcv_headerTextAppearance="@null"
+            app:mcv_leftArrow="@null"
+            app:mcv_rightArrow="@null"
+            app:mcv_selectionColor="@color/white"
+            app:mcv_showOtherDates="all"
+            app:mcv_tileHeight="48dp"
+            app:mcv_tileWidth="48dp"
+            app:mcv_weekDayTextAppearance="@style/CustomWeekDayText"
+            android:focusable="false"
+            android:clickable="false"
+            android:descendantFocusability="blocksDescendants"/>
+    </LinearLayout>
+
+    <!-- 여행 제목 입력 -->
+    <EditText
+        android:id="@+id/tripTitleInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="여행 제목을 입력하세요"
+        android:textSize="16sp"
+        android:background="@android:color/transparent"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- 검은색 경계선 추가 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- 날짜 선택 (출발일 | 종료일) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:padding="12dp">
+
+        <!-- 출발일 -->
+        <TextView
+            android:id="@+id/startDatePicker"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="출발일 선택"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:background="@color/white"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="8dp"
+            android:background="@android:color/black" />
+        <!-- 종료일 -->
+        <TextView
+            android:id="@+id/endDatePicker"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="종료일 선택"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:background="@color/white"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <!-- 검은색 경계선 추가 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_marginHorizontal="16dp" />
+    <!-- 여행 설명 입력 -->
+
+    <EditText
+        android:id="@+id/tripDescriptionInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="여행 설명을 입력하세요."
+        android:textSize="16sp"
+        android:background="@android:color/transparent"
+        android:padding="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp" />
+    </LinearLayout>
