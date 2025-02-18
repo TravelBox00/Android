@@ -28,7 +28,8 @@ class AuthRepository {
                             // AccessToken, RefreshToken 저장
                             ApiNetwork.saveAccessToken(result.accessToken)
                             ApiNetwork.saveRefreshToken(result.refreshToken)
-
+                            //  로그인 성공 시 userTag 저장
+                            ApiNetwork.saveUserTag(userTag)
                             Log.d("LoginRepository", "로그인 성공: ${result.accessToken}")
                             callback(true)
                         } else {

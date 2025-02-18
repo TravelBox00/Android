@@ -74,5 +74,15 @@ object ApiNetwork{
     fun getRefreshToken(): String? {
         return if (::prefs.isInitialized) prefs.getString("refresh_token", null) else null
     }
+    // userTag 저장
+    fun saveUserTag(userTag: String) {
+        if (::prefs.isInitialized) {
+            prefs.edit().putString("user_tag", userTag).apply()
+        }
+    }
 
+    // userTag 불러오기
+    fun getUserTag(): String? {
+        return if (::prefs.isInitialized) prefs.getString("user_tag", null) else null
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.travelbox.data.repository.home
 
 import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -30,11 +32,40 @@ interface HomeInterface {
     // 댓글 추가
     @POST("/comment/add")
     fun addPostComment(
-        @Query("userId") userId : Int,
-        @Query("threadId") threadId : Int,
-        @Query("commentContent") commentContent : String,
-        @Query("commentVisible") commentVisible : String
+
+        @Body request: CommentRequest
+
     ) : Call<CommentAddResponse>
+
+    // 댓글 삭제
+    @DELETE("/comment/remove")
+    fun removePostComment(
+
+
+        @Query("commentId") commentId : Int,
+
+
+
+    )   : Call<CommentRemoveResponse>
+
+
+    // 게시글 좋아요 상태
+    @POST("/thread/like")
+    fun postIsLiked(
+
+        @Body request : PostLikeRequest
+
+    ) : Call<PostLikeResponse>
+
+
+    // 게시글 북마크 상태
+    @POST("/thread/scrap")
+    fun postIsScrapped(
+
+        @Body request : PostScrapRequest
+
+    ) : Call<PostScrapResponse>
+
 
 
     // 지역 필터

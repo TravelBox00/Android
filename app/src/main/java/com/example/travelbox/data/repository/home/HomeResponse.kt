@@ -30,7 +30,7 @@ data class Comment(
     val commenterNickname: String?
 )
 
-
+// 댓글 추가
 data class CommentAddResponse(
     val isSuccess: Boolean,
     val result : Result
@@ -38,6 +38,40 @@ data class CommentAddResponse(
 
 data class Result(
     val commentId: Int
+)
+
+// 댓글 삭제
+data class CommentRemoveResponse(
+
+    val isSuccess : Boolean
+
+)
+
+// 게시물 좋아요
+data class PostLikeResponse(
+    val isSuccess: Boolean,
+    val code : String,
+    val message : String,
+    val result : LikeResult
+
+)
+
+data class LikeResult(
+    val isLiked : Boolean
+)
+
+
+// 게시물 북마크
+data class PostScrapResponse(
+    val isSuccess: Boolean,
+    val code : String,
+    val message : String,
+    val result : ScrapResult
+)
+
+data class ScrapResult(
+
+    val isScrapped : Boolean
 )
 
 
