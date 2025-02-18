@@ -32,6 +32,10 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.backBtnIV.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed() // 뒤로 가기 기능 실행
+        }
+
         passwordET = findViewById(R.id.pwd_ET)
         viewPasswordIv = findViewById(R.id.show_pwd_IV)
         hidePasswordIv = findViewById(R.id.hide_pwd_IV)
