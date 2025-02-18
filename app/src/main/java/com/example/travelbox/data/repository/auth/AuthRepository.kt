@@ -140,6 +140,7 @@ class AuthRepository {
                             callback(false)
                         }
                     } else {
+                        Log.d("AuthRepository", "회원가입 요청 데이터: $userTag, $userPassword, $userNickname")
                         Log.e("AuthRepository", "회원가입 실패: ${response.errorBody()?.string()}")
                         callback(false)
                     }
@@ -158,13 +159,8 @@ class AuthRepository {
                 override fun onResponse(call: Call<DuplicateResponse>, response: Response<DuplicateResponse>) {
                     if (response.isSuccessful) {
                         val result = response.body()?.result
-                        if (result != null) {
-                            Log.d("AuthRepository", "아이디 중복 확인 성공: ${result.isAvailable}")
-                            callback(result.isAvailable)
-                        } else {
-                            Log.e("AuthRepository", "응답이 비어 있음")
-                            callback(false)
-                        }
+                        Log.d("AuthRepository", "아이디 중복 확인 성공: $result")
+                        callback(result ?: false)  // Boolean 값 그대로 사용
                     } else {
                         Log.e("AuthRepository", "아이디 중복 확인 실패: ${response.errorBody()?.string()}")
                         callback(false)
@@ -177,6 +173,7 @@ class AuthRepository {
                 }
             })
         }
+
     }
 }
 

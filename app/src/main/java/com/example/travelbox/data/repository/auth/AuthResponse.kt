@@ -35,10 +35,6 @@ data class SignUpResult(
 )
 
 data class DuplicateResponse(
-    val result: DuplicateResult?,
+    val result: Boolean,  // Boolean으로 변경!
     val isSuccess: Boolean
-)
-
-data class DuplicateResult(
-    val isAvailable: Boolean
 )

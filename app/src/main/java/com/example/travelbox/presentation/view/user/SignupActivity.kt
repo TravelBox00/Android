@@ -53,7 +53,7 @@ class SignupActivity : AppCompatActivity() {
                 runOnUiThread {
                     Log.d("SignupActivity", "중복 확인 결과: $isAvailable") // 서버 응답 로그
 
-                    if (isAvailable) {
+                    if (!isAvailable) {
                         binding.idavailable.visibility = View.VISIBLE
                         binding.idUnavailable.visibility = View.GONE
                     } else {
@@ -86,7 +86,6 @@ class SignupActivity : AppCompatActivity() {
                     AuthRepository.signUp(id, password, name) { isSuccess ->
                         runOnUiThread {
                             if (isSuccess) {
-                                Toast.makeText(this, "회원가입 성공!", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this, SignUpSuccessActivity::class.java))
                             } else {
                                 Toast.makeText(this, "회원가입 실패. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
@@ -97,7 +96,7 @@ class SignupActivity : AppCompatActivity() {
                     Toast.makeText(this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "모든 필드를 입력하세요", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "모든 항목을 입력하세요", Toast.LENGTH_SHORT).show()
             }
         }
 

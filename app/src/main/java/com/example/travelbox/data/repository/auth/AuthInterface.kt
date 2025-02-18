@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface AuthInterface {
@@ -33,8 +34,8 @@ interface AuthInterface {
     ): Call<SignUpResponse>
 
     //ID 중복확인
-    @GET("/users/signup/duplicate")
+    @GET("/users/signup/duplicate/{userTag}")
     fun duplicate(
-        @Query("userTag") userTag: String
+        @Path("userTag") userTag: String
     ): Call<DuplicateResponse>
 }
