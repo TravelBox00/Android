@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.calendar.CalendarRepository
 import com.example.travelbox.databinding.FragmentCalendarBinding
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
@@ -26,6 +28,7 @@ class CalendarFragment : Fragment() {
 
     private lateinit var binding: FragmentCalendarBinding
     private var selectedDate: CalendarDay = CalendarDay.today()  // ✅ 기본값: 오늘 날짜
+    private var userTag: String? = null // ✅ 로그인한 유저의 userTag
 
     private val months = listOf(
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -39,7 +42,7 @@ class CalendarFragment : Fragment() {
         binding = FragmentCalendarBinding.inflate(inflater, container, false)
 
         AndroidThreeTen.init(requireContext())
-
+        userTag = ApiNetwork.getUserTag()
         // ✅ 요일 변경: '일' → 'S', '월' → 'M' 등으로 변경
         val customWeekFormatter = WeekDayFormatter { dayOfWeek ->
             when (dayOfWeek) {
@@ -53,15 +56,19 @@ class CalendarFragment : Fragment() {
                 else -> "?"
             }
         }
+
         binding.calendarView.setWeekDayFormatter(customWeekFormatter)
+        // ✅ 현재 날짜에 맞게 연도와 월 초기화
+        val today = CalendarDay.today()
+        updateYearAndMonth(today.year, today.month)
+        // ✅ 캘린더 설정
+        setupCalendar()
 
         // ✅ 헤더 숨기기 적용
         binding.calendarView.setTitleFormatter { "" }
         binding.calendarView.topbarVisible = false
 
-        // ✅ 현재 날짜에 맞게 연도와 월 초기화
-        val today = CalendarDay.today()
-        updateYearAndMonth(today.year, today.month)
+
 
         // ✅ 캘린더에서 월이 변경될 때 연도와 월 업데이트
         binding.calendarView.setOnMonthChangedListener(OnMonthChangedListener { _, date ->
@@ -75,14 +82,15 @@ class CalendarFragment : Fragment() {
                 scrollToMonth(index)
                 binding.calendarView.currentDate = CalendarDay.from(today.year, index + 1, 1)
             }
+
         }
 
-        // ✅ 날짜 선택 이벤트
-        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
-            selectedDate = date  // ✅ 선택한 날짜 저장
-            binding.calendarView.invalidateDecorators()
-            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
-        })
+//        // ✅ 날짜 선택 이벤트
+//        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
+//            selectedDate = date  // ✅ 선택한 날짜 저장
+//            binding.calendarView.invalidateDecorators()
+//            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
+//        })
 
         // ✅ Fab 버튼 클릭 시 스케줄 이동 설정
         if (savedInstanceState == null) {
@@ -91,9 +99,34 @@ class CalendarFragment : Fragment() {
                 .commit()
         }
 
+        binding.calendarView.setOnMonthChangedListener(OnMonthChangedListener { _, date ->
+            if (userTag != null) {
+                fetchUserCalendarEvents(date.year, date.month)
+            }
+        })
         return binding.root
     }
+    private fun setupCalendar() {
 
+        // ✅ 오늘 날짜 데코레이터 추가
+        binding.calendarView.addDecorator(TodayDecorator(requireContext()))
+
+        // ✅ 날짜 선택 이벤트 리스너
+        binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
+            selectedDate = date  // ✅ 선택한 날짜 저장
+
+            // ✅ 기존 데코레이터 제거 후 다시 추가
+            binding.calendarView.removeDecorators()
+            binding.calendarView.addDecorator(TodayDecorator(requireContext())) // ✅ 오늘 날짜 유지
+            binding.calendarView.addDecorator(SelectedDateDecorator(requireContext(), selectedDate)) // ✅ 선택한 날짜 적용
+
+            // ✅ 즉시 반영
+            binding.calendarView.invalidateDecorators()
+
+            // ✅ 선택한 날짜 Toast 메시지 출력
+            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
+        })
+    }
     /**
      * ✅ Fab 버튼에서 스케줄 버튼 클릭 시 실행되는 함수
      * 선택한 날짜를 Intent로 `ScheduleActivity`에 전달
@@ -166,5 +199,22 @@ class CalendarFragment : Fragment() {
         val monthView = binding.monthTabs.getChildAt(monthIndex)
         val scrollToX = monthView.left - (binding.horizontalScrollView.width - monthView.width) / 2
         binding.horizontalScrollView.smoothScrollTo(scrollToX, 0)
+    }
+    private fun fetchUserCalendarEvents(year: Int, month: Int) {
+        if (userTag == null) return
+
+        val formattedDate = "$year-${String.format("%02d", month)}-01" // YYYY-MM-DD 형식
+
+        CalendarRepository.getUserCalendarEvents(userTag!!, formattedDate) { events ->
+            if (events != null) {
+                Log.d("CalendarFragment", "불러온 일정 개수: ${events.size}")
+
+                // ✅ 기존 데코레이터 유지하면서 일정 데코레이터만 추가
+                binding.calendarView.addDecorator(CalendarEventsDecorator(events))
+                binding.calendarView.invalidateDecorators()
+            } else {
+                Log.e("CalendarFragment", "일정 데이터를 가져오지 못함")
+            }
+        }
     }
 }

@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.calendar.CalendarRepository
 import com.example.travelbox.databinding.FragmentScheduleBinding
 import com.example.travelbox.presentation.view.calendar.decorators.RangeDecorator
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -70,10 +72,36 @@ class ScheduleFragment : Fragment() {
         binding.scheduleCalendarView.setOnMonthChangedListener(OnMonthChangedListener { _, date ->
             updateMonthTitle(date.month)
         })
+        // ✅ 일정 추가 버튼 클릭 이벤트
+        binding.checkButton.setOnClickListener {
+            addCalendarEvent()
+        }
 
         return binding.root
     }
 
+    // ✅ 일정 추가 메서드
+    private fun addCalendarEvent() {
+        val userId = ApiNetwork.getAccessToken()?.toIntOrNull() ?: 1 // 로그인한 사용자 ID (예시)
+        val title = binding.tripTitleInput.text.toString().trim()
+        val content = binding.tripDescriptionInput.text.toString().trim()
+        val startDateStr = startDate?.let { "${it.year}-${it.month}-${it.day}" } ?: ""
+        val endDateStr = endDate?.let { "${it.year}-${it.month}-${it.day}" } ?: ""
+
+        if (title.isEmpty() || startDateStr.isEmpty() || endDateStr.isEmpty()) {
+            Toast.makeText(requireContext(), "여행 제목과 날짜를 입력하세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        CalendarRepository.addCalendarEvent(userId, title, content, startDateStr, endDateStr) { success, message ->
+            if (success) {
+                Toast.makeText(requireContext(), "일정 추가 성공: $message", Toast.LENGTH_SHORT).show()
+                requireActivity().finish() // 일정 추가 후 화면 닫기
+            } else {
+                Toast.makeText(requireContext(), "일정 추가 실패: $message", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     /**
      * ✅ 월 타이틀 업데이트 함수
      */
@@ -179,4 +207,7 @@ class ScheduleFragment : Fragment() {
         val today = Calendar.getInstance()
         return "${today.get(Calendar.YEAR)}.${today.get(Calendar.MONTH) + 1}.${today.get(Calendar.DAY_OF_MONTH)}"
     }
+
+
 }
+
