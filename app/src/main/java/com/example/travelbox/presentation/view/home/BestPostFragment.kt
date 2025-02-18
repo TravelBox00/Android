@@ -75,6 +75,8 @@ class BestPostFragment : Fragment() {
 
     }
 
+    // 이전 프래그먼트로 전환
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == FILTER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -89,6 +91,7 @@ class BestPostFragment : Fragment() {
     }
 
     private fun getPopularPostWithFilters(city: String, district: String?) {
+
         // API 호출로 필터링된 게시물 가져오기
         HomeRepository.regionFilterSearch("여행", district!!) { response ->
             if (response?.isSuccess == true) {
@@ -151,9 +154,11 @@ class BestPostFragment : Fragment() {
                             putExtra("image", selectedItem.imageURL)
 
                             // 닉네임으로 바꿔야 함
-                            putExtra("id", selectedItem.threadId)
+                            putExtra("id", selectedItem.threadId.toString())
                             putExtra("title", selectedItem.postTitle)
                             putExtra("threadId", selectedItem.threadId)
+
+                            Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postTitle}, ThreadId: ${selectedItem.threadId}")
                         }
 
 
