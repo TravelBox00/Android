@@ -1,7 +1,5 @@
 package com.example.travelbox.presentation.view.post
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -19,11 +17,11 @@ import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.post.AddPostInterface
 import com.example.travelbox.data.repository.post.AddPostRepository
 import com.example.travelbox.databinding.FragmentAddPostBinding
+import com.example.travelbox.presentation.view.search.SearchPostFragment
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import java.io.File
-import java.io.FileOutputStream
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -186,23 +184,10 @@ class AddPostFragment : Fragment() {
         imagePickerLauncher.launch("image/*")
     }
 
-    // 사진 압축 (임시)
-    private fun compressImageFile(file: File): File {
-        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-        val compressedFile = File.createTempFile("compressed_", ".jpg", requireContext().cacheDir)
-        val outputStream = FileOutputStream(compressedFile)
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
-        outputStream.flush()
-        outputStream.close()
-
-        return compressedFile
-    }
-
     // URI에서 파일로 변환
     private fun getSelectedFiles(): List<File> {
         return imageUris.mapNotNull { uri ->
-            getFileFromUri(uri)?.let { compressImageFile(it) }
+            getFileFromUri(uri)
         }
     }
 
@@ -220,6 +205,7 @@ class AddPostFragment : Fragment() {
     private fun onAddPostClick() {
         val userTag = "testuser1234"
         val postCategory = selectedCategory ?: return
+        postRegionCode = regionList.joinToString(" ")
         val songName = binding.etSong.text.toString().trim()
         val postContent = binding.etInfo.text.toString().trim()
         val clothId = binding.etUri.text.toString().trim().toIntOrNull() ?: return
@@ -237,7 +223,7 @@ class AddPostFragment : Fragment() {
         addPostRepository.addPost(
             userTag, postCategory, postRegionCode, songName, postContent, clothId, files
         ) { response ->
-            if (response?.isSuccess == true) {
+            if (response?.success == true) {
                 Log.d("AddPost", "게시글 업로드 성공: ${response.message}")
                 Toast.makeText(requireContext(), "게시글 업로드 성공", Toast.LENGTH_SHORT).show()
             } else {
@@ -245,5 +231,10 @@ class AddPostFragment : Fragment() {
                 Toast.makeText(requireContext(), "게시글 업로드 실패", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // 이전 화면으로 돌아가기
+        val transaction = parentFragmentManager.beginTransaction()
+        transaction.replace(R.id.main_frm, SearchPostFragment())
+        transaction.commit()
     }
 }

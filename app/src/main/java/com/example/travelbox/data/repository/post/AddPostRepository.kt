@@ -5,11 +5,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
-
 
 class AddPostRepository(private val addPostInterface: AddPostInterface) {
 
@@ -23,21 +23,24 @@ class AddPostRepository(private val addPostInterface: AddPostInterface) {
         files: List<File>,
         callback: (AddPostResponse?) -> Unit
     ) {
-        val userTagBody = userTag.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val postCategoryBody = postCategory.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val postRegionCode = postRegionCode.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val songName = songName.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val postContentBody = postContent.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val clothIdBody = clothId.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        // JSON 객체 생성
+        val jsonBody = JSONObject().apply {
+            put("userTag", userTag)
+            put("postCategory", postCategory)
+            put("postRegionCode", postRegionCode)
+            put("songName", songName)
+            put("postContent", postContent)
+            put("clothId", clothId)
+        }.toString()
 
-        val fileParts = files.mapIndexed { index, file ->
+        val bodyRequest = jsonBody.toRequestBody("application/json".toMediaTypeOrNull())
+
+        val fileParts = files.map { file ->
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("files[]", file.name, requestFile)
+            MultipartBody.Part.createFormData("files", file.name, requestFile)
         }
 
-        addPostInterface.addPost(
-            userTagBody, postCategoryBody, postRegionCode, songName, postContentBody, clothIdBody, fileParts
-        ).enqueue(object : Callback<AddPostResponse> {
+        addPostInterface.addPost(bodyRequest, fileParts).enqueue(object : Callback<AddPostResponse> {
             override fun onResponse(call: Call<AddPostResponse>, response: Response<AddPostResponse>) {
                 if (response.isSuccessful) {
                     callback(response.body())
@@ -53,4 +56,5 @@ class AddPostRepository(private val addPostInterface: AddPostInterface) {
             }
         })
     }
+
 }

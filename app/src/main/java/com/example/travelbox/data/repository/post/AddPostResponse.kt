@@ -1,7 +1,7 @@
 package com.example.travelbox.data.repository.post
 
 data class AddPostResponse(
-    val isSuccess: Boolean,
+    val success: Boolean,
     val code: String,
     val message: String,
     val result: AddPostResult
