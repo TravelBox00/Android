@@ -11,18 +11,11 @@ import retrofit2.http.Part
 interface AddPostInterface {
 
     // 게시물 추가
-    @Headers("Content-Type: application/json")
     @Multipart
     @POST("/thread/add")
     fun addPost(
-        @Part("userTag") userTag: RequestBody,
-        @Part("postCategory") postCategory: RequestBody,
-        @Part("postRegionCode") postRegionCode: RequestBody,
-        @Part("songName") songName: RequestBody,
-        @Part("postContent") postContent: RequestBody,
-        @Part("clothId") clothId: RequestBody,
+        @Part("body") body: RequestBody,
         @Part files: List<MultipartBody.Part>
     ): Call<AddPostResponse>
 
 }
-
