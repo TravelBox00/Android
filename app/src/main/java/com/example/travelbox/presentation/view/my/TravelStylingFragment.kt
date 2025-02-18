@@ -37,7 +37,7 @@ class TravelStylingFragment : Fragment() {
         // RecyclerView 설정
         val adapter = PhotoAdapter(sampleData)
         binding.stylingRecyclerView.apply {
-            layoutManager = GridLayoutManager(context, 3) // 2열 그리드
+            layoutManager = GridLayoutManager(context, 3) // 3열 그리드
             this.adapter = adapter
         }
     }

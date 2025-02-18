@@ -37,4 +37,12 @@ interface HomeInterface {
     ) : Call<CommentAddResponse>
 
 
+    // 지역 필터
+    @GET("/search/filter")
+    fun regionFilter(
+        @Query("category") category : String,
+        @Query("region") region : String
+    ) : Call<RegionFilterResponse>
+
+
 }

@@ -3,20 +3,12 @@ package com.example.travelbox.presentation.view.my.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.travelbox.data.repository.my.Comment
 import com.example.travelbox.databinding.ItemCommentBinding
-
-data class Comment(
-    val userId: String,
-    val commentText: String,
-    val profileImageUrl: String? = null,  // 프로필 이미지 URL, 없을 수도 있음
-    val myId: String,
-    val myCommentText: String,
-    val myProfileImageUrl: String? = null
-)
 
 
 class CommentAdapter(
-    private val commentList: List<Comment>,
+    private val commentList: MutableList<Comment>,  // MutableList로 변경
     private val onEdit: (position: Int) -> Unit,
     private val onDelete: (position: Int) -> Unit
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
@@ -25,27 +17,20 @@ class CommentAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(comment: Comment, position: Int) {
-            // 첫 번째 사용자의 댓글 (user)
-            binding.commentUserId.text = comment.userId
-            binding.userCommentText.text = comment.commentText
-            // 이미지 URL을 로딩하는 경우 (예: Glide, Picasso 사용)
+            binding.commentUserId.text = comment.postOwnerNickname
+            binding.userCommentText.text = comment.commentContent
+            // 프로필 이미지 URL 로딩 (예: Glide 사용)
             // Glide.with(binding.root.context).load(comment.profileImageUrl).into(binding.userProfileImage)
 
-            // 두 번째 사용자의 댓글 (my)
-            binding.myCommentId.text = comment.myId
-            binding.myCommentText.text = comment.myCommentText
-            // 이미지 URL을 로딩하는 경우 (예: Glide, Picasso 사용)
+            binding.myCommentId.text = comment.postOwnerNickname
+            binding.myCommentText.text = comment.postContent
+            // 프로필 이미지 URL 로딩 (예: Glide 사용)
             // Glide.with(binding.root.context).load(comment.myProfileImageUrl).into(binding.myProfileImage)
 
             // 수정 버튼 클릭 시 처리
-            binding.commentEdit.setOnClickListener {
-                onEdit(position)
-            }
-
+            binding.commentEdit.setOnClickListener { onEdit(position) }
             // 삭제 버튼 클릭 시 처리
-            binding.commentDelete.setOnClickListener {
-                onDelete(position)
-            }
+            binding.commentDelete.setOnClickListener { onDelete(position) }
         }
     }
 
@@ -59,4 +44,10 @@ class CommentAdapter(
     }
 
     override fun getItemCount(): Int = commentList.size
+
+    // 새 데이터를 추가하는 함수
+    fun updateComments(newComments: List<Comment>) {
+        commentList.addAll(newComments)  // 새 댓글 추가
+        notifyDataSetChanged()  // RecyclerView 갱신
+    }
 }

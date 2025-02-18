@@ -6,7 +6,6 @@
 
     <application
         android:name=".TravelBoxApplication"
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelBox"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".presentation.view.home.DetailPostActivity"
             android:exported="false" />
@@ -31,27 +32,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".presentation.view.user.LoginActivity"
             android:exported="true" />
-
         <activity
             android:name=".presentation.view.user.SignupActivity"
             android:exported="true" />
-
         <activity
             android:name=".presentation.view.user.SignUpSuccessActivity"
             android:exported="true" />
-
         <activity
             android:name=".presentation.view.home.FilterActivity"
             android:exported="false" />
-
         <activity
             android:name=".presentation.view.calendar.ScheduleActivity"
             android:exported="true"
-            android:theme="@style/Theme.TravelBox"/>
+            android:theme="@style/Theme.TravelBox" />
     </application>
 
 </manifest>
