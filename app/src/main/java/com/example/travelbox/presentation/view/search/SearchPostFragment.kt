@@ -1,6 +1,9 @@
 package com.example.travelbox.presentation.view.search
 
+import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,11 +11,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.R
 import com.example.travelbox.data.repository.search.ThreadPost
 import com.example.travelbox.databinding.FragmentSearchPostBinding
+import com.example.travelbox.presentation.view.home.DetailPostActivity
+import com.example.travelbox.presentation.view.home.PostAdapter
 import com.example.travelbox.presentation.view.post.AddPostFragment
+import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -72,11 +79,42 @@ class SearchPostFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        val topImages = listOf(postList[0].imageUrl, postList[1].imageUrl)
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
+        sharedViewModel.setTopImages(topImages)
+
         val adapter = SearchPostAdapter(postList)
+
+        adapter.setItemClickListener(object :  SearchPostAdapter.OnItemClickListener{
+
+            override fun onItemClick(position: Int) {
+                val selectedItem = postList[position]
+
+                val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
+                    putExtra("image", selectedItem.imageUrl)
+
+                    putExtra("id", selectedItem.threadId.toString())
+                    putExtra("title", selectedItem.postTitle)
+                    putExtra("threadId", selectedItem.threadId)
+
+                    Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageUrl}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postTitle}, ThreadId: ${selectedItem.threadId}")
+                }
+
+
+                startActivity(intent)
+            }
+        })
+
         binding.recyclerview.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = GridLayoutManager(requireContext(), 2)
             this.adapter = adapter
         }
+
+        binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                outRect.bottom = 35 // 아이템 간의 간격 35dp
+            }
+        })
     }
 
 }
