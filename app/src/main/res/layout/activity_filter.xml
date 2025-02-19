@@ -179,9 +179,10 @@
 
             <View
                 android:id="@+id/view_line"
-                android:layout_width="300dp"
+                android:layout_width="330dp"
                 android:layout_height="1dp"
                 android:background="@color/gray3"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintStart_toStartOf="@id/tv_location"
                 app:layout_constraintTop_toBottomOf="@id/tv_location" />
