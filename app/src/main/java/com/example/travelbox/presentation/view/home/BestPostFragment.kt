@@ -126,7 +126,7 @@ class BestPostFragment : Fragment() {
                         val selectedItem = filteredPosts[position]
                         val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
                             putExtra("image", selectedItem.imageURL)
-                            putExtra("id", selectedItem.threadId)
+                            putExtra("id", selectedItem.userTag)
                             putExtra("title", selectedItem.postTitle)
                             putExtra("threadId", selectedItem.threadId)
                         }

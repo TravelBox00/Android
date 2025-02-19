@@ -17,7 +17,7 @@ class PostFilterAdapter(private var itemList: List<PostData>) :
     RecyclerView.Adapter<PostFilterAdapter.PostFilterViewHolder>() {
 
 
-    private var userTag: String? = "jay12"
+
     interface onItemClickListener {
         fun onItemClick(position: Int)
     }
@@ -72,8 +72,7 @@ class PostFilterAdapter(private var itemList: List<PostData>) :
 
         fun bind(data: PostData) {
 
-            // userTag 수신
-            userTag = ApiNetwork.getUserTag()
+
 
             // 인기 게시물 이미지
             Glide.with(binding.root.context)
@@ -82,7 +81,7 @@ class PostFilterAdapter(private var itemList: List<PostData>) :
                 .error(R.drawable.post_ex1)  // 에러 시 표시할 이미지
                 .into(binding.imageArea)  // 이미지뷰에 로드
 
-            binding.tvId.text = userTag
+            binding.tvId.text = "@${data.userTag}"
             binding.tvPostTitle.text = data.postTitle
 
 
