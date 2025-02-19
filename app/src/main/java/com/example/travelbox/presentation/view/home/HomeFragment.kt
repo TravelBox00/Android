@@ -66,6 +66,18 @@ class HomeFragment : Fragment() {
 
         searchPostViewModel = ViewModelProvider(requireActivity())[SearchPostViewModel::class.java]
 
+
+
+//        postAdapter = PostAdapter(listOf())  // 빈 리스트로 초기화
+//
+//        val postListView = layoutInflater.inflate(R.layout.fragment_best_post, null)
+//
+//        val recyclerView = postListView.findViewById<RecyclerView>(R.id.recyclerview)
+//        recyclerView.apply {
+//            layoutManager = LinearLayoutManager(context)
+//            adapter = postAdapter
+//        }
+
         setTextStyle()
 
         getPopularPost(1, 20)
