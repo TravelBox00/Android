@@ -28,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_music"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="@id/iv_back"
             app:layout_constraintTop_toTopOf="@id/iv_back" />
@@ -39,6 +40,7 @@
             android:text="Soranji - Mrs.GREEN APPLE"
             android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
+            android:textColor="@color/black"
             style="@style/regular12"
             app:layout_constraintStart_toStartOf="@id/iv_music"
             app:layout_constraintTop_toTopOf="@id/iv_back" />
