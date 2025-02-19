@@ -1,5 +1,6 @@
 package com.example.travelbox.presentation.view.calendar
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -18,8 +19,9 @@ class ScheduleAdapter(
             binding.itemSchedulePeriod.text = schedule.period
             binding.itemScheduleContent.text = schedule.content
 
-            // 삭제 버튼 클릭 이벤트
-            binding.itemScheduleDelete.setOnClickListener {  // ✅ 수정
+            Log.d("ScheduleAdapter", "🎯 바인딩: ${schedule.title}, ${schedule.period}, ${schedule.content}")
+
+            binding.itemScheduleDelete.setOnClickListener {
                 onDeleteClick(schedule.travelId)
             }
         }
@@ -34,5 +36,8 @@ class ScheduleAdapter(
         holder.bind(schedules[position])
     }
 
-    override fun getItemCount(): Int = schedules.size
+    override fun getItemCount(): Int {
+        Log.d("ScheduleAdapter", "✅ 총 아이템 개수: ${schedules.size}")
+        return schedules.size
+    }
 }
