@@ -40,18 +40,41 @@ class AddPostRepository(private val addPostInterface: AddPostInterface) {
             MultipartBody.Part.createFormData("files", file.name, requestFile)
         }
 
-        addPostInterface.addPost(bodyRequest, fileParts).enqueue(object : Callback<AddPostResponse> {
-            override fun onResponse(call: Call<AddPostResponse>, response: Response<AddPostResponse>) {
+        addPostInterface.addPost(bodyRequest, fileParts)
+            .enqueue(object : Callback<AddPostResponse> {
+                override fun onResponse(
+                    call: Call<AddPostResponse>,
+                    response: Response<AddPostResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        callback(response.body())
+                    } else {
+                        Log.e("AddPost", "서버 오류: ${response.code()}")
+                        callback(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
+                    Log.e("AddPost", "네트워크 오류: ${t.localizedMessage}")
+                    callback(null)
+                }
+            })
+    }
+
+    fun getSpotifySong(songName: String, callback: (String?) -> Unit) {
+        addPostInterface.getSpotifySong(songName).enqueue(object : Callback<SpotifyResponse> {
+            override fun onResponse(
+                call: Call<SpotifyResponse>,
+                response: Response<SpotifyResponse>
+            ) {
                 if (response.isSuccessful) {
-                    callback(response.body())
+                    callback(response.body()?.trackURL?.spotify)
                 } else {
-                    Log.e("AddPost", "서버 오류: ${response.code()}")
                     callback(null)
                 }
             }
 
-            override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
-                Log.e("AddPost", "네트워크 오류: ${t.localizedMessage}")
+            override fun onFailure(call: Call<SpotifyResponse>, t: Throwable) {
                 callback(null)
             }
         })

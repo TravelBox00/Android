@@ -47,6 +47,12 @@ data class CommentRemoveResponse(
 
 )
 
+// 댓글 수정
+data class CommentFixResponse(
+
+    val isSuccess : Boolean
+)
+
 // 게시물 좋아요
 data class PostLikeResponse(
     val isSuccess: Boolean,

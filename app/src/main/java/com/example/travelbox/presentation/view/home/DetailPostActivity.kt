@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.repository.home.CommentFixRequest
 import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.databinding.ActivityDetailPostBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -26,12 +27,18 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class DetailPostActivity : AppCompatActivity() {
 
 
+
     lateinit var binding: ActivityDetailPostBinding
     private  var isLiked = false
     private var isMarked = false
 
+    private var editingCommentId: Int? = null // 수정 중인 댓글 ID
+
     // threadId 초기화
     private var threadId : Int = -1
+    private var imageResId : String = ""
+    private var id : String = ""
+    private var title : String = ""
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -67,9 +74,9 @@ class DetailPostActivity : AppCompatActivity() {
 
 
         // 인텐트로부터 데이터 수신
-        val imageResId = intent.getStringExtra("image") ?: ""  // 기본값 설정
-        val id = intent.getStringExtra("id") ?: "No Id"
-        val title = intent.getStringExtra("title") ?: "No Title"
+        imageResId = intent.getStringExtra("image") ?: ""  // 기본값 설정
+        id = intent.getStringExtra("id") ?: "No Id"
+        title = intent.getStringExtra("title") ?: "No Title"
 
         Log.d("DetailPostActivity", "받은 데이터 - Image: $imageResId, Id: $id, Title: $title, ThreadId: $threadId")
 
@@ -114,7 +121,11 @@ class DetailPostActivity : AppCompatActivity() {
 
 
 
+
+            // 댓글 불러오기
             postCommentRecycler(bottomSheetView, threadId)
+
+            // 바텀시트
             bottomSheetDialog.show()
 
         }
@@ -222,6 +233,14 @@ class DetailPostActivity : AppCompatActivity() {
                         Toast.makeText(this, "댓글을 입력하세요", Toast.LENGTH_SHORT).show()
                     }
 
+
+
+//                    if (editingCommentId != null) {
+//                        updateComment(editingCommentId!!, commentText, etComment, btnSend)  // 댓글 수정
+//                    } else {
+//                        postAddComment("userTag", threadId, commentText, commentVisible, adapter, itemList, etComment, recyclerView) // 댓글 추가
+//                    }
+
                 }
 
 
@@ -292,6 +311,31 @@ class DetailPostActivity : AppCompatActivity() {
     }
 
 
+
+//    // 댓글 수정 API 호출
+//    private fun updateComment(commentId: Int, newContent: String, etComment: EditText, btnSend: ImageButton) {
+//        val request = CommentFixRequest(commentId, newContent, commentVisible)
+//
+//        HomeRepository.postCommentFix(request) { response ->
+//            if (response?.isSuccess == true) {
+//                Toast.makeText(this, "댓글이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+//
+//                // 수정 후 초기화
+//                editingCommentId = null
+//                etComment.text.clear()
+//                btnSend.setImageResource(R.drawable.ic_send)
+//
+//                // 댓글 목록 다시 불러오기
+//                postCommentRecycler(findViewById(R.id.bottomSheetDashBoardLayout), threadId)
+//            } else {
+//                Toast.makeText(this, "댓글 수정 실패", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
+
+
+
+
     // 1. 좋아요 상태 확인 (초기 로딩 시 호출)
 //    private fun getLikeStatus(threadId: Int, userTag: String) {
 //        HomeRepository.postAddIsLiked(threadId, userTag) { response ->
@@ -354,11 +398,8 @@ class DetailPostActivity : AppCompatActivity() {
     }
 
 
-    // 게시글 좋아요
-    private fun postIsLiked(threadId: Int, userTag: String)
-    {
+    // 댓글 수정
 
-    }
 
 
 

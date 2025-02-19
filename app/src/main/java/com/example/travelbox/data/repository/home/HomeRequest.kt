@@ -9,6 +9,15 @@ data class CommentRequest(
     val commentVisible: String
 )
 
+// 댓글 수정
+data class CommentFixRequest(
+
+    val commentId : Int,
+    val commentContent: String,
+    val commentVisible: String
+
+)
+
 
 // 게시글 좋아요 상태
 data class PostLikeRequest(
