@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.calendar.CalendarRepository
 import com.example.travelbox.databinding.FragmentScheduleBinding
@@ -96,6 +97,10 @@ class ScheduleFragment : Fragment() {
         CalendarRepository.addCalendarEvent(userId, title, content, startDateStr, endDateStr) { success, message ->
             if (success) {
                 Toast.makeText(requireContext(), "일정 추가 성공: $message", Toast.LENGTH_SHORT).show()
+
+                // ✅ CalendarFragment로 "calendar_update" 신호 보내기
+                setFragmentResult("calendar_update", Bundle())
+
                 requireActivity().finish() // 일정 추가 후 화면 닫기
             } else {
                 Toast.makeText(requireContext(), "일정 추가 실패: $message", Toast.LENGTH_SHORT).show()

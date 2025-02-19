@@ -10,10 +10,12 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import com.example.travelbox.R
 import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.calendar.CalendarQueryEvent
@@ -207,28 +209,33 @@ class CalendarFragment : Fragment() {
     private fun fetchUserCalendarEvents(year: Int, month: Int) {
         if (userTag == null) return
 
-        val formattedDate = "$year-${String.format("%02d", month)}-01" // YYYY-MM-DD 형식
+        // ✅ YYYY-MM-DD 형식으로 날짜 변환
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month - 1, 1) // `month - 1` (Calendar 클래스는 0부터 시작)
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formattedDate = sdf.format(calendar.time)
+
+        Log.d("CalendarFragment", "📅 일정 조회 요청: userTag=$userTag, date=$formattedDate")
 
         CalendarRepository.getUserCalendarEvents(userTag!!, formattedDate) { events ->
             if (events != null) {
-                Log.d("CalendarFragment", "불러온 일정 개수: ${events.size}")
+                Log.d("CalendarFragment", "✅ 일정 조회 성공! 개수: ${events.size}")
 
                 // ✅ 가져온 일정 리스트 저장
                 lastFetchedEvents = events
 
-                // ✅ 기존 데코레이터 유지하면서 일정 데코레이터만 추가
+                // ✅ 기존 데코레이터를 유지하면서 일정 데코레이터만 다시 추가
                 binding.calendarView.removeDecorators()
                 binding.calendarView.addDecorator(TodayDecorator(requireContext())) // 오늘 날짜 유지
                 binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents)) // ✅ 일정 반영
-                binding.calendarView.invalidateDecorators()
+                binding.calendarView.invalidateDecorators() // ✅ 캘린더 강제 갱신
+
             } else {
-                Log.e("CalendarFragment", "일정 데이터를 가져오지 못함")
+                Log.e("CalendarFragment", "❌ 일정 데이터를 가져오지 못함")
             }
         }
-
-
-
     }
+
     // 다이얼로그 파트
     private fun showScheduleBottomSheet(events: List<CalendarQueryEvent>) {
         if (events.isEmpty()) {
@@ -293,6 +300,23 @@ class CalendarFragment : Fragment() {
     }
 
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        Log.d("CalendarFragment", "🚀 onViewCreated 실행됨! 일정 자동 조회 시작")
+
+        // ✅ 앱 실행 시, 일정 조회 실행
+        if (userTag != null) {
+            fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+        }
+
+        // ✅ 다른 Fragment에서 "calendar_update" 신호를 보내면 일정 자동 갱신
+        setFragmentResultListener("calendar_update") { _, _ ->
+            Log.d("CalendarFragment", "🔄 새로운 일정이 추가됨! 일정 다시 조회")
+            if (userTag != null) {
+                fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+            }
+        }
+    }
 
 }
