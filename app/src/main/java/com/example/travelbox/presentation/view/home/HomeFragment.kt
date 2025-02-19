@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +28,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.travelbox.R
 import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.data.repository.home.HomeRepository.Companion.getPopularPost
+import com.example.travelbox.data.repository.search.SearchRepository
 import com.example.travelbox.databinding.FragmentHomeBinding
+import com.example.travelbox.presentation.view.search.SearchPostFragment
+import com.example.travelbox.presentation.view.search.SearchPostViewModel
 import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
 
@@ -40,6 +44,8 @@ class HomeFragment : Fragment() {
     private lateinit var bannerAdapter: BannerAdapter
     private lateinit var mBanner: ViewPager2
 
+    private val searchRepository = SearchRepository()
+    private lateinit var searchPostViewModel: SearchPostViewModel
 
 
 
@@ -57,6 +63,8 @@ class HomeFragment : Fragment() {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
+
+        searchPostViewModel = ViewModelProvider(requireActivity())[SearchPostViewModel::class.java]
 
         setTextStyle()
 
@@ -130,6 +138,15 @@ class HomeFragment : Fragment() {
 
 
 
+        // 검색 버튼 클릭 리스너
+        binding.ivSearch.setOnClickListener {
+            val keyword = binding.etSearch.text.toString()
+            if (keyword.isNotEmpty()) {
+                searchForPosts(keyword)
+            } else {
+                Toast.makeText(requireContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
 
@@ -233,6 +250,23 @@ class HomeFragment : Fragment() {
 
 
         binding.tvTravelRecord.text = spannableString
+    }
+
+    private fun searchForPosts(searchKeyword: String) {
+        searchRepository.getSearchPost(searchKeyword, 0) { threadPosts ->
+            val posts = threadPosts ?: emptyList()
+            searchPostViewModel.setPosts(posts)
+
+            val searchPostFragment = SearchPostFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, searchPostFragment)
+                .addToBackStack(null)
+                .commit()
+
+            if (posts.isEmpty()) {
+                Toast.makeText(requireContext(), "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
