@@ -40,6 +40,9 @@ class AddPostFragment : Fragment() {
     private lateinit var addPostRepository: AddPostRepository
     private lateinit var addPostInterface: AddPostInterface
 
+    private var selectedButton: Button? = null
+    private var selectedCategory: String? = null
+
     private lateinit var regionAdapter: ButtonAdapter
     //private lateinit var hashtagAdapter: ButtonAdapter
 
@@ -48,22 +51,21 @@ class AddPostFragment : Fragment() {
 
     private var postRegionCode = ""
 
-    private var selectedCategory: String? = null
-
     // 여러 개의 이미지 URI 저장
     private val imageUris = mutableListOf<Uri>()
 
     // 여러 개의 이미지 선택을 위한 Launcher
-    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-        if (uris.isNotEmpty()) {
-            imageUris.clear()
-            imageUris.addAll(uris)
-            Log.d("AddPost", "선택된 이미지 개수: ${imageUris.size}")
-            binding.ivPhoto2.visibility = View.VISIBLE
-            binding.ivPhoto2.setImageURI(imageUris.first()) // 첫 번째 이미지만
-            adjustImageLayout()
+    private val imagePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+            if (uris.isNotEmpty()) {
+                imageUris.clear()
+                imageUris.addAll(uris)
+                Log.d("AddPost", "선택된 이미지 개수: ${imageUris.size}")
+                binding.ivPhoto2.visibility = View.VISIBLE
+                binding.ivPhoto2.setImageURI(imageUris.first()) // 첫 번째 이미지만
+                adjustImageLayout()
+            }
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,9 +90,20 @@ class AddPostFragment : Fragment() {
         )
         categoryButtons.forEach { button ->
             button.setOnClickListener {
-                val clicked = updateButtonState(button, button.tag as? Boolean ?: false)
-                button.tag = clicked
-                selectedCategory = button.text.toString()
+                if (selectedButton == button) {
+                    // 같은 버튼을 다시 누른 경우 선택 해제
+                    resetButtonState(button)
+                    selectedButton = null
+                    selectedCategory = null
+                } else {
+                    // 기존 선택 버튼 초기화
+                    selectedButton?.let { resetButtonState(it) }
+
+                    // 선택된 버튼 상태 업데이트
+                    updateButtonState(button)
+                    selectedButton = button
+                    selectedCategory = button.text.toString()
+                }
             }
         }
 
@@ -101,22 +114,27 @@ class AddPostFragment : Fragment() {
             pickImageFromGallery()
         }
 
+        // 노래 검색 버튼 클릭 리스너
+        binding.btnAddSong.setOnClickListener {
+            getSpotifySongUrl()
+        }
+
         // 업로드 버튼 클릭 리스너
         binding.btnUpload.setOnClickListener {
             onAddPostClick()
         }
     }
 
-    // 카테고리 버튼 클릭 상태 변경
-    private fun updateButtonState(button: Button, clicked: Boolean): Boolean {
-        if (clicked) {
-            button.setTextColor(Color.parseColor("#ACACAC"))
-            button.setBackgroundResource(R.drawable.btn_category)
-        } else {
-            button.setTextColor(Color.parseColor("#007151"))
-            button.setBackgroundResource(R.drawable.btn_create)
-        }
-        return !clicked
+    // 카테고리 버튼 상태를 선택된 상태로 변경
+    private fun updateButtonState(button: Button) {
+        button.setTextColor(Color.parseColor("#007151"))
+        button.setBackgroundResource(R.drawable.btn_create)
+    }
+
+    // 카테고리 버튼 상태를 기본 상태로 초기화
+    private fun resetButtonState(button: Button) {
+        button.setTextColor(Color.parseColor("#ACACAC"))
+        button.setBackgroundResource(R.drawable.btn_category)
     }
 
     // 이미지 간 레이아웃 조정
@@ -129,11 +147,33 @@ class AddPostFragment : Fragment() {
         constraintSet.clear(binding.ivPhoto2.id, ConstraintSet.END)
         constraintSet.clear(binding.ivPhoto2.id, ConstraintSet.START)
 
-        constraintSet.connect(binding.ivPhoto1.id, ConstraintSet.END, binding.ivPhoto2.id, ConstraintSet.START, 4)
-        constraintSet.connect(binding.ivPhoto2.id, ConstraintSet.START, binding.ivPhoto1.id, ConstraintSet.END, 4)
+        constraintSet.connect(
+            binding.ivPhoto1.id,
+            ConstraintSet.END,
+            binding.ivPhoto2.id,
+            ConstraintSet.START,
+            4
+        )
+        constraintSet.connect(
+            binding.ivPhoto2.id,
+            ConstraintSet.START,
+            binding.ivPhoto1.id,
+            ConstraintSet.END,
+            4
+        )
 
-        constraintSet.connect(binding.ivPhoto1.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-        constraintSet.connect(binding.ivPhoto2.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+        constraintSet.connect(
+            binding.ivPhoto1.id,
+            ConstraintSet.START,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.START
+        )
+        constraintSet.connect(
+            binding.ivPhoto2.id,
+            ConstraintSet.END,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.END
+        )
 
         constraintSet.applyTo(binding.photoContainer)
     }
@@ -199,6 +239,25 @@ class AddPostFragment : Fragment() {
             inputStream.copyTo(outputStream)
         }
         return tempFile
+    }
+
+    // Spotify 노래 Url 얻기
+    private fun getSpotifySongUrl() {
+        val songName = binding.etSong.text.toString().trim()
+        if (songName.isNotEmpty()) {
+            addPostRepository.getSpotifySong(songName) { songUrl ->
+                requireActivity().runOnUiThread {
+                    if (songUrl != null) {
+                        binding.etSong.setText(songUrl)
+                    } else {
+                        Toast.makeText(requireContext(), "노래를 찾을 수 없습니다.", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        } else {
+            Toast.makeText(requireContext(), "노래 제목을 입력하세요.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     // 게시글 업로드 버튼 클릭 시 호출

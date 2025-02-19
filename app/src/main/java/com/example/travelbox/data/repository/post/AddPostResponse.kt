@@ -11,3 +11,11 @@ data class AddPostResult(
     val threadId: Int,
     val imageUrls: List<String>
 )
+
+data class SpotifyResponse(
+    val trackURL: TrackURL
+)
+
+data class TrackURL(
+    val spotify: String
+)
