@@ -4,6 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
@@ -28,9 +29,10 @@ interface CalendarInterface {
         @Body request: CalendarEventDeleteRequest
     ): Call<CalendarEventResponse>
 
-    // ✅ 일정 조회 API
+    // ✅ 일정 조회 API (Authorization 헤더 추가)
     @GET("/calendar/my")
     fun getUserCalendarEvents(
+        @Header("Authorization") token: String,  // ✅ Bearer 토큰 추가
         @Query("userTag") userTag: String,
         @Query("date") date: String
     ): Call<CalendarQueryResponse>

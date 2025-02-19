@@ -186,7 +186,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/calendar_border"
-        android:padding="8dp"
+        android:padding="-2dp"
         android:paddingBottom="2dp"
         android:orientation="vertical">
 
@@ -197,8 +197,8 @@
             app:mcv_selectionColor="@color/gray5"
             app:mcv_showOtherDates="all"
             app:mcv_dateTextAppearance="@style/regular14"
-            app:mcv_tileWidth="48dp"
-            app:mcv_tileHeight="48dp"
+            app:mcv_tileWidth="46dp"
+            app:mcv_tileHeight="46dp"
             app:mcv_headerTextAppearance="@null"
             app:mcv_weekDayTextAppearance="@style/CustomWeekDayText"
             app:mcv_leftArrow="@null"

@@ -1,5 +1,6 @@
 package com.example.travelbox.presentation.view.calendar
 
+import ThickGreenUnderlineSpan
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -15,6 +16,7 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.example.travelbox.R
 import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.calendar.CalendarQueryEvent
 import com.example.travelbox.data.repository.calendar.CalendarRepository
 import com.example.travelbox.databinding.FragmentCalendarBinding
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -29,6 +31,8 @@ class CalendarFragment : Fragment() {
     private lateinit var binding: FragmentCalendarBinding
     private var selectedDate: CalendarDay = CalendarDay.today()  // ✅ 기본값: 오늘 날짜
     private var userTag: String? = null // ✅ 로그인한 유저의 userTag
+    private var lastFetchedEvents: List<CalendarQueryEvent> = emptyList()
+    private var selectedMonth: Int = CalendarDay.today().month - 1 // ✅ 현재 월 (0-based index)
 
     private val months = listOf(
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -99,9 +103,11 @@ class CalendarFragment : Fragment() {
                 .commit()
         }
 
+        // ✅ 캘린더에서 월이 변경될 때 연도와 월 업데이트
         binding.calendarView.setOnMonthChangedListener(OnMonthChangedListener { _, date ->
+            updateYearAndMonth(date.year, date.month) // ✅ 월 변경 시 UI 갱신
             if (userTag != null) {
-                fetchUserCalendarEvents(date.year, date.month)
+                fetchUserCalendarEvents(date.year, date.month) // ✅ 일정 다시 불러오기
             }
         })
         return binding.root
@@ -112,18 +118,20 @@ class CalendarFragment : Fragment() {
         binding.calendarView.addDecorator(TodayDecorator(requireContext()))
 
         // ✅ 날짜 선택 이벤트 리스너
+
+// ✅ 날짜 선택 이벤트 리스너 (밑줄은 유지)
         binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
             selectedDate = date  // ✅ 선택한 날짜 저장
 
-            // ✅ 기존 데코레이터 제거 후 다시 추가
+            // ✅ 기존 데코레이터를 유지하면서 선택한 날짜 표시
             binding.calendarView.removeDecorators()
-            binding.calendarView.addDecorator(TodayDecorator(requireContext())) // ✅ 오늘 날짜 유지
-            binding.calendarView.addDecorator(SelectedDateDecorator(requireContext(), selectedDate)) // ✅ 선택한 날짜 적용
+            binding.calendarView.addDecorator(TodayDecorator(requireContext())) // 오늘 날짜 유지
+            binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents)) // 일정 밑줄 유지
+            binding.calendarView.addDecorator(SelectedDateDecorator(requireContext(), selectedDate)) // 선택한 날짜 적용
 
             // ✅ 즉시 반영
             binding.calendarView.invalidateDecorators()
 
-            // ✅ 선택한 날짜 Toast 메시지 출력
             Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
         })
     }
@@ -143,12 +151,11 @@ class CalendarFragment : Fragment() {
             val monthText = months[index]  // JAN, FEB, ...
 
             if (index == selectedMonth) {
-                // ✅ 선택된 월 (검은색 + 굵은 글씨 + #00A879 밑줄)
+                // ✅ 선택된 월 (검은색 + 굵은 글씨 + 초록색 밑줄)
                 val spannableString = SpannableString(monthText).apply {
                     setSpan(ForegroundColorSpan(Color.BLACK), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    setSpan(UnderlineSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) // 기본 밑줄
+                    setSpan(ThickGreenUnderlineSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) // ✅ 새로운 밑줄 적용
                 }
-
                 monthTextView.text = spannableString
                 monthTextView.setTypeface(null, Typeface.BOLD)
                 monthTextView.textSize = 18f
@@ -161,35 +168,18 @@ class CalendarFragment : Fragment() {
             }
         }
     }
+
+
     /**
      * ✅ 연도 및 월을 업데이트하는 함수
      */
     private fun updateYearAndMonth(year: Int, month: Int) {
         binding.yearText.text = year.toString()
 
-        binding.monthTabs.children.forEachIndexed { index, view ->
-            val monthTextView = view as TextView
-            monthTextView.text = months[index]
+        selectedMonth = month - 1  // ✅ 선택된 월 업데이트
+        updateMonthTabs(selectedMonth)  // ✅ 월 UI 갱신
 
-            if (index == month - 1) {
-                // ✅ 선택된 월 (검은색 + 굵은 글씨 + 초록색 밑줄)
-                val spannableString = SpannableString(monthTextView.text).apply {
-                    setSpan(ForegroundColorSpan(Color.BLACK), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    setSpan(UnderlineSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                }
-                monthTextView.text = spannableString
-                monthTextView.setTypeface(null, Typeface.BOLD)
-                monthTextView.textSize = 18f
-            } else {
-                // ✅ 기본 월 스타일 (회색, 일반 글씨)
-                monthTextView.text = months[index]
-                monthTextView.setTextColor(Color.parseColor("#61646B"))
-                monthTextView.setTypeface(null, Typeface.NORMAL)
-                monthTextView.textSize = 14f
-            }
-        }
-
-        scrollToMonth(month - 1)
+        scrollToMonth(selectedMonth) // ✅ 스크롤 맞추기
     }
 
     /**
@@ -209,8 +199,13 @@ class CalendarFragment : Fragment() {
             if (events != null) {
                 Log.d("CalendarFragment", "불러온 일정 개수: ${events.size}")
 
+                // ✅ 가져온 일정 리스트 저장
+                lastFetchedEvents = events
+
                 // ✅ 기존 데코레이터 유지하면서 일정 데코레이터만 추가
-                binding.calendarView.addDecorator(CalendarEventsDecorator(events))
+                binding.calendarView.removeDecorators()
+                binding.calendarView.addDecorator(TodayDecorator(requireContext())) // 오늘 날짜 유지
+                binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents)) // ✅ 일정 반영
                 binding.calendarView.invalidateDecorators()
             } else {
                 Log.e("CalendarFragment", "일정 데이터를 가져오지 못함")
