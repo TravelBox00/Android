@@ -79,8 +79,9 @@ interface HomeInterface {
     // 지역 필터
     @GET("/search/filter")
     fun regionFilter(
-        @Query("category") category : String,
-        @Query("region") region : String?
+        @Query("category") category : String?,
+        @Query("region") region : String?,
+        @Query("cursor") cursor : String?
     ) : Call<RegionFilterResponse>
 
 

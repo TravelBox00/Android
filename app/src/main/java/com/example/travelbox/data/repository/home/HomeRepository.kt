@@ -283,9 +283,9 @@ class HomeRepository {
         }
 
         // 지역 필터 검색
-        fun regionFilterSearch(category : String, region : String, callback : (RegionFilterResponse?) -> Unit) {
+        fun regionFilterSearch(category : String?, region : String?, cursor: String?,callback : (RegionFilterResponse?) -> Unit) {
 
-            val call = homeService.regionFilter(category, region)
+            val call = homeService.regionFilter(category, region, cursor)
 
             call.enqueue(object : Callback<RegionFilterResponse> {
                 override fun onResponse(
