@@ -25,6 +25,9 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.WeekDayFormatter
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.threeten.bp.DayOfWeek
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class CalendarFragment : Fragment() {
 
@@ -133,6 +136,17 @@ class CalendarFragment : Fragment() {
             binding.calendarView.invalidateDecorators()
 
             Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
+            // ✅ 해당 날짜의 일정 필터링
+            val selectedDateStr = "${date.year}-${"%02d".format(date.month)}-${"%02d".format(date.day)}"
+            val eventsForDate = lastFetchedEvents.filter { event ->
+                event.travelStartDate <= selectedDateStr && event.travelEndDate >= selectedDateStr
+            }
+
+            if (eventsForDate.isNotEmpty()) {
+                showScheduleBottomSheet(eventsForDate) // ✅ 변경된 다이얼로그 호출
+            }
+
+            binding.calendarView.invalidateDecorators()
         })
     }
     /**
@@ -211,5 +225,62 @@ class CalendarFragment : Fragment() {
                 Log.e("CalendarFragment", "일정 데이터를 가져오지 못함")
             }
         }
+
+
+
     }
+    // 다이얼로그 파트
+    private fun showScheduleBottomSheet(events: List<CalendarQueryEvent>) {
+        if (events.isEmpty()) {
+            Log.w("CalendarFragment", "선택한 날짜에 해당하는 일정이 없습니다.")
+            return
+        }
+
+        val formattedDate = "${events.first().travelStartDate.substring(5, 7)}.${events.first().travelStartDate.substring(8, 10)} ${getDayOfWeek(events.first().travelStartDate)}"
+
+        val scheduleItems = events.map { event ->
+            ScheduleItem(
+                travelId = event.travelId,
+                title = event.travelTitle,
+                period = "${event.travelStartDate.substring(5, 7)}.${event.travelStartDate.substring(8, 10)} ${getDayOfWeek(event.travelStartDate)} ~ ${event.travelEndDate.substring(5, 7)}.${event.travelEndDate.substring(8, 10)} ${getDayOfWeek(event.travelEndDate)}",
+                content = event.travelContent
+            )
+        }
+
+        Log.d("CalendarFragment", "🚀 다이얼로그 생성 전!")
+
+        val dialog = ScheduleBottomSheetDialog(requireContext(), formattedDate, scheduleItems) { travelId ->
+            deleteSchedule(travelId)
+        }
+
+        Log.d("CalendarFragment", "🚀 다이얼로그 show() 호출!")
+        dialog.show()
+    }
+
+
+
+
+
+    private fun getDayOfWeek(date: String): String {
+        val days = listOf("일", "월", "화", "수", "목", "금", "토")
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        calendar.time = sdf.parse(date)!!
+        return days[calendar.get(Calendar.DAY_OF_WEEK) - 1]
+    }
+
+    private fun deleteSchedule(travelId: Int) {
+        CalendarRepository.deleteCalendarEvent(travelId) { success, message ->
+            if (success) {
+                Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
+                fetchUserCalendarEvents(selectedDate.year, selectedDate.month) // ✅ 일정 다시 불러오기
+            } else {
+                Toast.makeText(requireContext(), "삭제 실패: $message", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
+
 }
