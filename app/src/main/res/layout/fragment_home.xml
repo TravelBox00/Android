@@ -120,7 +120,7 @@
                     <TextView
                         android:id="@+id/tv_travel_record"
                         android:layout_width="150dp"
-                        android:layout_height="180dp"
+                        android:layout_height="170dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableBottom="@drawable/iv_travel_record"
                         android:drawablePadding="-10dp"
@@ -135,8 +135,8 @@
 
                     <TextView
                         android:id="@+id/tv_style"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:layout_marginStart="20dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableTop="@drawable/iv_style"
@@ -152,8 +152,8 @@
 
                     <TextView
                         android:id="@+id/tv_place"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableTop="@drawable/iv_place"
                         android:drawablePadding="-10dp"
@@ -162,15 +162,15 @@
                         android:text="여행지"
                         android:padding="10dp"
                         android:gravity="bottom|center_horizontal"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="15dp"
                         app:layout_constraintStart_toEndOf="@id/tv_style"
                         app:layout_constraintTop_toTopOf="@id/tv_travel_record"/>
 
 
                     <TextView
                         android:id="@+id/tv_souvenir"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableTop="@drawable/iv_shopping"
                         android:drawablePadding="-10dp"
@@ -187,9 +187,9 @@
                     <TextView
                         android:id="@+id/tv_song"
                         style="@style/semibold12"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginStart="20dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_marginStart="15dp"
                         android:layout_marginTop="20dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableTop="@drawable/iv_music"
@@ -242,8 +242,8 @@
 
                     <ImageView
                         android:id="@+id/iv_post_one"
-                        android:layout_width="160dp"
-                        android:layout_height="160dp"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
                         android:scaleType="centerCrop"
                         app:layout_constraintStart_toStartOf="@id/tv_best_post"
                         app:layout_constraintTop_toBottomOf="@id/tv_best_post"
@@ -252,10 +252,10 @@
 
                     <ImageView
                         android:id="@+id/iv_post_two"
-                        android:layout_width="160dp"
-                        android:layout_height="160dp"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
                         android:scaleType="centerCrop"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="15dp"
                         app:layout_constraintStart_toEndOf="@id/iv_post_one"
                         app:layout_constraintTop_toBottomOf="@id/tv_best_post"
                         android:layout_marginTop="10dp"/>

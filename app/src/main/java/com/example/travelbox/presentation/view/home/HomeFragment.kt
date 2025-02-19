@@ -27,6 +27,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.travelbox.R
 import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.data.repository.home.HomeRepository.Companion.getPopularPost
+import com.example.travelbox.data.repository.home.PostData
+import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.FragmentHomeBinding
 import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
@@ -37,6 +39,7 @@ class HomeFragment : Fragment() {
     lateinit var binding : FragmentHomeBinding
     private lateinit var sharedViewModel: PostSharedViewModel
 
+    private lateinit var postAdapter: PostAdapter
     private lateinit var bannerAdapter: BannerAdapter
     private lateinit var mBanner: ViewPager2
 
@@ -57,6 +60,18 @@ class HomeFragment : Fragment() {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
+
+
+
+//        postAdapter = PostAdapter(listOf())  // 빈 리스트로 초기화
+//
+//        val postListView = layoutInflater.inflate(R.layout.fragment_best_post, null)
+//
+//        val recyclerView = postListView.findViewById<RecyclerView>(R.id.recyclerview)
+//        recyclerView.apply {
+//            layoutManager = LinearLayoutManager(context)
+//            adapter = postAdapter
+//        }
 
         setTextStyle()
 
@@ -120,12 +135,45 @@ class HomeFragment : Fragment() {
         }
 
 
-        // 뒤로 가기 버튼
+        // 인기 게시물 버튼
         binding.ivBackButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, BestPostFragment())  // BestPostFragment로 전환
                 .addToBackStack(null)
                 .commit()
+        }
+
+
+        // 코디 카테고리
+        binding.tvStyle.setOnClickListener {
+
+            val categoryFragment = CategoryPostFragment("코디")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
+
+        // 여행지 카테고리
+        binding.tvPlace.setOnClickListener {
+
+            loadCategoryPosts("여행지")
+
+        }
+
+        // 기념품 카테고리
+        binding.tvSouvenir.setOnClickListener {
+
+            loadCategoryPosts("기념품")
+
+        }
+
+        // 노래 카테고리
+        binding.tvSong.setOnClickListener {
+
+            loadCategoryPosts("노래")
+
         }
 
 
@@ -164,6 +212,33 @@ class HomeFragment : Fragment() {
     }
 
 
+    // 카테고리
+    private fun loadCategoryPosts(category: String) {
+        HomeRepository.regionFilterSearch(category, "") { response ->
+            if (response?.isSuccess == true && response.result.isNotEmpty()) {
+                val mappedPosts = mapPostDataToPostItem(response.result) // 변환 실행
+                postAdapter.updateData(mappedPosts)
+            } else {
+                Log.e("HomeFragment", "$category 게시물 조회 실패")
+            }
+        }
+    }
+
+
+    // 카테고리 postData -> postItem 변환
+    private fun mapPostDataToPostItem(postDataList: List<PostData>): List<PostItem> {
+        return postDataList.map { postData ->
+            PostItem(
+                threadId = postData.threadId,
+                postTitle = postData.postTitle,
+                postDate = postData.postDate,
+                imageURL = postData.postImageURL ?: "", // null 방지
+                totalEngagement = null // 해당 데이터가 없으므로 기본값 설정
+            )
+        }
+    }
+
+
 
     // 인기 게시물 2개 가져오기
     private fun loadImage(imageView: ImageView, url: String) {
@@ -172,7 +247,7 @@ class HomeFragment : Fragment() {
         val options = RequestOptions()
             .transform(RoundedCorners(20))
 
-            Glide.with(this)
+        Glide.with(this)
                 .load(url)
                 .apply(options)
                 .override(imageView.width, imageView.height) // 로딩 중 배경
