@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.home.CommentFixRequest
 import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.databinding.ActivityDetailPostBinding
@@ -31,6 +32,8 @@ class DetailPostActivity : AppCompatActivity() {
     lateinit var binding: ActivityDetailPostBinding
     private  var isLiked = false
     private var isMarked = false
+
+    private var userTag: String? = "jay12"
 
     private var editingCommentId: Int? = null // 수정 중인 댓글 ID
 
@@ -56,8 +59,9 @@ class DetailPostActivity : AppCompatActivity() {
 
 
 
-        // 임의로 넣은 userTag
-        val userTag = "jay12"
+        // userTag 수신
+        userTag = ApiNetwork.getUserTag()
+
 
         // SharedPreferences 초기화
         sharedPreferences = getSharedPreferences("LikePrefs", MODE_PRIVATE)
@@ -146,7 +150,7 @@ class DetailPostActivity : AppCompatActivity() {
 //                binding.ivHeart.setImageResource(R.drawable.ic_heart_off)
 //            }
 
-            toggleLike(threadId, userTag)
+            toggleLike(threadId, userTag!!)
 
 
         }
@@ -162,7 +166,7 @@ class DetailPostActivity : AppCompatActivity() {
 //                binding.ivBookmark.setImageResource(R.drawable.ic_bookmark)
 //            }
 
-            toggleBookmark(threadId, userTag)
+            toggleBookmark(threadId, userTag!!)
 
         }
 
@@ -226,7 +230,7 @@ class DetailPostActivity : AppCompatActivity() {
 
                     if (commentText.isNotEmpty()) {
 
-                        postAddComment("userTag", threadId, commentText, commentVisible, adapter, itemList, etComment, recyclerView)
+                        postAddComment(userTag!!, threadId, commentText, commentVisible, adapter, itemList, etComment, recyclerView)
 
                     } else {
 
@@ -286,7 +290,7 @@ class DetailPostActivity : AppCompatActivity() {
 
 
 
-                val newComment = CommentRecyclerModel(commentNickname = "jay12", commentId = postId, commentContent = commentContent, commentVisible = commentVisible)
+                val newComment = CommentRecyclerModel(commentNickname = userId, commentId = postId, commentContent = commentContent, commentVisible = commentVisible)
                 itemList.add(newComment) // 최신 댓글 추가
                 adapter.notifyItemInserted(itemList.size - 1)
 

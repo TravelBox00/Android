@@ -11,7 +11,7 @@
             android:id="@+id/imgBanner"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/home_image"
+            android:background="@drawable/home_image_paris"
             android:contentDescription="@string/app_name"/>
 
         <!-- 첫 번째 텍스트-->
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="교토"
+            android:text="파리"
             android:textColor="@android:color/white"
             style="@style/semibold18"
             android:layout_marginBottom="35dp"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="고요한 전통과 현대의 조화"
+            android:text="낭만과 예술의 교차점"
             android:textColor="@android:color/white"
             style="@style/medium14"
             android:layout_marginBottom="15dp"

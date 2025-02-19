@@ -128,6 +128,12 @@ class SignupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // 비밀번호 길이 체크
+            if (password.length < 6 || password.length > 10) {
+                Toast.makeText(this, "비밀번호는 6~10자리로 입력해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             // 비밀번호 일치 여부 체크
             if (password != confirmPassword) {
                 Toast.makeText(this, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
