@@ -89,6 +89,7 @@ data class RegionFilterResponse(
 )
 
 data class PostData(
+    val userTag: String,
     val threadId: Int?,
     val imageURL: String?,
     val postTitle: String?,

@@ -43,7 +43,7 @@ class CategoryPostFragment(private val category: String) : Fragment() {
 
     private fun loadCategoryPosts(category: String) {
         HomeRepository.regionFilterSearch(category, null, null) { response ->
-            if (response?.isSuccess == true && response.result.isNotEmpty()) {
+            if (response?.isSuccess == true ) {
 
                 response.result.forEach { post ->
                     Log.d("CategoryPostFragment", "Image URL: ${post.imageURL}")
@@ -62,9 +62,12 @@ class CategoryPostFragment(private val category: String) : Fragment() {
                         val selectedItem = filteredPosts[position]
                         val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
                             putExtra("image", selectedItem.imageURL)
-                            putExtra("id", selectedItem.threadId)
+                            putExtra("id", selectedItem.userTag)
                             putExtra("title", selectedItem.postTitle)
                             putExtra("threadId", selectedItem.threadId)
+
+                            Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.userTag}, Title: ${selectedItem.postTitle}, ThreadId: ${selectedItem.threadId}")
+
                         }
                         startActivity(intent)
                     }
