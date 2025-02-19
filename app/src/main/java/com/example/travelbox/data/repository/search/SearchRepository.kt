@@ -98,7 +98,7 @@ class SearchRepository {
                     response: Response<List<ThreadPost>>
                 ) {
                     if (response.isSuccessful) {
-                        callback(response.body())  // 바로 리스트 사용
+                        callback(response.body())
                     } else {
                         Log.e("SearchRepository", "getSearchPost 실패: ${response.code()}")
                         callback(null)
