@@ -111,16 +111,29 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+                <LinearLayout
+                    android:id="@+id/category_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf= "parent">
+
+
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp">
 
 
+
+
                     <TextView
                         android:id="@+id/tv_travel_record"
                         android:layout_width="150dp"
-                        android:layout_height="170dp"
+                        android:layout_height="180dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableBottom="@drawable/iv_travel_record"
                         android:drawablePadding="-10dp"
@@ -128,15 +141,15 @@
                         android:padding="10dp"
                         android:textColor="@color/black"
                         style="@style/medium12"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="30dp"
                         android:layout_marginTop="20dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
                     <TextView
                         android:id="@+id/tv_style"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_marginStart="20dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableTop="@drawable/iv_style"
@@ -152,8 +165,8 @@
 
                     <TextView
                         android:id="@+id/tv_place"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableTop="@drawable/iv_place"
                         android:drawablePadding="-10dp"
@@ -169,8 +182,8 @@
 
                     <TextView
                         android:id="@+id/tv_souvenir"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:background="@drawable/style_rounded_contents"
                         android:drawableTop="@drawable/iv_shopping"
                         android:drawablePadding="-10dp"
@@ -187,8 +200,8 @@
                     <TextView
                         android:id="@+id/tv_song"
                         style="@style/semibold12"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="20dp"
                         android:background="@drawable/style_rounded_contents"
@@ -201,7 +214,15 @@
                         app:layout_constraintStart_toEndOf="@id/tv_souvenir"
                         app:layout_constraintTop_toBottomOf="@id/tv_style" />
 
+
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                </LinearLayout>
+
+
 
 
 
@@ -220,7 +241,7 @@
                         android:textColor="@color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginStart="25dp"
+                        android:layout_marginStart="35dp"
                         android:layout_marginTop="16dp"/>
 
                     <ImageView
@@ -242,8 +263,8 @@
 
                     <ImageView
                         android:id="@+id/iv_post_one"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
                         android:scaleType="centerCrop"
                         app:layout_constraintStart_toStartOf="@id/tv_best_post"
                         app:layout_constraintTop_toBottomOf="@id/tv_best_post"
@@ -252,8 +273,8 @@
 
                     <ImageView
                         android:id="@+id/iv_post_two"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
                         android:scaleType="centerCrop"
                         android:layout_marginStart="15dp"
                         app:layout_constraintStart_toEndOf="@id/iv_post_one"
