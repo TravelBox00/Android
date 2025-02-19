@@ -232,13 +232,16 @@ class CalendarFragment : Fragment() {
     // 다이얼로그 파트
     private fun showScheduleBottomSheet(events: List<CalendarQueryEvent>) {
         if (events.isEmpty()) {
-            Log.w("CalendarFragment", "선택한 날짜에 해당하는 일정이 없습니다.")
+            Log.w("CalendarFragment", "🚨 선택한 날짜에 해당하는 일정이 없습니다.")
             return
         }
 
-        val formattedDate = "${events.first().travelStartDate.substring(5, 7)}.${events.first().travelStartDate.substring(8, 10)} ${getDayOfWeek(events.first().travelStartDate)}"
+        // ✅ 사용자가 선택한 날짜를 "MM.dd E" 형식으로 변환 (예: 03.01 금)
+        val selectedDateFormatted = formatSelectedDate(selectedDate)
 
         val scheduleItems = events.map { event ->
+            Log.d("CalendarFragment", "🚀 일정 추가: ${event.travelTitle}, ${event.travelStartDate} ~ ${event.travelEndDate}")
+
             ScheduleItem(
                 travelId = event.travelId,
                 title = event.travelTitle,
@@ -247,14 +250,23 @@ class CalendarFragment : Fragment() {
             )
         }
 
-        Log.d("CalendarFragment", "🚀 다이얼로그 생성 전!")
-
-        val dialog = ScheduleBottomSheetDialog(requireContext(), formattedDate, scheduleItems) { travelId ->
+        val dialog = ScheduleBottomSheetDialog(selectedDateFormatted, scheduleItems) { travelId ->
             deleteSchedule(travelId)
         }
 
-        Log.d("CalendarFragment", "🚀 다이얼로그 show() 호출!")
-        dialog.show()
+        dialog.show(parentFragmentManager, "ScheduleBottomSheetDialog")
+    }
+
+    /**
+     * ✅ 선택한 날짜를 "MM.dd E" 형식으로 변환하는 함수
+     * (예: 2025-03-01 → "03.01 금")
+     */
+    private fun formatSelectedDate(date: CalendarDay): String {
+        val calendar = Calendar.getInstance()
+        calendar.set(date.year, date.month - 1, date.day) // month는 0부터 시작하므로 -1 해줌
+
+        val sdf = SimpleDateFormat("MM.dd E", Locale.getDefault()) // "03.01 금" 형태
+        return sdf.format(calendar.time)
     }
 
 
