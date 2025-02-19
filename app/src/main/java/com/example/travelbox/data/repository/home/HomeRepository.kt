@@ -163,6 +163,43 @@ class HomeRepository {
             })
         }
 
+
+        // 댓글 수정
+        fun postCommentFix(commentFixRequest: CommentFixRequest, callback: (CommentFixResponse?) -> Unit) {
+
+            Log.d("댓글 삭제", "삭제할 댓글 ID3: ${commentFixRequest.commentId}")
+
+
+            val call = homeService.fixPostComment(commentFixRequest)
+
+            call.enqueue(object : Callback<CommentFixResponse> {
+                override fun onResponse(
+                    call: Call<CommentFixResponse>,
+                    response: Response<CommentFixResponse>
+                ) {
+                    if (response.isSuccessful) {
+
+                        // 통신 성공
+                        Log.d("댓글 수정", "통신 성공 ${response.code()} ")
+                        callback(response.body())
+
+                    } else {
+                        // 통신 실패
+                        val error = response.errorBody()?.string()
+                        Log.e("댓글 수정", "통신 실패 $error")
+                        callback(null)
+
+                    }
+                }
+
+                override fun onFailure(call: Call<CommentFixResponse>, t: Throwable) {
+                    // 통신 실패
+                    Log.w("댓글 수정", "통신 실패1: ${t.message}")
+                    callback(null)
+                }
+            })
+        }
+
         // 게시물 좋아요
         fun postAddIsLiked(threadId: Int, userTag: String, callback: (PostLikeResponse?) -> Unit) {
 

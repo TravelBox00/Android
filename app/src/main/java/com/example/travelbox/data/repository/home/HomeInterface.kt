@@ -6,6 +6,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface HomeInterface {
@@ -49,6 +50,13 @@ interface HomeInterface {
     )   : Call<CommentRemoveResponse>
 
 
+    // 댓글 수정
+    @PUT("/comment/fix")
+    fun fixPostComment(
+        @Body request : CommentFixRequest
+    ) : Call<CommentFixResponse>
+
+
     // 게시글 좋아요 상태
     @POST("/thread/like")
     fun postIsLiked(
@@ -72,7 +80,7 @@ interface HomeInterface {
     @GET("/search/filter")
     fun regionFilter(
         @Query("category") category : String,
-        @Query("region") region : String
+        @Query("region") region : String?
     ) : Call<RegionFilterResponse>
 
 
