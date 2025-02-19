@@ -12,7 +12,7 @@ import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.ItemGridPostBinding
 
 
-class PostFilterAdapter(private val itemList: List<PostData>) :
+class PostFilterAdapter(private var itemList: List<PostData>) :
     RecyclerView.Adapter<PostFilterAdapter.PostFilterViewHolder>() {
 
     interface onItemClickListener {
@@ -25,6 +25,11 @@ class PostFilterAdapter(private val itemList: List<PostData>) :
         this.itemClickListener = itemClickListener
     }
 
+    fun updateData(newList: List<PostData>) {
+        itemList = newList
+        notifyDataSetChanged()
+    }
+
 
 
 
@@ -32,6 +37,8 @@ class PostFilterAdapter(private val itemList: List<PostData>) :
 
 
         val binding: ItemGridPostBinding = ItemGridPostBinding.inflate(LayoutInflater.from(viewgroup.context), viewgroup, false)
+
+
 
 
 
@@ -55,6 +62,7 @@ class PostFilterAdapter(private val itemList: List<PostData>) :
         holder.bind(itemList[position])
     }
 
+   
 
     inner class PostFilterViewHolder(private val binding: ItemGridPostBinding)
         : RecyclerView.ViewHolder(binding.root) {
@@ -101,5 +109,6 @@ class PostFilterAdapter(private val itemList: List<PostData>) :
 
 
     }
+
 
 }

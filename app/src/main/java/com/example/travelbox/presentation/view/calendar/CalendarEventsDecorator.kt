@@ -1,5 +1,6 @@
 package com.example.travelbox.presentation.view.calendar
 
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
@@ -12,7 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * ✅ 캘린더에서 일정이 있는 날에 초록색 밑줄을 추가하는 데코레이터
+ * ✅ 일정이 있는 날짜에 초록색 밑줄을 추가하는 데코레이터
  */
 class CalendarEventsDecorator(events: List<CalendarQueryEvent>) : DayViewDecorator {
 
@@ -47,25 +48,30 @@ class CalendarEventsDecorator(events: List<CalendarQueryEvent>) : DayViewDecorat
     }
 
     override fun decorate(view: DayViewFacade?) {
-        view?.addSpan(ThickUnderlineSpan()) // ✅ 초록색 밑줄 추가
+        view?.addSpan(ThickUnderlineSpan()) // ✅ 일정이 있는 날짜에 초록색 밑줄 추가
     }
 
     /**
-     * ✅ 초록색 밑줄을 두껍게 그리는 커스텀 Span 클래스
+     * ✅ 밑줄을 두껍게 그리는 커스텀 Span
      */
     private class ThickUnderlineSpan : LineBackgroundSpan {
         override fun drawBackground(
-            c: android.graphics.Canvas, p: Paint,
+            c: Canvas, p: Paint,
             left: Int, right: Int, top: Int, baseline: Int, bottom: Int,
             text: CharSequence, start: Int, end: Int, lineNumber: Int
         ) {
             val paint = Paint()
-            paint.color = Color.parseColor("#00A879") // ✅ 초록색
-            paint.style = Paint.Style.FILL
-            paint.strokeWidth = 8f // ✅ 밑줄 두께 조정
+            paint.color = Color.parseColor("#00A879")
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = 6f // ✅ 좀 더 얇게 조정 (8f → 6f)
+            paint.isAntiAlias = true
 
-            val rect = RectF(left.toFloat(), bottom.toFloat() + 8f, right.toFloat(), bottom.toFloat() + 16f)
-            c.drawRect(rect, paint)
+            val padding = 6f  // ✅ 글자와 밑줄 사이 간격
+            val startX = left.toFloat() + 40f  // ✅ 좌측 여백 추가
+            val endX = right.toFloat() - 40f  // ✅ 우측 여백 추가
+            val y = bottom.toFloat() + padding
+
+            c.drawLine(startX, y, endX, y, paint)
         }
     }
 }

@@ -82,9 +82,11 @@ class CalendarRepository {
                 }
             })
         }
-        // ✅ 일정 조회 API 추가
+        // ✅ 일정 조회 API (Authorization 헤더 추가)
         fun getUserCalendarEvents(userTag: String, date: String, callback: (List<CalendarQueryEvent>?) -> Unit) {
-            service.getUserCalendarEvents(userTag, date).enqueue(object : Callback<CalendarQueryResponse> {
+            val accessToken = ApiNetwork.getAccessToken()  // ✅ 로그인한 사용자의 액세스 토큰 가져오기
+
+            service.getUserCalendarEvents("Bearer $accessToken", userTag, date).enqueue(object : Callback<CalendarQueryResponse> {
                 override fun onResponse(
                     call: Call<CalendarQueryResponse>,
                     response: Response<CalendarQueryResponse>

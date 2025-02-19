@@ -24,11 +24,25 @@ import java.util.logging.Handler
 class BottomCommentAdapter(private val itemList: MutableList<CommentRecyclerModel>) :
     RecyclerView.Adapter<BottomCommentAdapter.CommentViewHolder>() {
 
+
+
+
+
+    // 댓글 수정 이벤트 인터페이스
+//    interface OnCommentActionListener {
+//        fun onEditComment(commentId: Int, commentContent: String, commentVisible: String)
+//    }
+
     interface onItemClickListener {
         fun onItemClick(position: Int)
     }
 
     private lateinit var itemClickListener: onItemClickListener
+
+    //private var itemClickListener: onItemClickListener ?= null
+
+//    private var editingCommentId: Int? = null
+//    private var editingPosition: Int? = null
 
     fun setItemClickListener(itemClickListener: onItemClickListener) {
         this.itemClickListener = itemClickListener
@@ -88,15 +102,6 @@ class BottomCommentAdapter(private val itemList: MutableList<CommentRecyclerMode
 
 
 
-
-
-
-
-
-
-
-
-
         }
 
 
@@ -121,8 +126,14 @@ class BottomCommentAdapter(private val itemList: MutableList<CommentRecyclerMode
 
             // 수정하기 버튼
             popupView.findViewById<TextView>(R.id.tv_modify).setOnClickListener {
+                //Toast.makeText(anchorView.context,"수정", Toast.LENGTH_SHORT).show()
+
                 Toast.makeText(anchorView.context,"수정", Toast.LENGTH_SHORT).show()
                 popupWindow.dismiss()
+
+//                commentActionListener.onEditComment(data.commentId, data.commentContent!!, data.commentVisible)
+//                popupWindow.dismiss()
+
             }
 
 
@@ -227,6 +238,9 @@ class BottomCommentAdapter(private val itemList: MutableList<CommentRecyclerMode
 
 
     }
+
+    // 댓글 수정
+
 
 
 
