@@ -18,6 +18,7 @@ import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.data.repository.home.PostData
 import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.FragmentBestPostBinding
+import com.example.travelbox.presentation.view.post.AddPostFragment
 import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -67,6 +68,13 @@ class BestPostFragment : Fragment() {
         }
 
 
+        // 플로팅 버튼 클릭 시 AddPostFragment로 이동
+        binding.btnFloating.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, AddPostFragment())
+                .addToBackStack(null)
+                .commit()
+        }
 
 
         return binding.root
