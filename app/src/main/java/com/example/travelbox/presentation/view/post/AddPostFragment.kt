@@ -1,23 +1,27 @@
 package com.example.travelbox.presentation.view.post
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.activity.result.ActivityResultLauncher
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintSet
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.post.AddPostInterface
+import com.example.travelbox.data.repository.post.AddPostRepository
 import com.example.travelbox.databinding.FragmentAddPostBinding
+import com.example.travelbox.presentation.view.search.SearchPostFragment
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
+import java.io.File
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,15 +37,33 @@ class AddPostFragment : Fragment() {
 
     lateinit var binding: FragmentAddPostBinding
 
-    private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var addPostRepository: AddPostRepository
+    private lateinit var addPostInterface: AddPostInterface
 
     private lateinit var regionAdapter: ButtonAdapter
-    private lateinit var hashtagAdapter: ButtonAdapter
+    //private lateinit var hashtagAdapter: ButtonAdapter
 
     private val regionList = mutableListOf<String>()
-    private val hashtagList = mutableListOf<String>()
+    //private val hashtagList = mutableListOf<String>()
 
+    private var postRegionCode = ""
 
+    private var selectedCategory: String? = null
+
+    // 여러 개의 이미지 URI 저장
+    private val imageUris = mutableListOf<Uri>()
+
+    // 여러 개의 이미지 선택을 위한 Launcher
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        if (uris.isNotEmpty()) {
+            imageUris.clear()
+            imageUris.addAll(uris)
+            Log.d("AddPost", "선택된 이미지 개수: ${imageUris.size}")
+            binding.ivPhoto2.visibility = View.VISIBLE
+            binding.ivPhoto2.setImageURI(imageUris.first()) // 첫 번째 이미지만
+            adjustImageLayout()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,37 +76,10 @@ class AddPostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val imageUri: Uri? = result.data?.data
-                imageUri?.let {
-                    binding.ivPhoto2.setImageURI(it)
-                    binding.ivPhoto2.visibility = View.VISIBLE
+        addPostInterface = ApiNetwork.createService(AddPostInterface::class.java)
+        addPostRepository = AddPostRepository(addPostInterface)
 
-                    val constraintSet = ConstraintSet()
-                    constraintSet.clone(binding.photoContainer)
-
-                    constraintSet.clear(binding.ivPhoto1.id, ConstraintSet.END)
-                    constraintSet.clear(binding.ivPhoto1.id, ConstraintSet.START)
-                    constraintSet.clear(binding.ivPhoto2.id, ConstraintSet.END)
-                    constraintSet.clear(binding.ivPhoto2.id, ConstraintSet.START)
-
-                    constraintSet.connect(binding.ivPhoto1.id, ConstraintSet.END, binding.ivPhoto2.id, ConstraintSet.START, 4)
-                    constraintSet.connect(binding.ivPhoto2.id, ConstraintSet.START, binding.ivPhoto1.id, ConstraintSet.END, 4)
-
-                    constraintSet.connect(binding.ivPhoto1.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-                    constraintSet.connect(binding.ivPhoto2.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-
-                    constraintSet.applyTo(binding.photoContainer)
-                }
-            }
-        }
-
-        binding.ivPhoto1.setOnClickListener {
-            pickImageFromGallery()
-        }
-
-
+        // 카테고리 버튼 클릭 리스너
         val categoryButtons = listOf(
             binding.btnCategory1,
             binding.btnCategory2,
@@ -95,55 +90,24 @@ class AddPostFragment : Fragment() {
             button.setOnClickListener {
                 val clicked = updateButtonState(button, button.tag as? Boolean ?: false)
                 button.tag = clicked
+                selectedCategory = button.text.toString()
             }
         }
 
+        setupRegionButtons()
 
-        val regionLayoutManager = FlexboxLayoutManager(requireContext()).apply {
-            flexWrap = FlexWrap.WRAP
-            flexDirection = FlexDirection.ROW
-        }
-        binding.recyclerViewRegions.layoutManager = regionLayoutManager
-
-        val hashtagLayoutManager = FlexboxLayoutManager(requireContext()).apply {
-            flexWrap = FlexWrap.WRAP
-            flexDirection = FlexDirection.ROW
-        }
-        binding.recyclerViewHashtags.layoutManager = hashtagLayoutManager
-
-
-        regionAdapter = ButtonAdapter(regionList)
-        binding.recyclerViewRegions.adapter = regionAdapter
-
-        hashtagAdapter = ButtonAdapter(hashtagList)
-        binding.recyclerViewHashtags.adapter = hashtagAdapter
-
-
-        binding.btnAddRegion.setOnClickListener {
-            val regionText = binding.etRegion.text.toString().trim()
-            if (regionText.isNotEmpty() && !regionList.contains(regionText)) {
-                regionList.add(regionText)
-                regionAdapter.notifyItemInserted(regionList.size - 1)
-                binding.etRegion.text.clear()
-            }
+        // 이미지 선택 버튼 클릭 리스너
+        binding.ivPhoto1.setOnClickListener {
+            pickImageFromGallery()
         }
 
-        binding.btnAddHashtag.setOnClickListener {
-            val hashtagText = binding.etHashtag.text.toString().trim()
-            if (hashtagText.isNotEmpty() && !hashtagList.contains(hashtagText)) {
-                hashtagList.add("#$hashtagText")
-                hashtagAdapter.notifyItemInserted(hashtagList.size - 1)
-                binding.etHashtag.text.clear()
-            }
+        // 업로드 버튼 클릭 리스너
+        binding.btnUpload.setOnClickListener {
+            onAddPostClick()
         }
     }
 
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        imagePickerLauncher.launch(intent)
-    }
-
+    // 카테고리 버튼 클릭 상태 변경
     private fun updateButtonState(button: Button, clicked: Boolean): Boolean {
         if (clicked) {
             button.setTextColor(Color.parseColor("#ACACAC"))
@@ -155,4 +119,122 @@ class AddPostFragment : Fragment() {
         return !clicked
     }
 
+    // 이미지 간 레이아웃 조정
+    private fun adjustImageLayout() {
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(binding.photoContainer)
+
+        constraintSet.clear(binding.ivPhoto1.id, ConstraintSet.END)
+        constraintSet.clear(binding.ivPhoto1.id, ConstraintSet.START)
+        constraintSet.clear(binding.ivPhoto2.id, ConstraintSet.END)
+        constraintSet.clear(binding.ivPhoto2.id, ConstraintSet.START)
+
+        constraintSet.connect(binding.ivPhoto1.id, ConstraintSet.END, binding.ivPhoto2.id, ConstraintSet.START, 4)
+        constraintSet.connect(binding.ivPhoto2.id, ConstraintSet.START, binding.ivPhoto1.id, ConstraintSet.END, 4)
+
+        constraintSet.connect(binding.ivPhoto1.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+        constraintSet.connect(binding.ivPhoto2.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+
+        constraintSet.applyTo(binding.photoContainer)
+    }
+
+    // Region 버튼 설정
+    private fun setupRegionButtons() {
+        val regionLayoutManager = FlexboxLayoutManager(requireContext()).apply {
+            flexWrap = FlexWrap.WRAP
+            flexDirection = FlexDirection.ROW
+        }
+        binding.recyclerViewRegions.layoutManager = regionLayoutManager
+
+//        val hashtagLayoutManager = FlexboxLayoutManager(requireContext()).apply {
+//            flexWrap = FlexWrap.WRAP
+//            flexDirection = FlexDirection.ROW
+//        }
+//        binding.recyclerViewHashtags.layoutManager = hashtagLayoutManager
+
+        regionAdapter = ButtonAdapter(regionList)
+        binding.recyclerViewRegions.adapter = regionAdapter
+
+        //hashtagAdapter = ButtonAdapter(hashtagList)
+        //binding.recyclerViewHashtags.adapter = hashtagAdapter
+
+        // 지역 추가 기능
+        binding.btnAddRegion.setOnClickListener {
+            val regionText = binding.etRegion.text.toString().trim()
+            if (regionText.isNotEmpty() && !regionList.contains(regionText)) {
+                regionList.add(regionText)
+                regionAdapter.notifyItemInserted(regionList.size - 1)
+                postRegionCode = regionList.joinToString(" ")
+                binding.etRegion.text.clear()
+            }
+        }
+
+//        binding.btnAddHashtag.setOnClickListener {
+//            val hashtagText = binding.etHashtag.text.toString().trim()
+//            if (hashtagText.isNotEmpty() && !hashtagList.contains(hashtagText)) {
+//                hashtagList.add("#$hashtagText")
+//                hashtagAdapter.notifyItemInserted(hashtagList.size - 1)
+//                binding.etHashtag.text.clear()
+//            }
+//        }
+    }
+
+    // 갤러리에서 이미지 선택
+    private fun pickImageFromGallery() {
+        imagePickerLauncher.launch("image/*")
+    }
+
+    // URI에서 파일로 변환
+    private fun getSelectedFiles(): List<File> {
+        return imageUris.mapNotNull { uri ->
+            getFileFromUri(uri)
+        }
+    }
+
+    private fun getFileFromUri(uri: Uri): File? {
+        val context = requireContext()
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+        return tempFile
+    }
+
+    // 게시글 업로드 버튼 클릭 시 호출
+    private fun onAddPostClick() {
+        val userTag = "testuser1234"
+        val postCategory = selectedCategory ?: return
+        postRegionCode = regionList.joinToString(" ")
+        val songName = binding.etSong.text.toString().trim()
+        val postContent = binding.etInfo.text.toString().trim()
+        val clothId = binding.etUri.text.toString().trim().toIntOrNull() ?: return
+
+        val files = getSelectedFiles()
+
+        Log.d("AddPost", "userTag: $userTag")
+        Log.d("AddPost", "postCategory: $postCategory")
+        Log.d("AddPost", "postRegionCode: $postRegionCode")
+        Log.d("AddPost", "songName: $songName")
+        Log.d("AddPost", "postContent: $postContent")
+        Log.d("AddPost", "clothId: $clothId")
+        Log.d("AddPost", "파일 개수: ${files.size}")
+
+        addPostRepository.addPost(
+            userTag, postCategory, postRegionCode, songName, postContent, clothId, files
+        ) { response ->
+            if (response?.success == true) {
+                Log.d("AddPost", "게시글 업로드 성공: ${response.message}")
+                Toast.makeText(requireContext(), "게시글 업로드 성공", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.e("AddPost", "게시글 업로드 실패: ${response?.message}")
+                Toast.makeText(requireContext(), "게시글 업로드 실패", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // 이전 화면으로 돌아가기
+        val transaction = parentFragmentManager.beginTransaction()
+        transaction.replace(R.id.main_frm, SearchPostFragment())
+        transaction.commit()
+    }
 }

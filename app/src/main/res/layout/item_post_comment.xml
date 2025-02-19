@@ -32,9 +32,9 @@
 
         <ImageView
             android:id="@+id/iv_comment_lock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/iv_lock"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/iv_unlock"
             android:layout_marginStart="4dp"
             android:layout_marginTop="1dp"
             app:layout_constraintTop_toTopOf="parent"

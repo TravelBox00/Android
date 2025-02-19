@@ -8,11 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.travelbox.R
+import com.example.travelbox.data.repository.search.SearchRepository
 import com.example.travelbox.databinding.FragmentSearchBinding
-import com.example.travelbox.presentation.view.home.BestPostFragment
-import com.example.travelbox.presentation.view.search.SearchPostFragment
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,12 +28,9 @@ private const val ARG_PARAM2 = "param2"
 class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
-
-    // 추천 검색어 샘플 데이터
-    private val searchSuggestions = listOf(
-        "오사카 전체", "오사카 맛집", "오사카 근교", "오사카 도톤보리",
-        "오사카 스시", "오사카 교토 차이", "오사카 유니버설", "오사카 하루카스", "오사카성"
-    )
+    private val searchRepository = SearchRepository()
+    private lateinit var suggestionsAdapter: SuggestionsAdapter
+    private lateinit var searchPostViewModel: SearchPostViewModel
 
     // 인기 검색어 샘플 데이터
     private val popularSearches = listOf(
@@ -51,35 +48,10 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 추천 검색어 어댑터 설정
-        val suggestionsAdapter = SuggestionsAdapter(emptyList()) { selectedSuggestion ->
-            binding.etSearch.setText(selectedSuggestion)
-        }
+        searchPostViewModel = ViewModelProvider(requireActivity())[SearchPostViewModel::class.java]
 
-        binding.suggestionsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = suggestionsAdapter
-            visibility = View.GONE
-        }
-
-        // 검색어 입력 시 추천 검색어 필터링
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
-                if (query.isNotEmpty()) {
-                    val filteredSuggestions =
-                        searchSuggestions.filter { it.contains(query, ignoreCase = true) }
-                    suggestionsAdapter.updateSuggestions(filteredSuggestions)
-                    binding.suggestionsRecyclerView.visibility = View.VISIBLE
-                } else {
-                    binding.suggestionsRecyclerView.visibility = View.GONE
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        setupSearchSuggestions() // 자동완성
+        setupSearchButton() // 검색
 
         // 인기 검색어 어댑터 설정
         val popularAdapter = SuggestionsAdapter(popularSearches) { selectedSuggestion ->
@@ -91,17 +63,83 @@ class SearchFragment : Fragment() {
             adapter = popularAdapter
         }
 
-        // 검색 버튼 클릭 시
         binding.ivSearch.setOnClickListener {
-            //val searchText = binding.etSearch.text.toString()
-            //if (searchText.isNotEmpty()) {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, SearchPostFragment())
-                    .addToBackStack(null)
-                    .commit()
-            //}
+            val keyword = binding.etSearch.text.toString()
+            if (keyword.isNotEmpty()) {
+                searchForPosts(keyword)
+            } else {
+                Toast.makeText(requireContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
         }
 
+    }
+
+
+    // 검색어 자동 완성
+    private fun setupSearchSuggestions() {
+        suggestionsAdapter = SuggestionsAdapter(emptyList()) { selectedSuggestion ->
+            binding.etSearch.setText(selectedSuggestion)
+        }
+
+        binding.suggestionsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = suggestionsAdapter
+            visibility = View.GONE
+        }
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString()
+                if (query.isNotEmpty()) {
+                    AutoCompleteSuggestions(query) // 자동완성 API 호출
+                } else {
+                    binding.suggestionsRecyclerView.visibility = View.GONE
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun AutoCompleteSuggestions(query: String) {
+        searchRepository.getSearchWord(query) { response ->
+            if (response != null && response.result.isNotEmpty()) {
+                suggestionsAdapter.updateSuggestions(response.result)
+                binding.suggestionsRecyclerView.visibility = View.VISIBLE
+            } else {
+                binding.suggestionsRecyclerView.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setupSearchButton() {
+        binding.ivSearch.setOnClickListener {
+            val searchText = binding.etSearch.text.toString().trim()
+            if (searchText.isNotEmpty()) {
+                searchForPosts(searchText)
+            } else {
+                Toast.makeText(requireContext(), "검색어를 입력하세요", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun searchForPosts(searchKeyword: String) {
+        searchRepository.getSearchPost(searchKeyword, 0) { threadPosts ->
+            val posts = threadPosts ?: emptyList()
+            searchPostViewModel.setPosts(posts)
+
+            val searchPostFragment = SearchPostFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, searchPostFragment)
+                .addToBackStack(null)
+                .commit()
+
+            if (posts.isEmpty()) {
+                Toast.makeText(requireContext(), "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 }
