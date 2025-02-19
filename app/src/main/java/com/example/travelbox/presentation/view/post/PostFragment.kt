@@ -65,6 +65,16 @@ class PostFragment : Fragment() {
 
 
 
+        // 플로팅 버튼 클릭 시 AddPostFragment로 이동
+        binding.btnFloating.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, AddPostFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+
+
         return binding.root
     }
 
