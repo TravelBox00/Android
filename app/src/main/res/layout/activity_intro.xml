@@ -21,7 +21,7 @@
 
     <Button
         android:id="@+id/login_btn"
-        android:layout_width="352dp"
+        android:layout_width="330dp"
         android:layout_height="68dp"
         android:background="@drawable/btn_radius_4"
         android:text="로그인"

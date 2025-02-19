@@ -83,28 +83,28 @@
         app:layout_constraintEnd_toEndOf="@+id/pwd_ET"
         app:layout_constraintTop_toTopOf="@+id/pwd_ET" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="아이디 · 비밀번호 찾기"
-        android:textColor="@color/gray3"
-        style="@style/regular14"
-        app:layout_constraintEnd_toEndOf="@+id/pwd_ET"
-        app:layout_constraintTop_toBottomOf="@+id/pwd_ET" />
+<!--    <TextView-->
+<!--        android:id="@+id/textView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:text="아이디 · 비밀번호 찾기"-->
+<!--        android:textColor="@color/gray3"-->
+<!--        style="@style/regular14"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/pwd_ET"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/pwd_ET" />-->
 
     <Button
         android:id="@+id/login_btn"
-        android:layout_width="352dp"
+        android:layout_width="330dp"
         android:layout_height="68dp"
         android:layout_marginBottom="67dp"
         android:background="@drawable/btn_radius_4"
         android:text="로그인"
         android:textColor="@color/white"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="70dp"
         style="@style/semibold20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/show_pwd_IV" />
 </androidx.constraintlayout.widget.ConstraintLayout>
