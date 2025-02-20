@@ -1,4 +1,5 @@
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -13,6 +14,9 @@ class TempoAdapter(private val imageList: List<String>) : RecyclerView.Adapter<T
             Glide.with(binding.storyImage.context)
                 .load(imageUrl)
                 .into(binding.storyImage)
+
+            // 텍스트 숨기기
+            binding.textViewPostContent.visibility = View.GONE
 
         }
     }
