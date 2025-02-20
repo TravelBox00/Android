@@ -80,7 +80,10 @@ class AddPostFragment : Fragment() {
 
         addPostInterface = ApiNetwork.createService(AddPostInterface::class.java)
         addPostRepository = AddPostRepository(addPostInterface)
-
+        // 뒤로가기 버튼 클릭 이벤트 추가
+        binding.btnBack.setOnClickListener {
+            parentFragmentManager.popBackStack()  // 이전 Fragment로 이동
+        }
         // 카테고리 버튼 클릭 리스너
         val categoryButtons = listOf(
             binding.btnCategory1,
