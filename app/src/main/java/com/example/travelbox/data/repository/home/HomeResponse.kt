@@ -13,7 +13,8 @@ data class PostItem(
     val postDate: String?,
     val imageURL: String,
     val userTag : String,
-    val totalEngagement: Int?
+    val totalEngagement: Int?,
+    val singInfo: String?
 )
 
 // 댓글 작성

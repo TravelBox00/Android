@@ -23,6 +23,8 @@ data class ThreadPost(
     val postContent: String,
     val postDate: String,
     val imageURL: String,
+    val clothInfo: String,
+    val singInfo: String
 )
 
 data class ThreadSearchResponse(
