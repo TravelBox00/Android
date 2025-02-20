@@ -19,6 +19,7 @@ interface MyInterface {
         @Path("userTag") userTag: String)
     : Call<FollowingResponse>
 
+
     //게시글
     @GET("/thread/specific")
     suspend fun getPosts()
@@ -35,4 +36,9 @@ interface MyInterface {
     fun modifyUser(@Body userInfo: Map<String, String>)
     : Call<UserResponse>
      */
+
+    //여행기록
+    @GET("/thread/my")
+    suspend fun getMyThreads(): Response<StoryResponse>
+
 }

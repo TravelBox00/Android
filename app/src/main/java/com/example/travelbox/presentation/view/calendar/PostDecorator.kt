@@ -12,7 +12,7 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade
 
 class PostDecorator(
     private val context: Context,
-    private val postDates: List<CalendarDay>  // ✅ 게시물이 있는 날짜 리스트
+    private val postDates: List<CalendarDay>
 ) : DayViewDecorator {
 
     private val drawable: Drawable? = ContextCompat.getDrawable(context, R.drawable.post_circle) // ✅ 파란색 테두리 원
@@ -23,8 +23,7 @@ class PostDecorator(
 
     override fun decorate(view: DayViewFacade) {
         drawable ?: return
-        view.setBackgroundDrawable(drawable) // ✅ 파란색 테두리 원 적용
+        view.setBackgroundDrawable(drawable)
         view.addSpan(android.text.style.StyleSpan(Typeface.BOLD)) // ✅ 볼드 텍스트
-        view.addSpan(android.text.style.ForegroundColorSpan(Color.BLUE)) // ✅ 글자색 파란색으로 설정
     }
 }
