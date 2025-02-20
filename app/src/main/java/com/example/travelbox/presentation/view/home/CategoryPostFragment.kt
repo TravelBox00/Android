@@ -1,6 +1,7 @@
 package com.example.travelbox.presentation.view.home
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -77,6 +78,13 @@ class CategoryPostFragment(private val category: String) : Fragment() {
                 binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 2)
 
 
+
+                binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
+                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                        outRect.bottom = 50 // 아이템 간의 간격
+                        outRect.right= 20
+                    }
+                })
 
 
 
