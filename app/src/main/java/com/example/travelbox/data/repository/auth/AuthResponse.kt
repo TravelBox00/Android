@@ -26,12 +26,7 @@ data class LogoutResponse(
 )
 
 data class SignUpResponse(
-    val result: SignUpResult?,
     val isSuccess: Boolean
-)
-
-data class SignUpResult(
-    val userTag: String
 )
 
 data class DuplicateResponse(
