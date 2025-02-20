@@ -277,7 +277,10 @@ class AddPostFragment : Fragment() {
 
     // 게시글 업로드 버튼 클릭 시 호출
     private fun onAddPostClick() {
-        val userTag = "testuser1234"
+        val userTag = ApiNetwork.getUserTag() ?: run {
+            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
         val postCategory = selectedCategory ?: return
         postRegionCode = regionList.joinToString(" ")
         val songName = binding.etSong.text.toString().trim()
@@ -297,12 +300,13 @@ class AddPostFragment : Fragment() {
         addPostRepository.addPost(
             userTag, postCategory, postRegionCode, songName, postContent, clothInfo, files
         ) { response ->
-            if (response?.success == true) {
-                Log.d("AddPost", "게시글 업로드 성공: ${response.message}")
-                Toast.makeText(requireContext(), "게시글 업로드 성공", Toast.LENGTH_SHORT).show()
-            } else {
-                Log.e("AddPost", "게시글 업로드 실패: ${response?.message}")
-                Toast.makeText(requireContext(), "게시글 업로드 실패", Toast.LENGTH_SHORT).show()
+            requireActivity().runOnUiThread {
+                if (response?.success == true) {
+                    Toast.makeText(requireContext(), "게시글 업로드 성공", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.popBackStack()  // ✅ 이전 화면으로 돌아가기
+                } else {
+                    Toast.makeText(requireContext(), "게시글 업로드 실패", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

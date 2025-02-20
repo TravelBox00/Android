@@ -234,8 +234,14 @@ class CalendarFragment : Fragment() {
             val formattedDate = sdf.format(calendar.time)
 
             CalendarRepository.getUserCalendarEvents(userTag!!, formattedDate) { events ->
+                // ✅ Fragment가 `detach`된 상태면 실행하지 않음
+                if (!isAdded || context == null) {
+                    Log.e("CalendarFragment", "🚨 Fragment가 제거됨. UI 업데이트 중단")
+                    return@getUserCalendarEvents
+                }
+
                 if (events != null) {
-                    allEvents.addAll(events) // ✅ HashSet이므로 중복 일정 자동 제거
+                    allEvents.addAll(events)
                     Log.d("CalendarFragment", "✅ ${formattedDate} 일정 조회 성공! 개수: ${events.size}")
                 } else {
                     Log.e("CalendarFragment", "❌ ${formattedDate} 일정 조회 실패")
@@ -243,17 +249,20 @@ class CalendarFragment : Fragment() {
 
                 completedRequests++
                 if (completedRequests == maxDays) {
-                    // 모든 날짜 조회 완료 후 UI 갱신
-                    lastFetchedEvents = allEvents.toList() // ✅ Set을 List로 변환하여 UI에 반영
-                    binding.calendarView.removeDecorators()
-                    binding.calendarView.addDecorator(TodayDecorator(requireContext()))
-                    binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents))
-                    binding.calendarView.invalidateDecorators()
-                    Log.d("CalendarFragment", "✅ 모든 일정 조회 완료. UI 반영 완료")
+                    requireActivity().runOnUiThread {
+                        if (!isAdded || context == null) return@runOnUiThread // ✅ 다시 한 번 체크
+                        lastFetchedEvents = allEvents.toList()
+                        binding.calendarView.removeDecorators()
+                        binding.calendarView.addDecorator(TodayDecorator(requireContext()))
+                        binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents))
+                        binding.calendarView.invalidateDecorators()
+                        Log.d("CalendarFragment", "✅ 모든 일정 조회 완료. UI 반영 완료")
+                    }
                 }
             }
         }
     }
+
 
 
 
@@ -342,9 +351,15 @@ class CalendarFragment : Fragment() {
         super.onResume()
         Log.d("CalendarFragment", "🔄 onResume() 호출됨 → 일정 자동 갱신 실행")
 
+        if (!isAdded || context == null) {
+            Log.e("CalendarFragment", "🚨 Fragment가 attach되지 않음. 일정 조회 중단")
+            return
+        }
+
         if (userTag != null) {
             fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
         }
+
         setFragmentResultListener("calendar_update") { _, _ ->
             Log.d("CalendarFragment", "🔄 일정이 삭제됨 → 일정 다시 조회")
             if (userTag != null) {
@@ -352,5 +367,6 @@ class CalendarFragment : Fragment() {
             }
         }
     }
+
 
 }
