@@ -149,7 +149,7 @@ class CalendarFragment : Fragment() {
 
             val selectedDateStr = "%04d-%02d-%02d".format(date.year, date.month, date.day)
 
-            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
             val eventsForDate = lastFetchedEvents.filter { event ->
                 val startDate = event.travelStartDate.substring(0, 10) // "YYYY-MM-DD"
                 val endDate = event.travelEndDate.substring(0, 10) // "YYYY-MM-DD"
@@ -272,8 +272,15 @@ class CalendarFragment : Fragment() {
                             }
                         }) // ✅ PostDecorator 다시 추가
 
+                        // ✅ 데코레이터 즉시 반영
                         binding.calendarView.invalidateDecorators()
                         Log.d("CalendarFragment", "✅ 모든 일정 조회 완료. UI 반영 완료")
+
+                        // ✅ 혹시라도 바로 반영되지 않을 경우 500ms 후 다시 UI 반영
+                        binding.calendarView.postDelayed({
+                            Log.d("CalendarFragment", "🔄 일정 추가 후 500ms 후 다시 UI 반영")
+                            binding.calendarView.invalidateDecorators()
+                        }, 500)
                     }
                 }
             }
@@ -341,10 +348,10 @@ class CalendarFragment : Fragment() {
     private fun deleteSchedule(travelId: Int) {
         CalendarRepository.deleteCalendarEvent(travelId) { success, message ->
             if (success) {
-                Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
                 fetchUserCalendarEvents(selectedDate.year, selectedDate.month) // ✅ 일정 다시 불러오기
             } else {
-                Toast.makeText(requireContext(), "삭제 실패: $message", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "삭제 실패: $message", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -361,20 +368,28 @@ class CalendarFragment : Fragment() {
             fetchUserPosts() // ✅ 게시글 조회 추가
         }
 
-        // ✅ 다른 Fragment에서 "calendar_update" 신호를 보내면 일정 자동 갱신
+        // ✅ "calendar_update" 신호를 감지하면 일정 자동 갱신
         setFragmentResultListener("calendar_update") { _, _ ->
             Log.d("CalendarFragment", "🔄 새로운 일정이 추가됨! 일정 다시 조회")
+
             if (userTag != null) {
                 fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
-                fetchUserPosts() // ✅ 게시글도 다시 불러옴
+
+                // ✅ 캘린더 데코레이터 즉시 반영 (UI 스레드에서 실행)
+                requireActivity().runOnUiThread {
+                    binding.calendarView.invalidateDecorators()
+                }
+
+                // ✅ 혹시라도 바로 반영되지 않을 경우 일정 시간 후 다시 반영
+                binding.calendarView.postDelayed({
+                    Log.d("CalendarFragment", "🔄 일정 추가 후 500ms 후 다시 UI 반영")
+                    binding.calendarView.invalidateDecorators()
+                }, 500)
             }
         }
     }
 
     override fun onResume() {
-        super.onResume()
-        Log.d("CalendarFragment", "🔄 onResume() 호출됨 → 일정 자동 갱신 실행")
-
         super.onResume()
         Log.d("CalendarFragment", "🔄 onResume() 호출됨 → 일정 & 게시글 자동 갱신 실행")
 
@@ -386,6 +401,12 @@ class CalendarFragment : Fragment() {
         if (userTag != null) {
             fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month) // 일정 조회
             fetchUserPosts() // ✅ 게시글도 다시 불러옴
+
+            // ✅ 500ms 후 다시 UI 업데이트 (혹시라도 반영되지 않을 경우)
+            binding.calendarView.postDelayed({
+                Log.d("CalendarFragment", "🔄 onResume() 후 500ms 뒤 캘린더 UI 반영")
+                binding.calendarView.invalidateDecorators()
+            }, 500)
         }
 
         setFragmentResultListener("calendar_update") { _, _ ->
