@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.databinding.ItemScheduleBinding
 
 class ScheduleAdapter(
-    private val schedules: List<ScheduleItem>,
-    private val onDeleteClick: (Int) -> Unit
+    private val schedules: MutableList<ScheduleItem>, // ✅ 리스트를 MutableList로 변경하여 삭제 가능
+    private val onDeleteClick: (Int) -> Unit // ✅ 삭제 이벤트 콜백 추가
 ) : RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
 
     inner class ScheduleViewHolder(private val binding: ItemScheduleBinding) :
@@ -22,7 +22,8 @@ class ScheduleAdapter(
             Log.d("ScheduleAdapter", "🎯 바인딩: ${schedule.title}, ${schedule.period}, ${schedule.content}")
 
             binding.itemScheduleDelete.setOnClickListener {
-                onDeleteClick(schedule.travelId)
+                Log.d("ScheduleAdapter", "🗑️ 삭제 버튼 클릭됨: ${schedule.travelId}")
+                onDeleteClick(schedule.travelId) // ✅ 삭제 이벤트 실행
             }
         }
     }
