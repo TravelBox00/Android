@@ -20,6 +20,7 @@ import com.example.travelbox.R
 import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.calendar.CalendarQueryEvent
 import com.example.travelbox.data.repository.calendar.CalendarRepository
+import com.example.travelbox.data.repository.calendar.PostRepository
 import com.example.travelbox.databinding.FragmentCalendarBinding
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
@@ -38,6 +39,7 @@ class CalendarFragment : Fragment() {
     private var userTag: String? = null // ✅ 로그인한 유저의 userTag
     private var lastFetchedEvents: List<CalendarQueryEvent> = emptyList()
     private var selectedMonth: Int = CalendarDay.today().month - 1 // ✅ 현재 월 (0-based index)
+    private var lastFetchedPosts: List<PostItem> = emptyList() // ✅ 게시물 데이터를 저장할 리스트
 
     private val months = listOf(
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -128,34 +130,39 @@ class CalendarFragment : Fragment() {
         binding.calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
             selectedDate = date  // ✅ 선택한 날짜 저장
 
-            // ✅ 기존 데코레이터를 유지하면서 선택한 날짜 표시
+            // ✅ 기존 데코레이터를 삭제하고 다시 추가 (PostDecorator 유지)
             binding.calendarView.removeDecorators()
             binding.calendarView.addDecorator(TodayDecorator(requireContext())) // 오늘 날짜 유지
             binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents)) // 일정 밑줄 유지
             binding.calendarView.addDecorator(SelectedDateDecorator(requireContext(), selectedDate)) // 선택한 날짜 적용
+            binding.calendarView.addDecorator(PostDecorator(requireContext(), lastFetchedPosts.mapNotNull { post ->
+                val parts = post.postDate.split("-")
+                if (parts.size == 3) {
+                    CalendarDay.from(parts[0].toInt(), parts[1].toInt(), parts[2].toInt())
+                } else {
+                    null  // ✅ 날짜 형식이 잘못된 경우 제외
+                }
+            })) // ✅ PostDecorator 다시 추가
 
             // ✅ 즉시 반영
             binding.calendarView.invalidateDecorators()
 
-            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
-            // ✅ 해당 날짜의 일정 필터링
-            // ✅ 날짜를 YYYY-MM-DD 형식으로 변환
             val selectedDateStr = "%04d-%02d-%02d".format(date.year, date.month, date.day)
 
-            // ✅ travelStartDate, travelEndDate도 동일한 형식으로 변환하여 비교
+//            Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
             val eventsForDate = lastFetchedEvents.filter { event ->
                 val startDate = event.travelStartDate.substring(0, 10) // "YYYY-MM-DD"
                 val endDate = event.travelEndDate.substring(0, 10) // "YYYY-MM-DD"
                 startDate <= selectedDateStr && endDate >= selectedDateStr
             }
 
-            if (eventsForDate.isNotEmpty()) {
-                showScheduleBottomSheet(eventsForDate) // ✅ 변경된 다이얼로그 호출
-            } else {
-                Log.d("CalendarFragment", "🚨 선택한 날짜에 해당하는 일정이 없음")
-            }
+            // ✅ 선택한 날짜의 게시글 필터링
+            val postsForDate = lastFetchedPosts.filter { it.postDate == selectedDateStr }
 
-            binding.calendarView.invalidateDecorators()
+            // ✅ 일정 또는 게시글이 있으면 다이얼로그 띄우기
+            if (eventsForDate.isNotEmpty() || postsForDate.isNotEmpty()) {
+                showScheduleBottomSheet(eventsForDate, postsForDate)
+            }
         })
     }
     /**
@@ -234,7 +241,6 @@ class CalendarFragment : Fragment() {
             val formattedDate = sdf.format(calendar.time)
 
             CalendarRepository.getUserCalendarEvents(userTag!!, formattedDate) { events ->
-                // ✅ Fragment가 `detach`된 상태면 실행하지 않음
                 if (!isAdded || context == null) {
                     Log.e("CalendarFragment", "🚨 Fragment가 제거됨. UI 업데이트 중단")
                     return@getUserCalendarEvents
@@ -250,13 +256,31 @@ class CalendarFragment : Fragment() {
                 completedRequests++
                 if (completedRequests == maxDays) {
                     requireActivity().runOnUiThread {
-                        if (!isAdded || context == null) return@runOnUiThread // ✅ 다시 한 번 체크
+                        if (!isAdded || context == null) return@runOnUiThread
                         lastFetchedEvents = allEvents.toList()
+
+                        // ✅ 기존 데코레이터 제거 후 다시 추가
                         binding.calendarView.removeDecorators()
                         binding.calendarView.addDecorator(TodayDecorator(requireContext()))
                         binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents))
+                        applyPostDecorator(lastFetchedPosts.mapNotNull { post ->
+                            val parts = post.postDate.split("-")
+                            if (parts.size == 3) {
+                                CalendarDay.from(parts[0].toInt(), parts[1].toInt(), parts[2].toInt())
+                            } else {
+                                null
+                            }
+                        }) // ✅ PostDecorator 다시 추가
+
+                        // ✅ 데코레이터 즉시 반영
                         binding.calendarView.invalidateDecorators()
                         Log.d("CalendarFragment", "✅ 모든 일정 조회 완료. UI 반영 완료")
+
+                        // ✅ 혹시라도 바로 반영되지 않을 경우 500ms 후 다시 UI 반영
+                        binding.calendarView.postDelayed({
+                            Log.d("CalendarFragment", "🔄 일정 추가 후 500ms 후 다시 UI 반영")
+                            binding.calendarView.invalidateDecorators()
+                        }, 500)
                     }
                 }
             }
@@ -266,16 +290,11 @@ class CalendarFragment : Fragment() {
 
 
 
-    // 다이얼로그 파트
-    private fun showScheduleBottomSheet(events: List<CalendarQueryEvent>) {
-        if (events.isEmpty()) {
-            Log.w("CalendarFragment", "🚨 선택한 날짜에 해당하는 일정이 없습니다.")
-            return
-        }
 
-        // ✅ 사용자가 선택한 날짜를 "MM.dd E" 형식으로 변환 (예: 03.01 금)
+    private fun showScheduleBottomSheet(events: List<CalendarQueryEvent>, posts: List<PostItem>) {
         val selectedDateFormatted = formatSelectedDate(selectedDate)
 
+        // ✅ 일정 데이터 변환
         val scheduleItems = events.map { event ->
             ScheduleItem(
                 travelId = event.travelId,
@@ -283,14 +302,24 @@ class CalendarFragment : Fragment() {
                 period = "${event.travelStartDate.substring(5, 7)}.${event.travelStartDate.substring(8, 10)} ~ ${event.travelEndDate.substring(5, 7)}.${event.travelEndDate.substring(8, 10)}",
                 content = event.travelContent
             )
-        }.toMutableList() // ✅ List → MutableList 변환
+        }.toMutableList()
 
-        val dialog = ScheduleBottomSheetDialog(selectedDateFormatted, scheduleItems) { travelId ->
+        // ✅ 일정과 게시글이 모두 없으면 다이얼로그 띄우지 않음
+        if (scheduleItems.isEmpty() && posts.isEmpty()) {
+            Log.w("CalendarFragment", "🚨 선택한 날짜에 일정과 게시글이 없음. 다이얼로그 열지 않음.")
+            return
+        }
+
+        // ✅ 다이얼로그 생성 및 띄우기
+        val dialog = ScheduleBottomSheetDialog(selectedDateFormatted, scheduleItems, posts) { travelId ->
             deleteSchedule(travelId)
         }
 
         dialog.show(parentFragmentManager, "ScheduleBottomSheetDialog")
     }
+
+
+
 
     /**
      * ✅ 선택한 날짜를 "MM.dd E" 형식으로 변환하는 함수
@@ -319,10 +348,10 @@ class CalendarFragment : Fragment() {
     private fun deleteSchedule(travelId: Int) {
         CalendarRepository.deleteCalendarEvent(travelId) { success, message ->
             if (success) {
-                Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
                 fetchUserCalendarEvents(selectedDate.year, selectedDate.month) // ✅ 일정 다시 불러오기
             } else {
-                Toast.makeText(requireContext(), "삭제 실패: $message", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "삭제 실패: $message", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -335,29 +364,49 @@ class CalendarFragment : Fragment() {
 
         // ✅ 앱 실행 시, 일정 조회 실행
         if (userTag != null) {
-            fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+            fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month) // 일정 조회
+            fetchUserPosts() // ✅ 게시글 조회 추가
         }
 
-        // ✅ 다른 Fragment에서 "calendar_update" 신호를 보내면 일정 자동 갱신
+        // ✅ "calendar_update" 신호를 감지하면 일정 자동 갱신
         setFragmentResultListener("calendar_update") { _, _ ->
             Log.d("CalendarFragment", "🔄 새로운 일정이 추가됨! 일정 다시 조회")
+
             if (userTag != null) {
                 fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+
+                // ✅ 캘린더 데코레이터 즉시 반영 (UI 스레드에서 실행)
+                requireActivity().runOnUiThread {
+                    binding.calendarView.invalidateDecorators()
+                }
+
+                // ✅ 혹시라도 바로 반영되지 않을 경우 일정 시간 후 다시 반영
+                binding.calendarView.postDelayed({
+                    Log.d("CalendarFragment", "🔄 일정 추가 후 500ms 후 다시 UI 반영")
+                    binding.calendarView.invalidateDecorators()
+                }, 500)
             }
         }
-
     }
+
     override fun onResume() {
         super.onResume()
-        Log.d("CalendarFragment", "🔄 onResume() 호출됨 → 일정 자동 갱신 실행")
+        Log.d("CalendarFragment", "🔄 onResume() 호출됨 → 일정 & 게시글 자동 갱신 실행")
 
         if (!isAdded || context == null) {
-            Log.e("CalendarFragment", "🚨 Fragment가 attach되지 않음. 일정 조회 중단")
+            Log.e("CalendarFragment", "🚨 Fragment가 attach되지 않음. 데이터 조회 중단")
             return
         }
 
         if (userTag != null) {
-            fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+            fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month) // 일정 조회
+            fetchUserPosts() // ✅ 게시글도 다시 불러옴
+
+            // ✅ 500ms 후 다시 UI 업데이트 (혹시라도 반영되지 않을 경우)
+            binding.calendarView.postDelayed({
+                Log.d("CalendarFragment", "🔄 onResume() 후 500ms 뒤 캘린더 UI 반영")
+                binding.calendarView.invalidateDecorators()
+            }, 500)
         }
 
         setFragmentResultListener("calendar_update") { _, _ ->
@@ -367,6 +416,47 @@ class CalendarFragment : Fragment() {
             }
         }
     }
+    private fun applyPostDecorator(postDates: List<CalendarDay>) {
+        requireActivity().runOnUiThread {
+            if (!isAdded || context == null) return@runOnUiThread
+
+            val postDecorator = PostDecorator(requireContext(), postDates)
+
+            // ✅ 기존 데코레이터는 제거하지 않고 유지하면서 추가
+            binding.calendarView.addDecorator(postDecorator) // 🔹 항상 최상위 유지
+            binding.calendarView.invalidateDecorators() // 즉시 반영
+        }
+    }
+
+
+    private fun fetchUserPosts() {
+        if (userTag == null) return
+
+        PostRepository.getUserPosts(userTag!!) { posts ->
+            if (posts != null) {
+                lastFetchedPosts = posts.map { post ->
+                    PostItem(
+                        post.imageURL ?: "",  // ✅ null-safe 처리
+                        post.postContent ?: "",  // ✅ null-safe 처리
+                        post.postDate?.substring(0, 10) ?: ""  // ✅ null-safe 처리
+                    )
+                }
+
+                requireActivity().runOnUiThread {
+                    applyPostDecorator(lastFetchedPosts.mapNotNull { post ->
+                        val parts = post.postDate.split("-")
+                        if (parts.size == 3) {
+                            CalendarDay.from(parts[0].toInt(), parts[1].toInt(), parts[2].toInt())
+                        } else {
+                            null  // ✅ 날짜 형식이 잘못된 경우 제외
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+
 
 
 }

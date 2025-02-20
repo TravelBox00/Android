@@ -14,7 +14,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ScheduleBottomSheetDialog(
     private val date: String,
-    private var events: MutableList<ScheduleItem>, // ✅ MutableList로 변경하여 삭제 후 리스트 갱신 가능
+    private var events: MutableList<ScheduleItem>,
+    private val posts: List<PostItem>, // ✅ 게시물 리스트 추가
     private val onDeleteClick: (Int) -> Unit
 ) : BottomSheetDialogFragment() {
 
@@ -22,7 +23,7 @@ class ScheduleBottomSheetDialog(
     private val binding get() = _binding!!
 
     private lateinit var scheduleAdapter: ScheduleAdapter
-
+    private lateinit var postAdapter: PostAdapter // ✅ 게시물 어댑터 추가
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogScheduleBottomSheetBinding.inflate(inflater, container, false)
         return binding.root
@@ -44,9 +45,24 @@ class ScheduleBottomSheetDialog(
         scheduleAdapter = ScheduleAdapter(events) { travelId ->
             deleteSchedule(travelId) // ✅ 삭제 요청 실행
         }
+        if (events.isNotEmpty()) {
+            scheduleAdapter = ScheduleAdapter(events) { travelId -> deleteSchedule(travelId) }
+            binding.recyclerViewSchedules.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewSchedules.adapter = scheduleAdapter
+            binding.recyclerViewSchedules.visibility = View.VISIBLE  // ✅ 보이게 설정
+        } else {
+            binding.recyclerViewSchedules.visibility = View.GONE  // ✅ 숨기기
+        }
 
-        binding.recyclerViewSchedules.layoutManager = LinearLayoutManager(context)
-        binding.recyclerViewSchedules.adapter = scheduleAdapter
+        // ✅ 게시물 RecyclerView 설정
+        if (posts.isNotEmpty()) {
+            postAdapter = PostAdapter(posts)
+            binding.recyclerViewPosts.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewPosts.adapter = postAdapter
+            binding.recyclerViewPosts.visibility = View.VISIBLE  // ✅ 보이게 설정
+        } else {
+            binding.recyclerViewPosts.visibility = View.GONE  // ✅ 숨기기
+        }
     }
 
     /**
