@@ -38,4 +38,9 @@ interface MyIneterface {
     fun modifyUser(@Body userInfo: Map<String, String>)
     : Call<UserResponse>
      */
+
+    //여행기록
+    @GET("/thread/my")
+    suspend fun getMyThreads(): Response<StoryResponse>
+
 }

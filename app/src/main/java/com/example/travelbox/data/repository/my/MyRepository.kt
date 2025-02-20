@@ -158,6 +158,33 @@ class MyRepository {
         }
          */
 
+        // 나의 여행 스레드 조회
+        fun getMyThreads(callback: (List<ThreadData>?, String?) -> Unit) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = myService.getMyThreads()
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        withContext(Dispatchers.Main) {
+                            if (body?.isSuccess == true) {
+                                Log.d("MyRepository", "나의 스레드 조회 성공: ${body.result}")
+                                callback(body.result, body.cursor)
+                            } else {
+                                Log.e("MyRepository", "나의 스레드 조회 실패: ${body?.message}")
+                                callback(null, null)
+                            }
+                        }
+                    } else {
+                        Log.e("MyRepository", "나의 스레드 조회 실패: ${response.errorBody()?.string()}")
+                        withContext(Dispatchers.Main) { callback(null, null) }
+                    }
+                } catch (e: Exception) {
+                    Log.e("MyRepository", "나의 스레드 요청 실패: ${e.message}")
+                    withContext(Dispatchers.Main) { callback(null, null) }
+                }
+            }
+        }
+
 
     }
 }
