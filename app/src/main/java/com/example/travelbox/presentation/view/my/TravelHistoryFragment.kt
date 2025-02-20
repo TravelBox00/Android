@@ -10,11 +10,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.travelbox.data.repository.my.MyRepository
 import com.example.travelbox.data.repository.my.ThreadData
 import com.example.travelbox.databinding.FragmentTravelHistoryBinding
+import androidx.lifecycle.lifecycleScope
+import com.example.travelbox.data.network.ApiNetwork.getAccessToken
+import kotlinx.coroutines.launch
 
 class TravelHistoryFragment : Fragment() {
 
     private var _binding: FragmentTravelHistoryBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var adapter: HistoryAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,23 +31,29 @@ class TravelHistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
         loadTravelHistory()
     }
 
     private fun loadTravelHistory() {
-        // MyRepository.getMyThreads로 호출
-        MyRepository.getMyThreads { threadList ->
+        val token = "Bearer " + getAccessToken()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val threadList = MyRepository.getMyThreads(token) // ✅ 수정된 API 호출
             if (threadList != null) {
-                setupRecyclerView(threadList)  // threadList를 어댑터에 전달
+                adapter.updateThreads(threadList)
             } else {
-                // 데이터가 없거나 에러가 발생한 경우 처리
-                Log.e("TravelHistoryFragment", "여행 스레드 로드 실패")
+                Log.e("API_ERROR", "여행 스레드 로드 실패 - 응답이 null입니다.")
             }
         }
     }
 
-    private fun setupRecyclerView(threadList: List<ThreadData>) {
-        val adapter = HistoryAdapter(threadList)
+
+
+
+    private fun setupRecyclerView() {
+        adapter = HistoryAdapter()
         binding.recyclerHistory.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerHistory.adapter = adapter
     }
@@ -52,4 +63,3 @@ class TravelHistoryFragment : Fragment() {
         _binding = null
     }
 }
-
