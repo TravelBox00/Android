@@ -20,6 +20,7 @@ import com.example.travelbox.R
 import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.calendar.CalendarQueryEvent
 import com.example.travelbox.data.repository.calendar.CalendarRepository
+import com.example.travelbox.data.repository.calendar.PostRepository
 import com.example.travelbox.databinding.FragmentCalendarBinding
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
@@ -367,6 +368,30 @@ class CalendarFragment : Fragment() {
             }
         }
     }
+    private fun applyPostDecorator(postDates: List<CalendarDay>) {
+        requireActivity().runOnUiThread {
+            if (!isAdded || context == null) return@runOnUiThread
 
+            val postDecorator = PostDecorator(requireContext(), postDates)
+
+            binding.calendarView.removeDecorators()
+            binding.calendarView.addDecorator(TodayDecorator(requireContext())) // ✅ 오늘 날짜 데코레이터 유지
+            binding.calendarView.addDecorator(postDecorator) // ✅ 파란색 테두리 원 추가
+            binding.calendarView.invalidateDecorators()
+        }
+    }
+    private fun fetchUserPosts() {
+        if (userTag == null) return
+
+        PostRepository.getUserPosts(userTag!!) { posts ->
+            if (posts != null) {
+                val postDates = posts.map { post ->
+                    val parts = post.postDate.substring(0, 10).split("-")
+                    CalendarDay.from(parts[0].toInt(), parts[1].toInt(), parts[2].toInt())
+                }
+                applyPostDecorator(postDates) // ✅ 데코레이터 적용
+            }
+        }
+    }
 
 }
