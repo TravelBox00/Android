@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.example.travelbox.R
 import com.example.travelbox.data.repository.search.ThreadPost
 import com.example.travelbox.databinding.ItemGridPostBinding
@@ -51,8 +53,11 @@ class SearchPostAdapter(private val itemList: List<ThreadPost>) :
         fun bind(data: ThreadPost) {
             Glide.with(binding.root.context)
                 .load(data.imageURL)
-                .placeholder(R.drawable.post_ex1)
-                .error(R.drawable.post_ex1)
+                .load(data.imageURL)
+                .thumbnail(Glide.with(binding.root.context).load(data.imageURL).override(100, 100))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .signature(ObjectKey(System.currentTimeMillis().toString())) // 매번 새로운 이미지로 로딩
+                .error(R.drawable.post_ex1)  // 에러 시 표시할 이미지
                 .into(binding.imageArea)
 
             binding.tvId.text = "@${data.userTag}"
