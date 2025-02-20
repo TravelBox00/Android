@@ -10,10 +10,12 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import com.example.travelbox.R
 import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.calendar.CalendarQueryEvent
@@ -137,13 +139,20 @@ class CalendarFragment : Fragment() {
 
             Toast.makeText(requireContext(), "선택한 날짜: ${date.year}.${date.month}.${date.day}", Toast.LENGTH_SHORT).show()
             // ✅ 해당 날짜의 일정 필터링
-            val selectedDateStr = "${date.year}-${"%02d".format(date.month)}-${"%02d".format(date.day)}"
+            // ✅ 날짜를 YYYY-MM-DD 형식으로 변환
+            val selectedDateStr = "%04d-%02d-%02d".format(date.year, date.month, date.day)
+
+            // ✅ travelStartDate, travelEndDate도 동일한 형식으로 변환하여 비교
             val eventsForDate = lastFetchedEvents.filter { event ->
-                event.travelStartDate <= selectedDateStr && event.travelEndDate >= selectedDateStr
+                val startDate = event.travelStartDate.substring(0, 10) // "YYYY-MM-DD"
+                val endDate = event.travelEndDate.substring(0, 10) // "YYYY-MM-DD"
+                startDate <= selectedDateStr && endDate >= selectedDateStr
             }
 
             if (eventsForDate.isNotEmpty()) {
                 showScheduleBottomSheet(eventsForDate) // ✅ 변경된 다이얼로그 호출
+            } else {
+                Log.d("CalendarFragment", "🚨 선택한 날짜에 해당하는 일정이 없음")
             }
 
             binding.calendarView.invalidateDecorators()
@@ -205,56 +214,85 @@ class CalendarFragment : Fragment() {
         binding.horizontalScrollView.smoothScrollTo(scrollToX, 0)
     }
     private fun fetchUserCalendarEvents(year: Int, month: Int) {
-        if (userTag == null) return
-
-        val formattedDate = "$year-${String.format("%02d", month)}-01" // YYYY-MM-DD 형식
-
-        CalendarRepository.getUserCalendarEvents(userTag!!, formattedDate) { events ->
-            if (events != null) {
-                Log.d("CalendarFragment", "불러온 일정 개수: ${events.size}")
-
-                // ✅ 가져온 일정 리스트 저장
-                lastFetchedEvents = events
-
-                // ✅ 기존 데코레이터 유지하면서 일정 데코레이터만 추가
-                binding.calendarView.removeDecorators()
-                binding.calendarView.addDecorator(TodayDecorator(requireContext())) // 오늘 날짜 유지
-                binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents)) // ✅ 일정 반영
-                binding.calendarView.invalidateDecorators()
-            } else {
-                Log.e("CalendarFragment", "일정 데이터를 가져오지 못함")
-            }
-        }
-
-
-
-    }
-    // 다이얼로그 파트
-    private fun showScheduleBottomSheet(events: List<CalendarQueryEvent>) {
-        if (events.isEmpty()) {
-            Log.w("CalendarFragment", "선택한 날짜에 해당하는 일정이 없습니다.")
+        if (userTag == null) {
+            Log.e("CalendarFragment", "🚨 userTag가 NULL입니다. 일정 조회 불가")
             return
         }
 
-        val formattedDate = "${events.first().travelStartDate.substring(5, 7)}.${events.first().travelStartDate.substring(8, 10)} ${getDayOfWeek(events.first().travelStartDate)}"
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month - 1, 1) // 월의 첫째 날 설정
+        val maxDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH) // 해당 월의 총 일수
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        val allEvents = mutableSetOf<CalendarQueryEvent>() // ✅ 중복 방지를 위한 HashSet 사용
+        var completedRequests = 0
+
+        Log.d("CalendarFragment", "📅 ${year}년 ${month}월 일정 전체 조회 시작")
+
+        for (day in 1..maxDays) {
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+            val formattedDate = sdf.format(calendar.time)
+
+            CalendarRepository.getUserCalendarEvents(userTag!!, formattedDate) { events ->
+                if (events != null) {
+                    allEvents.addAll(events) // ✅ HashSet이므로 중복 일정 자동 제거
+                    Log.d("CalendarFragment", "✅ ${formattedDate} 일정 조회 성공! 개수: ${events.size}")
+                } else {
+                    Log.e("CalendarFragment", "❌ ${formattedDate} 일정 조회 실패")
+                }
+
+                completedRequests++
+                if (completedRequests == maxDays) {
+                    // 모든 날짜 조회 완료 후 UI 갱신
+                    lastFetchedEvents = allEvents.toList() // ✅ Set을 List로 변환하여 UI에 반영
+                    binding.calendarView.removeDecorators()
+                    binding.calendarView.addDecorator(TodayDecorator(requireContext()))
+                    binding.calendarView.addDecorator(CalendarEventsDecorator(lastFetchedEvents))
+                    binding.calendarView.invalidateDecorators()
+                    Log.d("CalendarFragment", "✅ 모든 일정 조회 완료. UI 반영 완료")
+                }
+            }
+        }
+    }
+
+
+
+    // 다이얼로그 파트
+    private fun showScheduleBottomSheet(events: List<CalendarQueryEvent>) {
+        if (events.isEmpty()) {
+            Log.w("CalendarFragment", "🚨 선택한 날짜에 해당하는 일정이 없습니다.")
+            return
+        }
+
+        // ✅ 사용자가 선택한 날짜를 "MM.dd E" 형식으로 변환 (예: 03.01 금)
+        val selectedDateFormatted = formatSelectedDate(selectedDate)
 
         val scheduleItems = events.map { event ->
             ScheduleItem(
                 travelId = event.travelId,
                 title = event.travelTitle,
-                period = "${event.travelStartDate.substring(5, 7)}.${event.travelStartDate.substring(8, 10)} ${getDayOfWeek(event.travelStartDate)} ~ ${event.travelEndDate.substring(5, 7)}.${event.travelEndDate.substring(8, 10)} ${getDayOfWeek(event.travelEndDate)}",
+                period = "${event.travelStartDate.substring(5, 7)}.${event.travelStartDate.substring(8, 10)} ~ ${event.travelEndDate.substring(5, 7)}.${event.travelEndDate.substring(8, 10)}",
                 content = event.travelContent
             )
-        }
+        }.toMutableList() // ✅ List → MutableList 변환
 
-        Log.d("CalendarFragment", "🚀 다이얼로그 생성 전!")
-
-        val dialog = ScheduleBottomSheetDialog(requireContext(), formattedDate, scheduleItems) { travelId ->
+        val dialog = ScheduleBottomSheetDialog(selectedDateFormatted, scheduleItems) { travelId ->
             deleteSchedule(travelId)
         }
 
-        Log.d("CalendarFragment", "🚀 다이얼로그 show() 호출!")
-        dialog.show()
+        dialog.show(parentFragmentManager, "ScheduleBottomSheetDialog")
+    }
+
+    /**
+     * ✅ 선택한 날짜를 "MM.dd E" 형식으로 변환하는 함수
+     * (예: 2025-03-01 → "03.01 금")
+     */
+    private fun formatSelectedDate(date: CalendarDay): String {
+        val calendar = Calendar.getInstance()
+        calendar.set(date.year, date.month - 1, date.day) // month는 0부터 시작하므로 -1 해줌
+
+        val sdf = SimpleDateFormat("MM.dd E", Locale.getDefault()) // "03.01 금" 형태
+        return sdf.format(calendar.time)
     }
 
 
@@ -281,6 +319,38 @@ class CalendarFragment : Fragment() {
     }
 
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        Log.d("CalendarFragment", "🚀 onViewCreated 실행됨! 일정 자동 조회 시작")
+
+        // ✅ 앱 실행 시, 일정 조회 실행
+        if (userTag != null) {
+            fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+        }
+
+        // ✅ 다른 Fragment에서 "calendar_update" 신호를 보내면 일정 자동 갱신
+        setFragmentResultListener("calendar_update") { _, _ ->
+            Log.d("CalendarFragment", "🔄 새로운 일정이 추가됨! 일정 다시 조회")
+            if (userTag != null) {
+                fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+            }
+        }
+
+    }
+    override fun onResume() {
+        super.onResume()
+        Log.d("CalendarFragment", "🔄 onResume() 호출됨 → 일정 자동 갱신 실행")
+
+        if (userTag != null) {
+            fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+        }
+        setFragmentResultListener("calendar_update") { _, _ ->
+            Log.d("CalendarFragment", "🔄 일정이 삭제됨 → 일정 다시 조회")
+            if (userTag != null) {
+                fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+            }
+        }
+    }
 
 }

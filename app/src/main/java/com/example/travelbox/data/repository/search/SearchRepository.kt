@@ -98,7 +98,9 @@ class SearchRepository {
                     response: Response<List<ThreadPost>>
                 ) {
                     if (response.isSuccessful) {
-                        callback(response.body())
+                        val responseData = response.body()
+                        Log.d("SearchRepository", "API 응답 데이터: $responseData")
+                        callback(responseData)
                     } else {
                         Log.e("SearchRepository", "getSearchPost 실패: ${response.code()}")
                         callback(null)

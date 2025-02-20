@@ -1,6 +1,7 @@
 package com.example.travelbox.presentation.view.home
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,6 +36,14 @@ class CategoryPostFragment(private val category: String) : Fragment() {
         loadCategoryPosts(category)
 
 
+        binding.ivBack.setOnClickListener {
+            val homeFragment = HomeFragment() // HomeFragment 객체 생성
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, homeFragment)
+                .commit()
+        }
+
+
 
 
 
@@ -42,11 +51,11 @@ class CategoryPostFragment(private val category: String) : Fragment() {
     }
 
     private fun loadCategoryPosts(category: String) {
-        HomeRepository.regionFilterSearch(category, "") { response ->
-            if (response?.isSuccess == true && response.result.isNotEmpty()) {
+        HomeRepository.regionFilterSearch(category, null, null) { response ->
+            if (response?.isSuccess == true ) {
 
                 response.result.forEach { post ->
-                    Log.d("CategoryPostFragment", "Image URL: ${post.postImageURL}")
+                    Log.d("CategoryPostFragment", "Image URL: ${post.imageURL}")
                 }
 
                 //val mappedPosts = mapPostDataToPostItem(response.result)
@@ -61,10 +70,13 @@ class CategoryPostFragment(private val category: String) : Fragment() {
                     override fun onItemClick(position: Int) {
                         val selectedItem = filteredPosts[position]
                         val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
-                            putExtra("image", selectedItem.postImageURL)
-                            putExtra("id", selectedItem.threadId)
+                            putExtra("image", selectedItem.imageURL)
+                            putExtra("id", selectedItem.userTag)
                             putExtra("title", selectedItem.postTitle)
                             putExtra("threadId", selectedItem.threadId)
+
+                            Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.userTag}, Title: ${selectedItem.postTitle}, ThreadId: ${selectedItem.threadId}")
+
                         }
                         startActivity(intent)
                     }
@@ -75,6 +87,13 @@ class CategoryPostFragment(private val category: String) : Fragment() {
 
 
 
+                binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
+                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                        outRect.bottom = 50 // 아이템 간의 간격
+                        outRect.right= 20
+                    }
+                })
+
 
 
             } else {
@@ -83,15 +102,15 @@ class CategoryPostFragment(private val category: String) : Fragment() {
         }
     }
 
-    private fun mapPostDataToPostItem(postDataList: List<PostData>): List<PostItem> {
-        return postDataList.map { postData ->
-            PostItem(
-                threadId = postData.threadId,
-                postTitle = postData.postTitle,
-                postDate = postData.postDate,
-                imageURL = postData.postImageURL ?: "",
-                totalEngagement = null
-            )
-        }
-    }
+//    private fun mapPostDataToPostItem(postDataList: List<PostData>): List<PostItem> {
+//        return postDataList.map { postData ->
+//            PostItem(
+//                threadId = postData.threadId,
+//                postTitle = postData.postTitle,
+//                postDate = postData.postDate,
+//                //imageURL = postData.postImageURL ?: "",
+//                //totalEngagement = null
+//            )
+//        }
+//    }
 }

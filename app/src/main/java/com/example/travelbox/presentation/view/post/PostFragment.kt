@@ -96,7 +96,7 @@ class PostFragment : Fragment() {
     private fun getPopularPostWithFilters(city: String, district: String?) {
 
         // API 호출로 필터링된 게시물 가져오기
-        HomeRepository.regionFilterSearch("여행", district!!) { response ->
+        HomeRepository.regionFilterSearch("여행", district!!, null) { response ->
             if (response?.isSuccess == true) {
 
                 Log.d("지역 필터", "데이터 조회 성공 :$response")
@@ -110,7 +110,7 @@ class PostFragment : Fragment() {
                     override fun onItemClick(position: Int) {
                         val selectedItem = filteredPosts[position]
                         val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
-                            putExtra("image", selectedItem.postImageURL)
+                            putExtra("image", selectedItem.imageURL)
                             putExtra("id", selectedItem.threadId)
                             putExtra("title", selectedItem.postTitle)
                             putExtra("threadId", selectedItem.threadId)
@@ -157,11 +157,11 @@ class PostFragment : Fragment() {
                             putExtra("image", selectedItem.imageURL)
 
                             // 닉네임으로 바꿔야 함
-                            putExtra("id", selectedItem.threadId.toString())
-                            putExtra("title", selectedItem.postTitle)
+                            putExtra("id", selectedItem.userTag)
+                            putExtra("title", selectedItem.postContent)
                             putExtra("threadId", selectedItem.threadId)
 
-                            Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postTitle}, ThreadId: ${selectedItem.threadId}")
+                            Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postContent}, ThreadId: ${selectedItem.threadId}")
                         }
 
 
@@ -176,7 +176,8 @@ class PostFragment : Fragment() {
 
                 binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
                     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                        outRect.bottom = 35 // 아이템 간의 간격 35dp
+                        outRect.bottom = 50 // 아이템 간의 간격
+                        outRect.right= 20
                     }
                 })
 

@@ -80,7 +80,10 @@ class AddPostFragment : Fragment() {
 
         addPostInterface = ApiNetwork.createService(AddPostInterface::class.java)
         addPostRepository = AddPostRepository(addPostInterface)
-
+        // 뒤로가기 버튼 클릭 이벤트 추가
+        binding.btnBack.setOnClickListener {
+            parentFragmentManager.popBackStack()  // 이전 Fragment로 이동
+        }
         // 카테고리 버튼 클릭 리스너
         val categoryButtons = listOf(
             binding.btnCategory1,
@@ -95,6 +98,9 @@ class AddPostFragment : Fragment() {
                     resetButtonState(button)
                     selectedButton = null
                     selectedCategory = null
+
+                    binding.tvClothes.visibility = View.GONE
+                    binding.etUri.visibility = View.GONE
                 } else {
                     // 기존 선택 버튼 초기화
                     selectedButton?.let { resetButtonState(it) }
@@ -103,6 +109,15 @@ class AddPostFragment : Fragment() {
                     updateButtonState(button)
                     selectedButton = button
                     selectedCategory = button.text.toString()
+
+                    // btnCategory4(여행코디)가 선택된 경우에만 옷 정보 영역 보이기
+                    if (button == binding.btnCategory4) {
+                        binding.tvClothes.visibility = View.VISIBLE
+                        binding.etUri.visibility = View.VISIBLE
+                    } else {
+                        binding.tvClothes.visibility = View.GONE
+                        binding.etUri.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -267,7 +282,7 @@ class AddPostFragment : Fragment() {
         postRegionCode = regionList.joinToString(" ")
         val songName = binding.etSong.text.toString().trim()
         val postContent = binding.etInfo.text.toString().trim()
-        val clothId = binding.etUri.text.toString().trim().toIntOrNull() ?: return
+        val clothInfo = binding.etUri.text.toString().trim()
 
         val files = getSelectedFiles()
 
@@ -276,11 +291,11 @@ class AddPostFragment : Fragment() {
         Log.d("AddPost", "postRegionCode: $postRegionCode")
         Log.d("AddPost", "songName: $songName")
         Log.d("AddPost", "postContent: $postContent")
-        Log.d("AddPost", "clothId: $clothId")
+        Log.d("AddPost", "clothInfo: $clothInfo")
         Log.d("AddPost", "파일 개수: ${files.size}")
 
         addPostRepository.addPost(
-            userTag, postCategory, postRegionCode, songName, postContent, clothId, files
+            userTag, postCategory, postRegionCode, songName, postContent, clothInfo, files
         ) { response ->
             if (response?.success == true) {
                 Log.d("AddPost", "게시글 업로드 성공: ${response.message}")

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.calendar.CalendarRepository
 import com.example.travelbox.databinding.FragmentScheduleBinding
@@ -76,7 +77,18 @@ class ScheduleFragment : Fragment() {
         binding.checkButton.setOnClickListener {
             addCalendarEvent()
         }
-
+        binding.tripTitleInput.hint = "여행 제목을 입력하세요"
+        binding.tripDescriptionInput.hint = "여행 내용을 입력하세요"
+        binding.tripTitleInput.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && binding.tripTitleInput.text.toString().trim().isEmpty()) {
+                binding.tripTitleInput.error = "제목을 입력하세요."
+            }
+        }
+        binding.tripDescriptionInput.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && binding.tripDescriptionInput.text.toString().trim().isEmpty()) {
+                binding.tripDescriptionInput.error = "내용을 입력하세요."
+            }
+        }
         return binding.root
     }
 
@@ -88,14 +100,31 @@ class ScheduleFragment : Fragment() {
         val startDateStr = startDate?.let { "${it.year}-${it.month}-${it.day}" } ?: ""
         val endDateStr = endDate?.let { "${it.year}-${it.month}-${it.day}" } ?: ""
 
-        if (title.isEmpty() || startDateStr.isEmpty() || endDateStr.isEmpty()) {
-            Toast.makeText(requireContext(), "여행 제목과 날짜를 입력하세요.", Toast.LENGTH_SHORT).show()
+        // ✅ 예외 처리: 제목이 비었을 경우
+        if (title.isEmpty()) {
+            Toast.makeText(requireContext(), "여행 제목을 입력하세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // ✅ 예외 처리: 내용이 비었을 경우
+        if (content.isEmpty()) {
+            Toast.makeText(requireContext(), "여행 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // ✅ 예외 처리: 날짜가 선택되지 않은 경우
+        if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
+            Toast.makeText(requireContext(), "출발일과 종료일을 선택하세요.", Toast.LENGTH_SHORT).show()
             return
         }
 
         CalendarRepository.addCalendarEvent(userId, title, content, startDateStr, endDateStr) { success, message ->
             if (success) {
                 Toast.makeText(requireContext(), "일정 추가 성공: $message", Toast.LENGTH_SHORT).show()
+
+                // ✅ CalendarFragment로 "calendar_update" 신호 보내기
+                setFragmentResult("calendar_update", Bundle())
+
                 requireActivity().finish() // 일정 추가 후 화면 닫기
             } else {
                 Toast.makeText(requireContext(), "일정 추가 실패: $message", Toast.LENGTH_SHORT).show()

@@ -42,8 +42,8 @@ class Banner1Fragment : Fragment() {
         val tvDescription = binding.tvDescription
 
 
-        tvTitle.text = "교토"
-        tvDescription.text = "고요한 전통과 현대의 조화"
+        tvTitle.text = "경주"
+        tvDescription.text = "천 년의 시간을 품다"
 
 
         return binding.root

@@ -7,6 +7,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.home.PostData
 import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.ItemGridPostBinding
@@ -14,6 +15,8 @@ import com.example.travelbox.databinding.ItemGridPostBinding
 
 class PostAdapter(private var itemList: List<PostItem>) :
         RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+
+
 
         interface onItemClickListener {
             fun onItemClick(position: Int)
@@ -68,6 +71,8 @@ class PostAdapter(private var itemList: List<PostItem>) :
 
             fun bind(data: PostItem) {
 
+
+
                 // 인기 게시물 이미지
                 Glide.with(binding.root.context)
                     .load(data.imageURL)  // 데이터로 받은 URL
@@ -77,8 +82,9 @@ class PostAdapter(private var itemList: List<PostItem>) :
 
                     .into(binding.imageArea)  // 이미지뷰에 로드
 
-                binding.tvId.text = data.threadId.toString()
-                binding.tvPostTitle.text = data.postTitle
+                binding.tvId.text = "@${data.userTag}"
+                binding.tvPostTitle.text = data.postContent
+
 
 
                 // 메달 아이콘 표시

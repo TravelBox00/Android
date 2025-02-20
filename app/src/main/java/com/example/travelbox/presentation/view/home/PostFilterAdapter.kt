@@ -7,6 +7,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.home.PostData
 import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.ItemGridPostBinding
@@ -14,6 +15,8 @@ import com.example.travelbox.databinding.ItemGridPostBinding
 
 class PostFilterAdapter(private var itemList: List<PostData>) :
     RecyclerView.Adapter<PostFilterAdapter.PostFilterViewHolder>() {
+
+
 
     interface onItemClickListener {
         fun onItemClick(position: Int)
@@ -69,14 +72,16 @@ class PostFilterAdapter(private var itemList: List<PostData>) :
 
         fun bind(data: PostData) {
 
+
+
             // 인기 게시물 이미지
             Glide.with(binding.root.context)
-                .load(data.postImageURL)  // 데이터로 받은 URL
+                .load(data.imageURL)  // 데이터로 받은 URL
                 .placeholder(R.drawable.post_ex1)  // 로딩 중일 때 보여줄 이미지
                 .error(R.drawable.post_ex1)  // 에러 시 표시할 이미지
                 .into(binding.imageArea)  // 이미지뷰에 로드
 
-            binding.tvId.text = data.threadId.toString()
+            binding.tvId.text = "@${data.userTag}"
             binding.tvPostTitle.text = data.postTitle
 
 

@@ -5,7 +5,7 @@
 
     <TextView
         android:id="@+id/tv_filter"
-        android:layout_width="100dp"
+        android:layout_width="110dp"
         android:layout_height="40dp"
         android:padding="10dp"
         style="@style/medium12"
