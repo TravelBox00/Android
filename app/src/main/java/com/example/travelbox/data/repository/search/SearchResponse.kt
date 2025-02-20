@@ -18,6 +18,7 @@ data class AutoCompleteResponse(
 )
 
 data class ThreadPost(
+    val userTag: String,
     val threadId: Int,
     val postContent: String,
     val postDate: String,
