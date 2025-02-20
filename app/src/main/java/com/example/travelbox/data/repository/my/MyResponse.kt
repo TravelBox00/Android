@@ -85,3 +85,20 @@ data class UserInfo(
     val userNickname: String,
     val userName: String
 )
+
+
+// 여행 기록 데이터 모델
+data class StoryResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<ThreadData>,
+    val cursor: String
+)
+
+data class ThreadData(
+    val postContent: String,
+    val postDate: String,
+    val threadId: Int,
+    val imageURL: String
+)

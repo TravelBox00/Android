@@ -1,6 +1,5 @@
 package com.example.travelbox.data.repository.my
 
-import android.content.Context
 import android.util.Log
 import com.example.travelbox.data.network.ApiNetwork
 import kotlinx.coroutines.CoroutineScope
@@ -156,6 +155,45 @@ class MyRepository {
             })
         }
          */
+
+        // 나의 여행 스레드 조회
+        fun getMyThreads(callback: (List<ThreadData>?) -> Unit) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = myService.getMyThreads()  // API 호출
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        withContext(Dispatchers.Main) {
+                            if (body != null) {
+                                // 성공적으로 데이터를 가져온 경우
+                                Log.d("MyRepository", "나의 스레드 조회 성공: ${body.result}")
+                                callback(body.result)  // 응답 결과를 callback으로 전달
+                            } else {
+                                // 응답 본문이 비어있을 때
+                                Log.e("MyRepository", "나의 스레드 조회 실패: 응답 본문이 없음")
+                                callback(null)
+                            }
+                        }
+                    } else {
+                        // 응답이 실패한 경우
+                        Log.e("MyRepository", "나의 스레드 조회 실패: ${response.errorBody()?.string()}")
+                        withContext(Dispatchers.Main) {
+                            callback(null)
+                        }
+                    }
+                } catch (e: Exception) {
+                    // 네트워크 요청 중 오류가 발생한 경우
+                    Log.e("MyRepository", "나의 스레드 요청 실패: ${e.message}")
+                    withContext(Dispatchers.Main) {
+                        callback(null)
+                    }
+                }
+            }
+        }
+
+
+
+
 
 
     }
