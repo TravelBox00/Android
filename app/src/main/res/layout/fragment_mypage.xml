@@ -21,12 +21,11 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <!-- 프로필 사진 -->
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_IV"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:src="@drawable/temporary_img"
+                    android:background="@drawable/profile_circle_background"
                     app:civ_border_color="@color/gray2"
                     app:civ_border_overlay="false"
                     app:civ_border_width="1dp" />
@@ -117,14 +116,16 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
+                    android:id="@+id/text_nickname"
+                    style="@style/bold20"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="윌리"
-                    style="@style/bold20"/>
+                    android:text="윌리" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="way1234"
+                    android:id="@+id/nameTag"
                     android:textSize="14sp"
                     android:textColor="@android:color/darker_gray" />
             </LinearLayout>

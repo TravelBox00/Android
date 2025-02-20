@@ -74,18 +74,6 @@ data class Comment(
     val postOwnerNickname: String
 )
 
-// 사용자(회원) 정보 수정 여부
-data class UserInfoResponse(
-    val isSuccess: Boolean,
-    val userInfo: UserInfo?
-)
-//사용자 정보
-data class UserInfo(
-    val userTag: String,
-    val userNickname: String,
-    val userName: String
-)
-
 
 // 여행 기록 데이터 모델
 data class StoryResponse(
@@ -101,4 +89,17 @@ data class ThreadData(
     val postDate: String,
     val threadId: Int,
     val imageURL: String
+)
+
+//사용자 정보 불러오기
+data class UserInfoResponse(
+    @SerializedName("result") val userInfo: UserInfo,
+    @SerializedName("isSuccess") val isSuccess: Boolean
+)
+
+data class UserInfo(
+    @SerializedName("userTag") val userTag: String,
+    @SerializedName("userNickname") val userNickname: String,
+    @SerializedName("userProfileImage") val userProfileImage: String,
+    @SerializedName("email") val email: String?
 )
