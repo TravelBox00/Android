@@ -98,6 +98,8 @@ class SearchPostFragment : Fragment() {
             override fun onItemClick(position: Int) {
                 val selectedItem = postList[position]
 
+                Log.d("SearchPostFragment", "선택된 post의 singInfo: ${selectedItem.singInfo}")
+
                 val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
                     putExtra("image", selectedItem.imageURL)
 

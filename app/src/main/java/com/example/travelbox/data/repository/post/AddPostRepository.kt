@@ -64,13 +64,18 @@ class AddPostRepository(private val addPostInterface: AddPostInterface) {
     }
 
     fun getSpotifySong(songName: String, callback: (String?) -> Unit) {
+        Log.d("AddPostRepository", "getSpotifySong 호출 - 입력 songName: $songName") // 여기서 songName 확인
+
         addPostInterface.getSpotifySong(songName).enqueue(object : Callback<SpotifyResponse> {
             override fun onResponse(
                 call: Call<SpotifyResponse>,
                 response: Response<SpotifyResponse>
             ) {
+                val spotifyUrl = response.body()?.trackURL?.spotify
+                Log.d("AddPostRepository", "getSpotifySong 응답 URL: $spotifyUrl") // 응답값 확인
+
                 if (response.isSuccessful) {
-                    callback(response.body()?.trackURL?.spotify)
+                    callback(spotifyUrl)
                 } else {
                     callback(null)
                 }
@@ -81,5 +86,6 @@ class AddPostRepository(private val addPostInterface: AddPostInterface) {
             }
         })
     }
+
 
 }
