@@ -14,10 +14,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.search.ThreadPost
 import com.example.travelbox.databinding.FragmentSearchPostBinding
 import com.example.travelbox.presentation.view.home.DetailPostActivity
-import com.example.travelbox.presentation.view.home.PostAdapter
 import com.example.travelbox.presentation.view.post.AddPostFragment
 import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
@@ -36,6 +36,7 @@ class SearchPostFragment : Fragment() {
     private lateinit var binding: FragmentSearchPostBinding
     private lateinit var searchPostViewModel: SearchPostViewModel
     private lateinit var postList: List<ThreadPost>
+    private var userTag: String? = "testuser1234"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +49,9 @@ class SearchPostFragment : Fragment() {
     ): View? {
         binding = FragmentSearchPostBinding.inflate(inflater, container, false)
         searchPostViewModel = ViewModelProvider(requireActivity()).get(SearchPostViewModel::class.java)
+
+        // userTag 수신
+        userTag = ApiNetwork.getUserTag()
 
         // 뒤로 가기 버튼 클릭 리스너
         binding.ivBack.setOnClickListener {
@@ -79,9 +83,13 @@ class SearchPostFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val topImages = listOf(postList[0].imageUrl, postList[1].imageUrl)
+        val topImages = listOf(postList[0].imageURL, postList[1].imageURL)
         val sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
         sharedViewModel.setTopImages(topImages)
+
+        searchPostViewModel.posts.observe(viewLifecycleOwner) { posts ->
+            Log.d("SearchPostFragment", "ViewModel에서 받은 데이터: $posts")
+        }
 
         val adapter = SearchPostAdapter(postList)
 
@@ -91,13 +99,13 @@ class SearchPostFragment : Fragment() {
                 val selectedItem = postList[position]
 
                 val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
-                    putExtra("image", selectedItem.imageUrl)
+                    putExtra("image", selectedItem.imageURL)
 
-                    putExtra("id", selectedItem.threadId.toString())
-                    putExtra("title", selectedItem.postTitle)
+                    putExtra("id", selectedItem.userTag)
+                    putExtra("title", selectedItem.postContent)
                     putExtra("threadId", selectedItem.threadId)
 
-                    Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageUrl}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postTitle}, ThreadId: ${selectedItem.threadId}")
+                    Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postContent}, ThreadId: ${selectedItem.threadId}")
                 }
 
 
@@ -112,7 +120,8 @@ class SearchPostFragment : Fragment() {
 
         binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                outRect.bottom = 35 // 아이템 간의 간격 35dp
+                outRect.bottom = 50 // 아이템 간의 간격
+                outRect.right= 20
             }
         })
     }

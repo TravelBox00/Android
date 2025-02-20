@@ -19,7 +19,7 @@ class AddPostRepository(private val addPostInterface: AddPostInterface) {
         postRegionCode: String,
         songName: String,
         postContent: String,
-        clothId: Int,
+        clothInfo: String?,
         files: List<File>,
         callback: (AddPostResponse?) -> Unit
     ) {
@@ -30,7 +30,9 @@ class AddPostRepository(private val addPostInterface: AddPostInterface) {
             put("postRegionCode", postRegionCode)
             put("songName", songName)
             put("postContent", postContent)
-            put("clothId", clothId)
+            clothInfo?.let {
+                put("clothInfo", clothInfo)
+            }
         }.toString()
 
         val bodyRequest = jsonBody.toRequestBody("application/json".toMediaTypeOrNull())

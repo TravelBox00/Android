@@ -4,25 +4,20 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.webkit.WebChromeClient
+import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.R
 import com.example.travelbox.data.network.ApiNetwork
-import com.example.travelbox.data.repository.home.CommentFixRequest
 import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.databinding.ActivityDetailPostBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class DetailPostActivity : AppCompatActivity() {
@@ -105,6 +100,23 @@ class DetailPostActivity : AppCompatActivity() {
         binding.detailTitle.text = title
 
 
+//        // Spotify WebView 설정
+//        binding.webViewSpotify.webViewClient = WebViewClient()
+//        binding.webViewSpotify.webChromeClient = WebChromeClient()
+//        binding.webViewSpotify.settings.apply {
+//            javaScriptEnabled = true
+//            domStorageEnabled = true
+//            mediaPlaybackRequiresUserGesture = false
+//        }
+//
+//        // Spotify Embed URL로 변환 후 WebView에 로드
+//        if (singInfo.startsWith("https://open.spotify.com/track/")) {
+//            val embedUrl = singInfo.replace("track/", "embed/track/")
+//            binding.webViewSpotify.loadUrl(embedUrl)
+//            binding.webViewSpotify.visibility = View.VISIBLE
+//        } else {
+//            binding.webViewSpotify.visibility = View.GONE
+//        }
 
         // bottomSheet 적용
 

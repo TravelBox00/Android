@@ -19,9 +19,9 @@ data class AutoCompleteResponse(
 
 data class ThreadPost(
     val threadId: Int,
-    val postTitle: String,
+    val postContent: String,
     val postDate: String,
-    val imageUrl: String
+    val imageURL: String,
 )
 
 data class ThreadSearchResponse(

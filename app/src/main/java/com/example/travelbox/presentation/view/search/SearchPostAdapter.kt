@@ -50,13 +50,13 @@ class SearchPostAdapter(private val itemList: List<ThreadPost>) :
 
         fun bind(data: ThreadPost) {
             Glide.with(binding.root.context)
-                .load(data.imageUrl)
+                .load(data.imageURL)
                 .placeholder(R.drawable.post_ex1)
                 .error(R.drawable.post_ex1)
                 .into(binding.imageArea)
 
-            binding.tvId.text = data.threadId.toString()
-            binding.tvPostTitle.text = data.postTitle
+            binding.tvId.text = "@${data.userTag}"
+            binding.tvPostTitle.text = data.postContent
         }
     }
 }
