@@ -105,7 +105,9 @@ class SearchPostFragment : Fragment() {
                     putExtra("title", selectedItem.postContent)
                     putExtra("threadId", selectedItem.threadId)
 
-                    Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postContent}, ThreadId: ${selectedItem.threadId}")
+                    putExtra("singInfo", selectedItem.singInfo)
+
+                    Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postContent}, ThreadId: ${selectedItem.threadId}, SingInfo: ${selectedItem.singInfo}")
                 }
 
 

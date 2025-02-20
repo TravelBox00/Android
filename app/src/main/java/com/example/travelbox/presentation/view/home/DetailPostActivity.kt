@@ -38,6 +38,7 @@ class DetailPostActivity : AppCompatActivity() {
     private var imageResId : String = ""
     private var id : String = ""
     private var title : String = ""
+    private var singInfo : String = ""
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -78,7 +79,9 @@ class DetailPostActivity : AppCompatActivity() {
         id = intent.getStringExtra("id") ?: "No Id"
         title = intent.getStringExtra("title") ?: "No Title"
 
-        Log.d("DetailPostActivity", "받은 데이터 - Image: $imageResId, Id: $id, Title: $title, ThreadId: $threadId")
+        singInfo = intent.getStringExtra("singInfo") ?: "No Song"
+
+        Log.d("DetailPostActivity", "받은 데이터 - Image: $imageResId, Id: $id, Title: $title, ThreadId: $threadId, singInfo: $singInfo")
 
 
         // 기존 좋아요 상태 불러오기
@@ -99,6 +102,22 @@ class DetailPostActivity : AppCompatActivity() {
 
         binding.detailId.text = "@$id"
         binding.detailTitle.text = title
+
+        if (!singInfo.isNullOrEmpty() && singInfo.startsWith("https://open.spotify.com/track/")) {
+            val embedUrl = singInfo.replace("track/", "embed/track/")
+
+            binding.webViewSpotify.apply {
+                webViewClient = WebViewClient()
+                webChromeClient = WebChromeClient()
+                settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
+                settings.mediaPlaybackRequiresUserGesture = false
+                loadUrl(embedUrl)
+                visibility = View.VISIBLE
+            }
+        } else {
+            binding.webViewSpotify.visibility = View.GONE
+        }
 
 
 //        // Spotify WebView 설정
