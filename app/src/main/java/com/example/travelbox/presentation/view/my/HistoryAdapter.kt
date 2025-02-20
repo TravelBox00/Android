@@ -2,22 +2,25 @@ package com.example.travelbox.presentation.view.my
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.View
 import com.bumptech.glide.Glide
+import com.example.travelbox.data.repository.my.ThreadData
 import com.example.travelbox.databinding.ItemStoryBinding
 
-class HistoryAdapter (private val imageList: List<String>) : androidx.recyclerview.widget.RecyclerView.Adapter<HistoryAdapter.ImageViewHolder>() {
+class HistoryAdapter(private val threadList: List<ThreadData>) :
+    androidx.recyclerview.widget.RecyclerView.Adapter<HistoryAdapter.ImageViewHolder>() {
 
     inner class ImageViewHolder(private val binding: ItemStoryBinding) :
         androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(imageUrl: String) {
+        fun bind(thread: ThreadData) {
             // Glide로 이미지 로드
-            /*
-            Glide.with(binding.imageView.context)
-                .load(imageUrl)
-                .into(binding.imageView)
+            Glide.with(binding.storyImage.context)
+                .load(thread.imageURL)  // ThreadData에서 imageURL 가져오기
+                .into(binding.storyImage)
 
-             */
+            // 텍스트를 보이지 않게 설정
+            binding.textViewPostContent.visibility = View.GONE // 텍스트를 숨깁니다.
         }
     }
 
@@ -27,8 +30,8 @@ class HistoryAdapter (private val imageList: List<String>) : androidx.recyclervi
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.bind(imageList[position])
+        holder.bind(threadList[position])
     }
 
-    override fun getItemCount(): Int = imageList.size
+    override fun getItemCount(): Int = threadList.size
 }
