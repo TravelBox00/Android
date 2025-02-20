@@ -250,8 +250,8 @@ class HomeFragment : Fragment() {
     private fun loadCategoryPosts(category: String) {
         HomeRepository.regionFilterSearch(category, "", null) { response ->
             if (response?.isSuccess == true && response.result.isNotEmpty()) {
-                val mappedPosts = mapPostDataToPostItem(response.result) // 변환 실행
-                postAdapter.updateData(mappedPosts)
+                //val mappedPosts = mapPostDataToPostItem(response.result) // 변환 실행
+                //postAdapter.updateData(mappedPosts)
             } else {
                 Log.e("HomeFragment", "$category 게시물 조회 실패")
             }
@@ -260,18 +260,19 @@ class HomeFragment : Fragment() {
 
 
     // 카테고리 postData -> postItem 변환
-    private fun mapPostDataToPostItem(postDataList: List<PostData>): List<PostItem> {
-        return postDataList.map { postData ->
-            PostItem(
-                threadId = postData.threadId,
-                postContent = postData.postTitle,
-                postDate = postData.postDate,
-                imageURL = postData.imageURL ?: "", // null 방지
-                userTag = "postData.",
-                totalEngagement = null // 해당 데이터가 없으므로 기본값 설정
-            )
-        }
-    }
+//    private fun mapPostDataToPostItem(postDataList: List<PostData>): List<PostItem> {
+//        return postDataList.map { postData ->
+//            PostItem(
+//                threadId = postData.threadId,
+//                postContent = postData.postTitle,
+//                postDate = postData.postDate,
+//                imageURL = postData.imageURL ?: "", // null 방지
+//                userTag = "postData.",
+//                totalEngagement = null, // 해당 데이터가 없으므로 기본값 설정
+//                singInfo = null
+//            )
+//        }
+//    }
 
 
 
