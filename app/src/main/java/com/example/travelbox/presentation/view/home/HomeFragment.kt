@@ -148,6 +148,14 @@ class HomeFragment : Fragment() {
                 .commit()
         }
 
+        binding.tvTravelRecord.setOnClickListener {
+            val categoryFragment = CategoryPostFragment("여행 기록")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
 
         // 코디 카테고리
         binding.tvStyle.setOnClickListener {
