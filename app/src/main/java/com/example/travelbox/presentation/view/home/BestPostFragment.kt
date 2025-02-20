@@ -98,24 +98,25 @@ class BestPostFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == FILTER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val filtercategory = data?.getStringExtra("category")
             val city = data?.getStringExtra("city")
             val district = data?.getStringExtra("district")
-            if (city != null && district != null) {
-                getPopularPostWithFilters(city, district)
+            if (filtercategory!= null && city != null && district != null) {
+                getPopularPostWithFilters(filtercategory,city, district)
             } else {
                 Toast.makeText(context, "필터 정보를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun getPopularPostWithFilters(city: String, district: String?) {
+    private fun getPopularPostWithFilters(category: String, city: String, district: String?) {
 
         // API 호출로 필터링된 게시물 가져오기
-        HomeRepository.regionFilterSearch("여행", district!!, null) { response ->
+        HomeRepository.regionFilterSearch(category, city, district!!) { response ->
             if (response?.isSuccess == true) {
 
                 Log.d("지역 필터", "데이터 조회 성공 :$response")
-                Toast.makeText(context, "${city} ${district} 필터 적용됨", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, " ${city} ${district} 게시물", Toast.LENGTH_SHORT).show()
 
                 // 게시물 어댑터 업데이트
                 val filteredPosts = response.result

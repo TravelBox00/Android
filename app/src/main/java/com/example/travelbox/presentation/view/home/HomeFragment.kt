@@ -163,21 +163,33 @@ class HomeFragment : Fragment() {
         // 여행지 카테고리
         binding.tvPlace.setOnClickListener {
 
-            loadCategoryPosts("여행지")
+            val categoryFragment = CategoryPostFragment("여행지")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
 
         }
 
         // 기념품 카테고리
         binding.tvSouvenir.setOnClickListener {
 
-            loadCategoryPosts("기념품")
+            val categoryFragment = CategoryPostFragment("기념품")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
 
         }
 
         // 노래 카테고리
         binding.tvSong.setOnClickListener {
 
-            loadCategoryPosts("노래")
+            val categoryFragment = CategoryPostFragment("노래")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
 
         }
 
