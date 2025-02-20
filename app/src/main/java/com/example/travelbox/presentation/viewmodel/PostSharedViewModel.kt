@@ -14,4 +14,7 @@ class PostSharedViewModel : ViewModel(){
     fun setTopImages(images: List<String>) {
         _topImages.value = images
     }
+
+
+
 }

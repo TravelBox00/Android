@@ -14,7 +14,20 @@ class FilterAdapter(private val items: List<String>, private val onItemClick: (S
     private var selectedPosition = RecyclerView.NO_POSITION  // 선택된 항목 인덱스
 
 
-    inner class ViewHolder(private val binding: com.example.travelbox.databinding.ItemFilterBinding) : RecyclerView.ViewHolder(binding.root){
+
+
+//    private var selectedItem: String? = null
+//
+//
+//
+//    // 선택된 항목 리턴
+//    fun getSelectedItem(): String? {
+//        return selectedItem
+//    }
+
+
+
+    inner class ViewHolder(private val binding: ItemFilterBinding) : RecyclerView.ViewHolder(binding.root){
 
         fun bind(item: String, position: Int) {
             binding.tvFilter.text = item
@@ -57,8 +70,10 @@ class FilterAdapter(private val items: List<String>, private val onItemClick: (S
                 binding.tvFilter.setTextColor(Color.parseColor("#FFFFFF"))
                 binding.root.setBackgroundResource(0)  // 외곽선 제거 (drawable 제거)
             } else {
-                // 선택되지 않은 항목: 외곽선 적용
-                //binding.tvFilter.setBackgroundColor(Color.parseColor("#FFFFFF"))
+                // 선택되지 않은 항목 스타일을 명확히 지정
+                binding.tvFilter.setBackgroundColor(Color.TRANSPARENT)
+                binding.tvFilter.setTextColor(Color.parseColor("#A7A7A7"))
+                binding.root.setBackgroundResource(R.drawable.style_item_border)
             }
         }
     }

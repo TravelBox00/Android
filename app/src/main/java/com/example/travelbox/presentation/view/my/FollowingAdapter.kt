@@ -3,47 +3,35 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.databinding.ItemFollowBinding
-
-data class FollowItem(
-    val profileImageUrl: String,
-    val nickname: String,
-    val userId: String,
-    var isFollowing: Boolean
-)
-
+import com.example.travelbox.data.repository.my.FollowerItem
+import com.example.travelbox.data.repository.my.FollowingItem
 
 class FollowingAdapter(
-    private val followList: List<FollowItem>,
-    private val onFollowButtonClick: (FollowItem) -> Unit
+    private var followList: MutableList<FollowingItem>,  // 🔹 FollowerItem → FollowingItem 으로 변경
+    private val onFollowButtonClick: (FollowingItem) -> Unit  // 🔹 타입 수정
 ) : RecyclerView.Adapter<FollowingAdapter.FollowingViewHolder>() {
 
     inner class FollowingViewHolder(private val binding: ItemFollowBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: FollowItem) {
+        fun bind(item: FollowingItem) {  // 🔹 타입 수정
             with(binding) {
                 Glide.with(profileImage.context)
                     .load(item.profileImageUrl)
                     .circleCrop()
                     .into(profileImage)
 
-                textNickname.text = item.nickname
-                textUserId.text = item.userId
+                textNickname.text = item.userId
 
                 btnFollow.apply {
-                    text = if (item.isFollowing) "Following" else "Follow"
-                    /*
-                    setBackgroundTintList(
-                        context.getColorStateList(
-                            if (item.isFollowing) android.R.color.darker_gray else android.R.color.holo_blue_light
-                        )
-                    )
-                     */
+                    text = if (item.isFollowedByThem) "Following" else "Follow"
 
                     setOnClickListener {
-                        onFollowButtonClick(item)  // 여기서 클릭 시 액션을 수행
-                        item.isFollowing = !item.isFollowing
-                        notifyItemChanged(adapterPosition)
+                        if (adapterPosition != RecyclerView.NO_POSITION) {
+                            onFollowButtonClick(item)
+                            item.isFollowedByThem = !item.isFollowedByThem
+                            notifyItemChanged(adapterPosition)
+                        }
                     }
                 }
             }
@@ -61,4 +49,10 @@ class FollowingAdapter(
     }
 
     override fun getItemCount(): Int = followList.size
+
+    fun updateList(newList: List<FollowingItem>) {
+        followList.clear()
+        followList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }

@@ -54,7 +54,7 @@
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginTop="16dp"
         android:overScrollMode="never">
 
@@ -186,7 +186,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/calendar_border"
-        android:padding="8dp"
+        android:padding="-2dp"
         android:paddingBottom="2dp"
         android:orientation="vertical">
 
@@ -194,15 +194,16 @@
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:mcv_selectionColor="#DADADA"
+            app:mcv_selectionColor="@color/gray5"
             app:mcv_showOtherDates="all"
             app:mcv_dateTextAppearance="@style/regular14"
-            app:mcv_tileWidth="48dp"
-            app:mcv_tileHeight="48dp"
+            app:mcv_tileWidth="46dp"
+            app:mcv_tileHeight="46dp"
             app:mcv_headerTextAppearance="@null"
             app:mcv_weekDayTextAppearance="@style/CustomWeekDayText"
             app:mcv_leftArrow="@null"
             app:mcv_rightArrow="@null"/>
+
     </LinearLayout>
 
     <FrameLayout

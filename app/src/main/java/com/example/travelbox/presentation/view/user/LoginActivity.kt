@@ -32,6 +32,10 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.backBtnIV.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed() // 뒤로 가기 기능 실행
+        }
+
         passwordET = findViewById(R.id.pwd_ET)
         viewPasswordIv = findViewById(R.id.show_pwd_IV)
         hidePasswordIv = findViewById(R.id.hide_pwd_IV)
@@ -71,12 +75,10 @@ class LoginActivity : AppCompatActivity() {
                 login(id, password)
             } else {
                 // 로그인 실패 예시
-                Toast.makeText(this, "로그인 실패: 아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
-
 
     // 로그인
     private fun login(id: String, password: String) {

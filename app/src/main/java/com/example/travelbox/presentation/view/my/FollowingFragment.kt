@@ -1,9 +1,15 @@
+package com.example.travelbox.presentation.view.my
+
+import FollowingAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.travelbox.data.repository.my.FollowingItem
+import com.example.travelbox.data.repository.my.MyRepository
 import com.example.travelbox.databinding.FragmentFollowingBinding
 
 class FollowingFragment : Fragment() {
@@ -11,33 +17,42 @@ class FollowingFragment : Fragment() {
     private var _binding: FragmentFollowingBinding? = null
     private val binding get() = _binding!!
 
-    // 불변 리스트에서 가변 리스트로 변경
-    private val itemList = mutableListOf(
-        FollowItem("https://example.com/user1.jpg", "이름1", "user1", false),
-        FollowItem("https://example.com/user2.jpg", "이름2", "user2", true)
-    )
+    private val itemList = mutableListOf<FollowingItem>()
+    private lateinit var adapter: FollowingAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFollowingBinding.inflate(inflater, container, false)
-        setupRecyclerView()
+        setupRecyclerView() // 🔹 RecyclerView 설정 먼저 실행
+        loadFollowing() // 🔹 데이터 로딩 실행
         return binding.root
     }
 
     private fun setupRecyclerView() {
-        // 어댑터를 setupRecyclerView() 내에서 초기화
-        val adapter = FollowingAdapter(itemList) { followItem ->
-            // 버튼 클릭 시 isFollowing 값을 반전
-            followItem.isFollowing = !followItem.isFollowing
-            // 데이터가 변경되었으므로 RecyclerView에 변경 알리기
-            //adapter.notifyDataSetChanged()
+        adapter = FollowingAdapter(itemList) { followItem ->
+            // 버튼 클릭 시 isFollowedByThem 값을 반전
+            followItem.isFollowedByThem = !followItem.isFollowedByThem
+            adapter.notifyDataSetChanged()
         }
 
-        // RecyclerView에 어댑터와 레이아웃 매니저 설정
         binding.recyclerFollowing.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerFollowing.adapter = adapter
+    }
+
+    private fun loadFollowing() {
+        val userTag = "actualUserTag" // 🔹 실제 로그인된 사용자 태그로 변경 필요
+
+        MyRepository.getFollowing(userTag) { followings ->
+            if (followings != null) {
+                requireActivity().runOnUiThread {
+                    adapter.updateList(followings) // 🔹 UI 스레드에서 데이터 업데이트
+                }
+            } else {
+                Log.e("FollowingFragment", "팔로잉 데이터를 불러오는 데 실패했습니다.")
+            }
+        }
     }
 
     override fun onDestroyView() {

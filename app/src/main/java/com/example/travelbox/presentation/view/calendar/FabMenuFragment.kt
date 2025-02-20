@@ -12,6 +12,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.Fragment
 import com.example.travelbox.R
 import com.example.travelbox.databinding.FabMenuBinding
+import com.example.travelbox.presentation.view.post.AddPostFragment
 
 
 class FabMenuFragment(private val onScheduleClick: () -> Unit) : Fragment() {
@@ -48,16 +49,29 @@ class FabMenuFragment(private val onScheduleClick: () -> Unit) : Fragment() {
 
     private fun setupFabClickListeners() {
         binding.fabSchedule.setOnClickListener {
-            if (isFabOpen) {  // ✅ FAB이 열린 상태에서만 실행
+            if (isFabOpen) {
                 onScheduleClick()
                 closeFabMenu(binding.fabSchedule, binding.fabPost, binding.fabMain)
-                isFabOpen = false  // ✅ FAB 상태 닫힘으로 변경
+                isFabOpen = false
+            }
+        }
+
+        // ✅ fabPost 버튼 클릭 시 AddPostFragment로 이동
+        binding.fabPost.setOnClickListener {
+            if (isFabOpen) {
+                openAddPostFragment()
+                closeFabMenu(binding.fabSchedule, binding.fabPost, binding.fabMain)
+                isFabOpen = false
             }
         }
     }
-
-
-
+    private fun openAddPostFragment() {
+        val addPostFragment = AddPostFragment()
+        requireActivity().supportFragmentManager.beginTransaction() // ✅ 액티비티의 FragmentManager 사용
+            .replace(R.id.main_frm, addPostFragment)  // ✅ main_frm이 있는 액티비티에서 Fragment 교체
+            .addToBackStack(null)  // ✅ 뒤로 가기 버튼 지원
+            .commit()
+    }
 
     private fun openFabMenu(schedule: View, post: View, mainFab: View) {
         schedule.visibility = View.VISIBLE

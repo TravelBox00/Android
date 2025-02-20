@@ -7,12 +7,16 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.home.PostData
 import com.example.travelbox.data.repository.home.PostItem
 import com.example.travelbox.databinding.ItemGridPostBinding
 
 
-class PostAdapter(private val itemList: List<PostItem>) :
+class PostAdapter(private var itemList: List<PostItem>) :
         RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+
+
 
         interface onItemClickListener {
             fun onItemClick(position: Int)
@@ -52,6 +56,13 @@ class PostAdapter(private val itemList: List<PostItem>) :
             }
 
             holder.bind(itemList[position])
+
+
+        }
+
+        fun updateData(newList: List<PostItem>) {
+            itemList = newList
+            notifyDataSetChanged()
         }
 
 
@@ -60,15 +71,20 @@ class PostAdapter(private val itemList: List<PostItem>) :
 
             fun bind(data: PostItem) {
 
+
+
                 // 인기 게시물 이미지
                 Glide.with(binding.root.context)
                     .load(data.imageURL)  // 데이터로 받은 URL
                     .placeholder(R.drawable.post_ex1)  // 로딩 중일 때 보여줄 이미지
                     .error(R.drawable.post_ex1)  // 에러 시 표시할 이미지
+
+
                     .into(binding.imageArea)  // 이미지뷰에 로드
 
-                binding.tvId.text = data.threadId.toString()
-                binding.tvPostTitle.text = data.postTitle
+                binding.tvId.text = "@${data.userTag}"
+                binding.tvPostTitle.text = data.postContent
+
 
 
                 // 메달 아이콘 표시

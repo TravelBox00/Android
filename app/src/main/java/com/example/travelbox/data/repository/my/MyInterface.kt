@@ -15,8 +15,10 @@ interface MyInterface {
 
     //팔로잉
     @GET("follow/showFollowing/{userTag}")
-    fun getFollowing(@Path("userTag") userTag: String)
-    : Call<FollowerResponse>
+    fun getFollowing(
+        @Path("userTag") userTag: String)
+    : Call<FollowingResponse>
+
 
     //게시글
     @GET("/thread/specific")

@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,8 +28,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.travelbox.R
 import com.example.travelbox.data.repository.home.HomeRepository
 import com.example.travelbox.data.repository.home.HomeRepository.Companion.getPopularPost
+import com.example.travelbox.data.repository.home.PostData
+import com.example.travelbox.data.repository.home.PostItem
+import com.example.travelbox.data.repository.search.SearchRepository
 import com.example.travelbox.databinding.FragmentHomeBinding
+import com.example.travelbox.presentation.view.search.SearchPostFragment
+import com.example.travelbox.presentation.view.search.SearchPostViewModel
 import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
+
 
 
 class HomeFragment : Fragment() {
@@ -36,10 +43,12 @@ class HomeFragment : Fragment() {
     lateinit var binding : FragmentHomeBinding
     private lateinit var sharedViewModel: PostSharedViewModel
 
+    private lateinit var postAdapter: PostAdapter
     private lateinit var bannerAdapter: BannerAdapter
     private lateinit var mBanner: ViewPager2
 
-
+    private val searchRepository = SearchRepository()
+    private lateinit var searchPostViewModel: SearchPostViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +65,18 @@ class HomeFragment : Fragment() {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
+
+        searchPostViewModel = ViewModelProvider(requireActivity())[SearchPostViewModel::class.java]
+
+//        postAdapter = PostAdapter(listOf())  // 빈 리스트로 초기화
+//
+//        val postListView = layoutInflater.inflate(R.layout.fragment_best_post, null)
+//
+//        val recyclerView = postListView.findViewById<RecyclerView>(R.id.recyclerview)
+//        recyclerView.apply {
+//            layoutManager = LinearLayoutManager(context)
+//            adapter = postAdapter
+//        }
 
         setTextStyle()
 
@@ -119,7 +140,7 @@ class HomeFragment : Fragment() {
         }
 
 
-        // 뒤로 가기 버튼
+        // 인기 게시물 버튼
         binding.ivBackButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, BestPostFragment())  // BestPostFragment로 전환
@@ -128,7 +149,61 @@ class HomeFragment : Fragment() {
         }
 
 
+        // 코디 카테고리
+        binding.tvStyle.setOnClickListener {
 
+            val categoryFragment = CategoryPostFragment("코디")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
+
+        // 여행지 카테고리
+        binding.tvPlace.setOnClickListener {
+
+            val categoryFragment = CategoryPostFragment("여행지")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
+
+        // 기념품 카테고리
+        binding.tvSouvenir.setOnClickListener {
+
+            val categoryFragment = CategoryPostFragment("기념품")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
+
+        // 노래 카테고리
+        binding.tvSong.setOnClickListener {
+
+            val categoryFragment = CategoryPostFragment("노래")
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, categoryFragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
+
+
+
+        // 검색 버튼 클릭 리스너
+        binding.ivSearch.setOnClickListener {
+            val keyword = binding.etSearch.text.toString()
+            if (keyword.isNotEmpty()) {
+                searchForPosts(keyword)
+            } else {
+                Toast.makeText(requireContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
 
@@ -163,6 +238,34 @@ class HomeFragment : Fragment() {
     }
 
 
+    // 카테고리
+    private fun loadCategoryPosts(category: String) {
+        HomeRepository.regionFilterSearch(category, "", null) { response ->
+            if (response?.isSuccess == true && response.result.isNotEmpty()) {
+                val mappedPosts = mapPostDataToPostItem(response.result) // 변환 실행
+                postAdapter.updateData(mappedPosts)
+            } else {
+                Log.e("HomeFragment", "$category 게시물 조회 실패")
+            }
+        }
+    }
+
+
+    // 카테고리 postData -> postItem 변환
+    private fun mapPostDataToPostItem(postDataList: List<PostData>): List<PostItem> {
+        return postDataList.map { postData ->
+            PostItem(
+                threadId = postData.threadId,
+                postContent = postData.postTitle,
+                postDate = postData.postDate,
+                imageURL = postData.imageURL ?: "", // null 방지
+                userTag = "postData.",
+                totalEngagement = null // 해당 데이터가 없으므로 기본값 설정
+            )
+        }
+    }
+
+
 
     // 인기 게시물 2개 가져오기
     private fun loadImage(imageView: ImageView, url: String) {
@@ -171,7 +274,7 @@ class HomeFragment : Fragment() {
         val options = RequestOptions()
             .transform(RoundedCorners(20))
 
-            Glide.with(this)
+        Glide.with(this)
                 .load(url)
                 .apply(options)
                 .override(imageView.width, imageView.height) // 로딩 중 배경
@@ -232,6 +335,24 @@ class HomeFragment : Fragment() {
 
 
         binding.tvTravelRecord.text = spannableString
+    }
+
+
+
+
+    private fun searchForPosts(searchKeyword: String) {
+        searchRepository.getSearchPost(searchKeyword, 0) { threadPosts ->
+            val posts = threadPosts ?: emptyList()
+            searchPostViewModel.setPosts(posts)
+            val searchPostFragment = SearchPostFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, searchPostFragment)
+                .addToBackStack(null)
+                .commit()
+            if (posts.isEmpty()) {
+                Toast.makeText(requireContext(), "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
