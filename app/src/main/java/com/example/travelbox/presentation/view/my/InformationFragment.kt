@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.example.travelbox.data.network.ApiNetwork.getAccessToken
 import com.example.travelbox.data.repository.my.MyRepository
 import com.example.travelbox.data.repository.my.UserInfo
 import com.example.travelbox.databinding.FragmentInformationBinding
@@ -16,6 +17,7 @@ class InformationFragment : Fragment() {
 
     private var _binding: FragmentInformationBinding? = null
     private val binding get() = _binding!!
+    val token = getAccessToken().toString()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,7 +26,7 @@ class InformationFragment : Fragment() {
         _binding = FragmentInformationBinding.inflate(inflater, container, false)
 
         loadUserInfo()
-
+        Log.d("TokenAccess","$token")
         binding.logoutBtn.setOnClickListener {
             logout()
         }
