@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
 import android.widget.EditText
@@ -154,13 +155,7 @@ class DetailPostActivity : AppCompatActivity() {
 
         // 좋아요 버튼
         binding.ivHeart.setOnClickListener {
-//            isLiked = !isLiked
-//
-//            if (isLiked) {
-//                binding.ivHeart.setImageResource(R.drawable.ic_heart_on)
-//            } else {
-//                binding.ivHeart.setImageResource(R.drawable.ic_heart_off)
-//            }
+
 
             toggleLike(threadId, userTag!!)
 
@@ -170,24 +165,11 @@ class DetailPostActivity : AppCompatActivity() {
 
         // 북마크 버튼
         binding.ivBookmark.setOnClickListener {
-//            isMarked = !isMarked
-//
-//            if (isMarked) {
-//                binding.ivBookmark.setImageResource(R.drawable.ic_bookmark_on)
-//            } else {
-//                binding.ivBookmark.setImageResource(R.drawable.ic_bookmark)
-//            }
+
 
             toggleBookmark(threadId, userTag!!)
 
         }
-
-
-
-
-
-
-
 
 
 
@@ -216,24 +198,17 @@ class DetailPostActivity : AppCompatActivity() {
                 // 댓글 데이터 리스트 생성
                 val itemList = it.result.map { comment ->
                     CommentRecyclerModel(comment.commenterNickname, comment.commentId, comment.commentContent, comment.commentVisible!!)
-                }.toMutableList()
+                }.sortedBy { it.commentId }.toMutableList()
 
-                // RecyclerView에 데이터 설정
+
                 val adapter = BottomCommentAdapter(itemList)
                 recyclerView.adapter = adapter
-
-                //댓글이 많을 경우, 마지막 댓글 위치로 스크롤
-                recyclerView.scrollToPosition(itemList.size - 1)
+                recyclerView.scrollToPosition(itemList.size - 1) // 최신 댓글 위치로 스크롤
 
                 // 비공개 댓글 버튼
                 btnLock.setOnClickListener {
-                    if (commentVisible == "public") {
-                        commentVisible = "private"
-                        btnLock.setImageResource(R.drawable.ic_lock) // 아이콘 변경
-                    } else {
-                        commentVisible = "public"
-                        btnLock.setImageResource(R.drawable.ic_unlock) // 기본 아이콘
-                    }
+                    commentVisible = if (commentVisible == "public") "private" else "public"
+                    btnLock.setImageResource(if (commentVisible == "private") R.drawable.ic_lock else R.drawable.ic_unlock)
                 }
 
                 // 댓글 전송 버튼 이벤트
@@ -304,12 +279,20 @@ class DetailPostActivity : AppCompatActivity() {
 
                 val newComment = CommentRecyclerModel(commentNickname = userId, commentId = postId, commentContent = commentContent, commentVisible = commentVisible)
                 itemList.add(newComment) // 최신 댓글 추가
+                itemList.sortBy { it.commentId } // 최신순 정렬
+                //adapter.notifyDataSetChanged() // 데이터 갱신
                 adapter.notifyItemInserted(itemList.size - 1)
+
+                // 댓글 RecyclerView 설정
+                recyclerView.layoutManager = LinearLayoutManager(this).apply {
+                    stackFromEnd = false // 아이템을 위에서부터 쌓기
+
+                }
 
 
                 // 최신 댓글이 보이도록 자동 스크롤
                 recyclerView.postDelayed({
-                    recyclerView.scrollToPosition(itemList.size - 1)
+                    recyclerView.smoothScrollToPosition(itemList.size - 1)
                 }, 100)
 
 
@@ -319,6 +302,11 @@ class DetailPostActivity : AppCompatActivity() {
 
                 // 입력창 초기화
                 etComment.text.clear() // 입력창 초기화
+
+
+                // 키보드 내리기
+                val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(etComment.windowToken, 0)
             } ?: run {
                 Toast.makeText(this, "댓글 등록 실패", Toast.LENGTH_SHORT).show()
             }
@@ -352,17 +340,6 @@ class DetailPostActivity : AppCompatActivity() {
 
 
 
-    // 1. 좋아요 상태 확인 (초기 로딩 시 호출)
-//    private fun getLikeStatus(threadId: Int, userTag: String) {
-//        HomeRepository.postAddIsLiked(threadId, userTag) { response ->
-//            response?.let {
-//                isLiked = it.result.isLiked // API 응답값으로 업데이트
-//                updateLikeUI()
-//            } ?: run {
-//                Log.e("게시물 좋아요", "좋아요 상태 불러오기 실패")
-//            }
-//        }
-//    }
 
     // 좋아요 버튼 클릭 시 상태 변경
     private fun toggleLike(threadId: Int, userTag: String) {
@@ -414,7 +391,6 @@ class DetailPostActivity : AppCompatActivity() {
     }
 
 
-    // 댓글 수정
 
 
 
