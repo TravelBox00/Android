@@ -120,7 +120,6 @@ class ScheduleFragment : Fragment() {
 
         CalendarRepository.addCalendarEvent(userId, title, content, startDateStr, endDateStr) { success, message ->
             if (success) {
-                Toast.makeText(requireContext(), "일정 추가 성공: $message", Toast.LENGTH_SHORT).show()
 
                 // ✅ CalendarFragment로 "calendar_update" 신호 보내기
                 setFragmentResult("calendar_update", Bundle())
