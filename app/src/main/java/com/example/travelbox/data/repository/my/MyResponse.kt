@@ -1,8 +1,6 @@
 package com.example.travelbox.data.repository.my
 
-data class FollowerResponse(
-    val followers: List<Follower>
-)
+import com.google.gson.annotations.SerializedName
 
 //팔로워 수 조회
 data class Follower(
@@ -14,21 +12,39 @@ data class Follower(
     }
 }
 
-//팔로워 중인 사람 조회
-data class FollowerItem(
-    val profileImageUrl: String,
-    val nickname: String,
-    val userId: String,
-    val isFollowing: Boolean
+// 팔로워 목록 API 응답 모델
+data class FollowerResponse(
+    @SerializedName("followers") val followers: List<FollowerItem>
 )
 
-//팔로잉
-data class Following(
-    val followingUserId: Int,
-    val followingUserTag: String
+// 개별 팔로워 데이터 모델
+data class FollowerItem(
+    @SerializedName("followerUserId") val followerUserId: Int,  // 🔹 Swagger에 맞춰 추가
+    @SerializedName("userTag") val userId: String,
+    @SerializedName("userProfileImage") val profileImageUrl: String,
+    @SerializedName("isFollowing") var isFollowing: Boolean,
+    val nickname: String = ""  // 기본값 제공
 ) {
     override fun toString(): String {
-        return "Follower(userId=$followingUserId, userTag=$followingUserTag)"
+        return "FollowerItem(followerUserId=$followerUserId, userId=$userId, profileImageUrl=$profileImageUrl, isFollowing=$isFollowing, nickname=$nickname)"
+    }
+}
+
+
+// 팔로잉 목록 API 응답 모델
+data class FollowingResponse(
+    @SerializedName("followings") val followings: List<FollowingItem>
+)
+
+// 개별 팔로잉 데이터 모델
+data class FollowingItem(
+    @SerializedName("followingUserId") val followingUserId: Int,  // 🔹 Swagger에 맞춰 추가
+    @SerializedName("userTag") val userId: String,
+    @SerializedName("userProfileImage") val profileImageUrl: String,
+    @SerializedName("isFollowedByThem") var isFollowedByThem: Boolean
+) {
+    override fun toString(): String {
+        return "FollowingItem(followingUserId=$followingUserId, userId=$userId, profileImageUrl=$profileImageUrl, isFollowedByThem=$isFollowedByThem)"
     }
 }
 
