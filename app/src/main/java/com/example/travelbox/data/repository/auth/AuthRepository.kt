@@ -121,7 +121,7 @@ class AuthRepository {
             })
         }
 
-        // 회원가입
+        //회원가입
         fun signUp(userTag: String, userPassword: String, userNickname: String, callback: (Boolean) -> Unit) {
             val request = SignUpRequest(userTag, userPassword, userNickname)
 
@@ -130,17 +130,18 @@ class AuthRepository {
                     call: Call<SignUpResponse>,
                     response: Response<SignUpResponse>
                 ) {
+                    Log.d("AuthRepository", "회원가입 요청 데이터: $userTag, $userPassword, $userNickname")
+
                     if (response.isSuccessful) {
-                        val result = response.body()?.result
-                        if (result != null) {
-                            Log.d("AuthRepository", "회원가입 성공: ${result.userTag}")
+                        val result = response.body()
+                        if (result != null && result.isSuccess) {  // ✅ 서버 응답에 맞게 수정
+                            Log.d("AuthRepository", "회원가입 성공")
                             callback(true)
                         } else {
-                            Log.e("AuthRepository", "회원가입 응답 : null")
+                            Log.e("AuthRepository", "회원가입 실패: 서버에서 isSuccess=false 반환")
                             callback(false)
                         }
                     } else {
-                        Log.d("AuthRepository", "회원가입 요청 데이터: $userTag, $userPassword, $userNickname")
                         Log.e("AuthRepository", "회원가입 실패: ${response.errorBody()?.string()}")
                         callback(false)
                     }
@@ -152,6 +153,7 @@ class AuthRepository {
                 }
             })
         }
+
 
         //ID 중복확인
         fun duplicate(userTag: String, callback: (Boolean) -> Unit) {
