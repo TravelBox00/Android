@@ -36,6 +36,14 @@ class CategoryPostFragment(private val category: String) : Fragment() {
         loadCategoryPosts(category)
 
 
+        binding.ivBack.setOnClickListener {
+            val homeFragment = HomeFragment() // HomeFragment 객체 생성
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, homeFragment)
+                .commit()
+        }
+
+
 
 
 

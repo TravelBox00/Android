@@ -14,10 +14,10 @@ import retrofit2.Response
 class MyRepository {
 
     companion object {
-        private val myService = ApiNetwork.createService(MyIneterface::class.java)
+        private val myService = ApiNetwork.createService(MyInterface::class.java)
 
         // 팔로워
-        fun getFollowers(userTag: String, callback: (List<Follower>?) -> Unit) {
+        fun getFollowers(userTag: String, callback: (List<FollowerItem>?) -> Unit) {
             myService.getFollowers(userTag).enqueue(object : Callback<FollowerResponse> {
                 override fun onResponse(call: Call<FollowerResponse>, response: Response<FollowerResponse>) {
                     if (response.isSuccessful) {
@@ -37,12 +37,11 @@ class MyRepository {
             })
         }
 
-        // 팔로잉
-        fun getFollowing(userTag: String, callback: (List<Follower>?) -> Unit) {
-            myService.getFollowing(userTag).enqueue(object : Callback<FollowerResponse> {
-                override fun onResponse(call: Call<FollowerResponse>, response: Response<FollowerResponse>) {
+        fun getFollowing(userTag: String, callback: (List<FollowingItem>?) -> Unit) {
+            myService.getFollowing(userTag).enqueue(object : Callback<FollowingResponse> {
+                override fun onResponse(call: Call<FollowingResponse>, response: Response<FollowingResponse>) {
                     if (response.isSuccessful) {
-                        val followings = response.body()?.followers
+                        val followings = response.body()?.followings
                         Log.d("MyRepository", "팔로잉 목록 조회 성공: $followings")
                         callback(followings)
                     } else {
@@ -51,7 +50,7 @@ class MyRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<FollowerResponse>, t: Throwable) {
+                override fun onFailure(call: Call<FollowingResponse>, t: Throwable) {
                     Log.e("MyRepository", "팔로잉 목록 요청 실패: ${t.message}")
                     callback(null)
                 }

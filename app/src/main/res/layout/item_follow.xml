@@ -39,7 +39,7 @@
     <Button
         android:id="@+id/btn_follow"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:text="Following"
         android:background="@drawable/border_background" />
 </LinearLayout>

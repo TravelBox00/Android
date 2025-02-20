@@ -1,7 +1,6 @@
 package com.example.mypage
 
 import CommentFragment
-import FollowingFragment
 import InformationFragment
 import StoryFragment
 import android.os.Bundle
@@ -15,6 +14,7 @@ import com.example.travelbox.R
 import com.example.travelbox.data.repository.my.MyRepository
 import com.example.travelbox.databinding.FragmentMypageBinding
 import com.example.travelbox.presentation.view.my.FollowerFragment
+import com.example.travelbox.presentation.view.my.FollowingFragment
 import com.example.travelbox.presentation.view.my.ScrapFragment
 import com.google.android.material.tabs.TabLayoutMediator
 

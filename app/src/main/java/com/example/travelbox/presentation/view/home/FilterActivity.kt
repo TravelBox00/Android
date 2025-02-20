@@ -25,10 +25,6 @@ class FilterActivity : AppCompatActivity() {
     // cityDistrictMap을 나중에 초기화하기 위해 lateinit 선언
     private lateinit var cityDistrictMap: Map<String, List<String>>
 
-//    private val cityDistrictMap = mapOf(
-//        "서울" to listOf("강남", "명동", "홍대", "이태원"),
-//        "부산" to listOf("해운대", "서면", "광안리", "자갈치시장")
-//    )
 
     private var categoryString: String? = "여행"
 
@@ -205,18 +201,19 @@ class FilterActivity : AppCompatActivity() {
 //            Toast.makeText(this, "$district 선택됨", Toast.LENGTH_SHORT).show()
 //        }
 //    }
-//  하나의 도시만 선택되도록 수정
+//  도시 출력 함수
     private fun showCities(cities: List<String>) {
         setupRecyclerView(binding.rvCity, cities) { city ->
             if (selectedCity != city) {  // 기존 선택과 다를 경우에만 변경
                 selectedCity = city
-                selectedDistrict = null  // 🔹 새 도시 선택 시 기존 지역 초기화
+                selectedDistrict = null  // 새 도시 선택 시 기존 지역 초기화
+                binding.rvDistrict.adapter = null
                 showDistricts(cityDistrictMap[city] ?: emptyList())
             }
         }
     }
 
-    //  하나의 지역만 선택되도록 수정
+    //  도시 내 장소 출력 함수
     private fun showDistricts(districts: List<String>) {
         setupRecyclerView(binding.rvDistrict, districts) { district ->
             if (selectedDistrict != district) {  // 기존 선택과 다를 경우에만 변경
@@ -240,7 +237,7 @@ class FilterActivity : AppCompatActivity() {
         binding.rvDistrict.visibility = RecyclerView.GONE
     }
 
-    // 🔹 JSON 파일을 읽어와 cityDistrictMap을 생성하는 함수
+    // JSON 파일을 읽어와 cityDistrictMap을 생성하는 함수
     private fun loadCityDistrictMap(): Map<String, List<String>> {
         return try {
             val inputStream = assets.open("filter.json") // assets 폴더에서 JSON 파일 열기

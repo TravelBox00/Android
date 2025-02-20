@@ -127,89 +127,28 @@
             app:layout_constraintStart_toStartOf="@id/detailImage"
             app:layout_constraintTop_toBottomOf="@id/detailId" />
 
-        <TextView
-            android:id="@+id/tv_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="코디"
-            style="@style/semibold14"
-            android:textColor="@color/black"
-            android:layout_marginTop="70dp"
-            app:layout_constraintStart_toStartOf="@id/detailImage"
-            app:layout_constraintTop_toBottomOf="@id/detailTitle" />
-
-        <LinearLayout
-            android:id="@+id/layout_style"
-            android:layout_width="340dp"
-            android:layout_height="90dp"
-            android:orientation="horizontal"
-            android:background="@drawable/style_etv_background"
-            android:layout_marginTop="10dp"
-            android:padding="10dp"
-            app:layout_constraintStart_toStartOf="@id/tv_style"
-            app:layout_constraintTop_toBottomOf="@id/tv_style">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- 이미지 -->
-                <FrameLayout
-                    android:layout_width="70dp"
-                    android:layout_height="70dp">
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:cardCornerRadius="20dp"
-                        android:background="@drawable/style_etv_background" >
-
-                    <ImageView
-                        android:id="@+id/iv_style_shop"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/post_ex1"
-                        android:background="@drawable/style_rounded_image_mask" />
-                    </androidx.cardview.widget.CardView>
-
-                </FrameLayout>
 
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="10dp"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center">
 
-                    <TextView
-                        android:id="@+id/tv_style_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="블리즈"
-                        style="@style/medium12"
-                        android:textColor="@color/black"/>
 
-                    <TextView
-                        android:id="@+id/tv_style_subtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="따뜻하고 귀여운 코디"
-                        style="@style/regular12"
-                        android:textColor="@color/black"/>
-                </LinearLayout>
 
-            </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
             
-        </LinearLayout>
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
