@@ -81,8 +81,8 @@ class PostFilterAdapter(private var itemList: List<PostData>) :
                 .load(data.imageURL)  // 데이터로 받은 URL
                 .load(data.imageURL)
                 .thumbnail(Glide.with(binding.root.context).load(data.imageURL).override(100, 100))
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .signature(ObjectKey(System.currentTimeMillis().toString())) // 매번 새로운 이미지로 로딩
+                //.transition(DrawableTransitionOptions.withCrossFade())
+                //.signature(ObjectKey(System.currentTimeMillis().toString())) // 매번 새로운 이미지로 로딩
                 .error(R.drawable.post_ex1)  // 에러 시 표시할 이미지
                 .into(binding.imageArea)  // 이미지뷰에 로드
 

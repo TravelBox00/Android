@@ -81,8 +81,8 @@ class PostAdapter(private var itemList: List<PostItem>) :
 //                    .placeholder(R.drawable.post_ex1)  // 로딩 중일 때 보여줄 이미지
                     .load(data.imageURL)
                     .thumbnail(Glide.with(binding.root.context).load(data.imageURL).override(100, 100))
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .signature(ObjectKey(System.currentTimeMillis().toString())) // 매번 새로운 이미지로 로딩
+                    //.transition(DrawableTransitionOptions.withCrossFade())
+                    //.signature(ObjectKey(System.currentTimeMillis().toString())) // 매번 새로운 이미지로 로딩
                     .error(R.drawable.post_ex1)  // 에러 시 표시할 이미지
 
 
