@@ -268,15 +268,13 @@ class CalendarFragment : Fragment() {
         val selectedDateFormatted = formatSelectedDate(selectedDate)
 
         val scheduleItems = events.map { event ->
-            Log.d("CalendarFragment", "🚀 일정 추가: ${event.travelTitle}, ${event.travelStartDate} ~ ${event.travelEndDate}")
-
             ScheduleItem(
                 travelId = event.travelId,
                 title = event.travelTitle,
-                period = "${event.travelStartDate.substring(5, 7)}.${event.travelStartDate.substring(8, 10)} ${getDayOfWeek(event.travelStartDate)} ~ ${event.travelEndDate.substring(5, 7)}.${event.travelEndDate.substring(8, 10)} ${getDayOfWeek(event.travelEndDate)}",
+                period = "${event.travelStartDate.substring(5, 7)}.${event.travelStartDate.substring(8, 10)} ~ ${event.travelEndDate.substring(5, 7)}.${event.travelEndDate.substring(8, 10)}",
                 content = event.travelContent
             )
-        }
+        }.toMutableList() // ✅ List → MutableList 변환
 
         val dialog = ScheduleBottomSheetDialog(selectedDateFormatted, scheduleItems) { travelId ->
             deleteSchedule(travelId)
@@ -338,6 +336,7 @@ class CalendarFragment : Fragment() {
                 fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
             }
         }
+
     }
     override fun onResume() {
         super.onResume()
@@ -345,6 +344,12 @@ class CalendarFragment : Fragment() {
 
         if (userTag != null) {
             fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+        }
+        setFragmentResultListener("calendar_update") { _, _ ->
+            Log.d("CalendarFragment", "🔄 일정이 삭제됨 → 일정 다시 조회")
+            if (userTag != null) {
+                fetchUserCalendarEvents(CalendarDay.today().year, CalendarDay.today().month)
+            }
         }
     }
 
