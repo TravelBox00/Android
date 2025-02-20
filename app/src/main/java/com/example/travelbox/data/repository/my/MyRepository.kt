@@ -192,6 +192,26 @@ class MyRepository {
         }
 
 
+        //사용자 정보 호출
+        fun getUserInfo(callback: (UserInfo?) -> Unit) {
+            myService.getUserInfo().enqueue(object : Callback<UserInfoResponse> {
+                override fun onResponse(call: Call<UserInfoResponse>, response: Response<UserInfoResponse>) {
+                    if (response.isSuccessful && response.body()?.isSuccess == true) {
+                        val userInfo = response.body()?.userInfo
+                        Log.d("MyRepository", "사용자 정보 조회 성공: $userInfo")
+                        callback(userInfo)
+                    } else {
+                        Log.e("MyRepository", "사용자 정보 조회 실패: ${response.errorBody()?.string()}")
+                        callback(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
+                    Log.e("MyRepository", "사용자 정보 요청 실패: ${t.message}")
+                    callback(null)
+                }
+            })
+        }
 
 
 

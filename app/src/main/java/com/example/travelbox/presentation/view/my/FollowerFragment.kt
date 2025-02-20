@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.my.MyRepository
 import com.example.travelbox.databinding.FragmentFollowerBinding
 import com.example.travelbox.data.repository.my.FollowerItem
@@ -42,7 +43,8 @@ class FollowerFragment : Fragment() {
     }
 
     private fun loadFollowers() {
-        val userTag = "actualUserTag" // 🔹 실제 사용자 태그로 변경 필요
+        //val userTag = "actualUserTag" // 🔹 실제 사용자 태그로 변경 필요
+        val userTag = ApiNetwork.getUserTag().toString()
 
         MyRepository.getFollowers(userTag) { followers ->
             if (followers != null) {
