@@ -87,9 +87,9 @@ class SearchPostFragment : Fragment() {
         val sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
         sharedViewModel.setTopImages(topImages)
 
-        searchPostViewModel.posts.observe(viewLifecycleOwner) { posts ->
-            Log.d("SearchPostFragment", "ViewModel에서 받은 데이터: $posts")
-        }
+//        searchPostViewModel.posts.observe(viewLifecycleOwner) { posts ->
+//            Log.d("SearchPostFragment", "ViewModel에서 받은 데이터: $posts")
+//        }
 
         val adapter = SearchPostAdapter(postList)
 
