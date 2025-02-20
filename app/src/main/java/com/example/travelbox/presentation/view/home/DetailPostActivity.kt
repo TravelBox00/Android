@@ -101,7 +101,7 @@ class DetailPostActivity : AppCompatActivity() {
             .error(R.drawable.post_ex1)
             .into(binding.detailImage)
 
-        binding.detailId.text = id
+        binding.detailId.text = "@$id"
         binding.detailTitle.text = title
 
 
@@ -120,7 +120,7 @@ class DetailPostActivity : AppCompatActivity() {
             val tvDetailTitle = bottomSheetView.findViewById<TextView>(R.id.tv_bottom_detailTitle)
 
             // Intent로 받은 데이터 설정
-            tvDetailId.text = id
+            tvDetailId.text = "@${id}"
             tvDetailTitle.text = title
 
 

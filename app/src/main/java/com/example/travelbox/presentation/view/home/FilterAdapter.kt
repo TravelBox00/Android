@@ -14,6 +14,8 @@ class FilterAdapter(private val items: List<String>, private val onItemClick: (S
     private var selectedPosition = RecyclerView.NO_POSITION  // 선택된 항목 인덱스
 
 
+
+
 //    private var selectedItem: String? = null
 //
 //

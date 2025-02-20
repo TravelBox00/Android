@@ -114,7 +114,7 @@ class FilterActivity : AppCompatActivity() {
 
     private fun fetchFilteredPosts() {
         if (selectedCity != null && selectedDistrict != null) {
-            HomeRepository.regionFilterSearch("여행", selectedCity!!) { response ->
+            HomeRepository.regionFilterSearch("여행", selectedCity!!, null) { response ->
                 if (response?.isSuccess == true) {
 
                     Log.d("지역 필터", "데이터 조회 성공 :$response")

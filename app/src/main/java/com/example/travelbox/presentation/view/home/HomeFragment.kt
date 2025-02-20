@@ -228,7 +228,7 @@ class HomeFragment : Fragment() {
 
     // 카테고리
     private fun loadCategoryPosts(category: String) {
-        HomeRepository.regionFilterSearch(category, "") { response ->
+        HomeRepository.regionFilterSearch(category, "", null) { response ->
             if (response?.isSuccess == true && response.result.isNotEmpty()) {
                 val mappedPosts = mapPostDataToPostItem(response.result) // 변환 실행
                 postAdapter.updateData(mappedPosts)
@@ -244,9 +244,10 @@ class HomeFragment : Fragment() {
         return postDataList.map { postData ->
             PostItem(
                 threadId = postData.threadId,
-                postTitle = postData.postTitle,
+                postContent = postData.postTitle,
                 postDate = postData.postDate,
-                imageURL = postData.postImageURL ?: "", // null 방지
+                imageURL = postData.imageURL ?: "", // null 방지
+                userTag = "postData.",
                 totalEngagement = null // 해당 데이터가 없으므로 기본값 설정
             )
         }

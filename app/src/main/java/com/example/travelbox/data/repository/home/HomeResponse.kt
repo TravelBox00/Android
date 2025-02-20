@@ -9,9 +9,10 @@ data class PopularPostResponse(
 
 data class PostItem(
     val threadId: Int?,
-    val postTitle: String?,
+    val postContent: String?,
     val postDate: String?,
     val imageURL: String,
+    val userTag : String,
     val totalEngagement: Int?
 )
 
@@ -88,8 +89,9 @@ data class RegionFilterResponse(
 )
 
 data class PostData(
+    val userTag: String,
     val threadId: Int?,
-    val postImageURL: String?,
+    val imageURL: String?,
     val postTitle: String?,
     val postDate: String?
 )
