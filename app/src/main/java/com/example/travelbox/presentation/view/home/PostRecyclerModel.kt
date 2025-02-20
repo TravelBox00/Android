@@ -10,6 +10,6 @@ data class PostRecyclerModel(
 
 data class CommentRecyclerModel(
 
-    val commentId : String,
-    val content : String
+    val commentId : String?,
+    val content : String?
 )

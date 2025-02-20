@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.R
 import com.example.travelbox.databinding.ItemCommentBinding
 import com.example.travelbox.databinding.ItemGridPostBinding
+import com.example.travelbox.databinding.ItemPostCommentBinding
 import java.util.logging.Handler
 
 class BottomCommentAdapter(private val itemList: MutableList<CommentRecyclerModel>) :
@@ -37,7 +38,7 @@ class BottomCommentAdapter(private val itemList: MutableList<CommentRecyclerMode
     override fun onCreateViewHolder(viewgroup: ViewGroup, viewType: Int): BottomCommentAdapter.CommentViewHolder {
 
 
-        val binding: ItemCommentBinding = ItemCommentBinding.inflate(LayoutInflater.from(viewgroup.context), viewgroup, false)
+        val binding: ItemPostCommentBinding = ItemPostCommentBinding.inflate(LayoutInflater.from(viewgroup.context), viewgroup, false)
 
 
         return CommentViewHolder(binding)
@@ -58,7 +59,7 @@ class BottomCommentAdapter(private val itemList: MutableList<CommentRecyclerMode
     }
 
 
-    inner class CommentViewHolder(private val binding: ItemCommentBinding)
+    inner class CommentViewHolder(private val binding: ItemPostCommentBinding)
         : RecyclerView.ViewHolder(binding.root) {
 
         private val etcButton : CardView = binding.cvButton

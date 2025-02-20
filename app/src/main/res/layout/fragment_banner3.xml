@@ -1,15 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_marginLeft="@dimen/pageMarginAndOffset"
+    android:layout_marginRight="@dimen/pageMarginAndOffset"
     android:layout_height="match_parent"
-    tools:context=".presentation.view.home.Banner3Fragment">
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="33"
-        android:background="@drawable/home_image"/>
+        <ImageView
+            android:id="@+id/imgBanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/home_image"
+            android:contentDescription="@string/app_name"/>
 
-</FrameLayout>
+        <!-- 첫 번째 텍스트-->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:text="교토"
+            android:textColor="@android:color/white"
+            style="@style/semibold18"
+            android:layout_marginBottom="35dp"
+            android:layout_marginEnd="20dp"/>
+
+        <!-- 두 번째 텍스트 -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:text="고요한 전통과 현대의 조화"
+            android:textColor="@android:color/white"
+            style="@style/medium14"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="20dp"/>
+
+</RelativeLayout>
