@@ -82,7 +82,7 @@ class DetailPostActivity : AppCompatActivity() {
         singInfo = intent.getStringExtra("singInfo") ?: "No Song"
 
         Log.d("DetailPostActivity", "받은 데이터 - Image: $imageResId, Id: $id, Title: $title, ThreadId: $threadId, singInfo: $singInfo")
-
+        Log.d("DetailPostActivity", "받은 singInfo URL: $singInfo")
 
         // 기존 좋아요 상태 불러오기
         //getLikeStatus(threadId, userTag)
