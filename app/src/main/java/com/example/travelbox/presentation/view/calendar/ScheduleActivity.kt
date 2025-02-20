@@ -21,5 +21,6 @@ class ScheduleActivity : AppCompatActivity() {
                 .replace(R.id.schedule_container, fragment)
                 .commit()
         }
+
     }
 }

@@ -4,6 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -23,11 +24,12 @@ interface CalendarInterface {
         @Body request: CalendarEventRequest
     ): Call<CalendarEventResponse>
 
-    // 일정 삭제 API
-    @DELETE("/calendar/remove")
+    @HTTP(method = "DELETE", path = "/calendar/remove", hasBody = true)
     fun deleteCalendarEvent(
-        @Body request: CalendarEventDeleteRequest
+        @Header("Authorization") token: String,
+        @Body request: CalendarEventDeleteRequest // ✅ travelId를 JSON Body로 전달
     ): Call<CalendarEventResponse>
+
 
     // ✅ 일정 조회 API (Authorization 헤더 추가)
     @GET("/calendar/my")
