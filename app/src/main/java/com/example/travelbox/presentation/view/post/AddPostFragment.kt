@@ -303,7 +303,6 @@ class AddPostFragment : Fragment() {
             requireActivity().runOnUiThread {
                 if (response?.success == true) {
                     Toast.makeText(requireContext(), "게시글 업로드 성공", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.popBackStack()  // ✅ 이전 화면으로 돌아가기
                 } else {
                     Toast.makeText(requireContext(), "게시글 업로드 실패", Toast.LENGTH_SHORT).show()
                 }
@@ -312,7 +311,7 @@ class AddPostFragment : Fragment() {
 
         // 이전 화면으로 돌아가기
         val transaction = parentFragmentManager.beginTransaction()
-        transaction.replace(R.id.main_frm, SearchPostFragment())
+        transaction.replace(R.id.main_frm, PostFragment())
         transaction.commit()
     }
 }
