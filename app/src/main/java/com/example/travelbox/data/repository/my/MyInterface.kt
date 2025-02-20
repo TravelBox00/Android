@@ -41,4 +41,8 @@ interface MyInterface {
     @GET("/thread/my")
     suspend fun getMyThreads(): Response<StoryResponse>
 
+    //사용자 정보 불러오기
+    @GET("/users/info")
+    fun getUserInfo(): Call<UserInfoResponse>
+
 }

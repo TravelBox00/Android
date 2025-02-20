@@ -10,8 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
 import com.example.travelbox.data.repository.my.MyRepository
+import com.example.travelbox.data.repository.my.UserInfo
 import com.example.travelbox.databinding.FragmentMypageBinding
 import com.example.travelbox.presentation.view.my.FollowerFragment
 import com.example.travelbox.presentation.view.my.FollowingFragment
@@ -36,15 +39,37 @@ class MypageFragment : Fragment() {
         setupButtonListeners()
         setupViewPagerAndTabs()
 
-        // 유저의 태그를 가져와야 합니다.
-        // 예를 들어, `userTag`는 로그인된 유저의 태그나 프로필에서 가져올 수 있습니다.
-        // 이 부분은 예시로 userTag를 "exampleTag"로 설정했습니다.
-        userTag = "john#123"
+        //userTag = "john#123"
+        userTag = ApiNetwork.getUserTag().toString()
 
+        loadUserInfo()//사용자 정보
         getPostsAndUpdateUI() //게시글 수 조회
         getFollowersAndUpdateUI() //팔로워 수 조회
         getFollowingAndUpdateUI() //팔로잉 수 조회
     }
+
+    //유저 화면 업로드
+    private fun loadUserInfo() {
+        MyRepository.getUserInfo { userInfo ->
+            if (userInfo != null) {
+                updateUI(userInfo)
+            } else {
+                Log.e("MypageFragment", "Failed to load user information")
+            }
+        }
+    }
+
+    private fun updateUI(userInfo: UserInfo) {
+        // Set the profile image using Glide
+        Glide.with(this)
+            .load(userInfo.userProfileImage)
+            .into(binding.profileIV)
+
+        // Set the nickname and user tag
+        binding.textNickname.text = userInfo.userNickname
+        binding.nameTag.text = userInfo.userTag
+    }
+
 
     private fun getPostsAndUpdateUI() {
         MyRepository.fetchPosts { posts ->
