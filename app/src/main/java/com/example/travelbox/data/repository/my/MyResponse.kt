@@ -77,11 +77,9 @@ data class Comment(
 
 // 여행 기록 데이터 모델
 data class StoryResponse(
-    val isSuccess: Boolean,
-    val code: String,
-    val message: String,
     val result: List<ThreadData>,
-    val cursor: String
+    val cursor: String?,
+    val isSuccess: Boolean
 )
 
 data class ThreadData(

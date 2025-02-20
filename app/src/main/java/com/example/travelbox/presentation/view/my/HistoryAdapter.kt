@@ -3,24 +3,24 @@ package com.example.travelbox.presentation.view.my
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.travelbox.data.repository.my.ThreadData
 import com.example.travelbox.databinding.ItemStoryBinding
 
-class HistoryAdapter(private val threadList: List<ThreadData>) :
-    androidx.recyclerview.widget.RecyclerView.Adapter<HistoryAdapter.ImageViewHolder>() {
+class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ImageViewHolder>() {
+
+    private var threadList: MutableList<ThreadData> = mutableListOf()
 
     inner class ImageViewHolder(private val binding: ItemStoryBinding) :
-        androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(thread: ThreadData) {
-            // Glide로 이미지 로드
             Glide.with(binding.storyImage.context)
-                .load(thread.imageURL)  // ThreadData에서 imageURL 가져오기
+                .load(thread.imageURL)
                 .into(binding.storyImage)
 
-            // 텍스트를 보이지 않게 설정
-            binding.textViewPostContent.visibility = View.GONE // 텍스트를 숨깁니다.
+            binding.textViewPostContent.visibility = View.GONE
         }
     }
 
@@ -34,4 +34,11 @@ class HistoryAdapter(private val threadList: List<ThreadData>) :
     }
 
     override fun getItemCount(): Int = threadList.size
+
+    // ✅ updateThreads 함수 추가 (이전 리스트를 지우고 새 리스트를 추가하는 함수)
+    fun updateThreads(newList: List<ThreadData>) {
+        threadList.clear()
+        threadList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }

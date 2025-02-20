@@ -18,7 +18,10 @@ class MyRepository {
         // 팔로워
         fun getFollowers(userTag: String, callback: (List<FollowerItem>?) -> Unit) {
             myService.getFollowers(userTag).enqueue(object : Callback<FollowerResponse> {
-                override fun onResponse(call: Call<FollowerResponse>, response: Response<FollowerResponse>) {
+                override fun onResponse(
+                    call: Call<FollowerResponse>,
+                    response: Response<FollowerResponse>
+                ) {
                     if (response.isSuccessful) {
                         val followers = response.body()?.followers
                         Log.d("MyRepository", "팔로워 목록 조회 성공: $followers")
@@ -38,7 +41,10 @@ class MyRepository {
 
         fun getFollowing(userTag: String, callback: (List<FollowingItem>?) -> Unit) {
             myService.getFollowing(userTag).enqueue(object : Callback<FollowingResponse> {
-                override fun onResponse(call: Call<FollowingResponse>, response: Response<FollowingResponse>) {
+                override fun onResponse(
+                    call: Call<FollowingResponse>,
+                    response: Response<FollowingResponse>
+                ) {
                     if (response.isSuccessful) {
                         val followings = response.body()?.followings
                         Log.d("MyRepository", "팔로잉 목록 조회 성공: $followings")
@@ -85,7 +91,10 @@ class MyRepository {
         // 나의 댓글 조회
         fun fetchComments(callback: (List<Comment>?) -> Unit) {
             myService.fetchComments().enqueue(object : Callback<CommentResponse> {
-                override fun onResponse(call: Call<CommentResponse>, response: Response<CommentResponse>) {
+                override fun onResponse(
+                    call: Call<CommentResponse>,
+                    response: Response<CommentResponse>
+                ) {
                     if (response.isSuccessful && response.body()?.isSuccess == true) {
                         response.body()?.result?.let {
                             // 댓글 데이터를 성공적으로 받아왔을 때 처리
@@ -157,45 +166,38 @@ class MyRepository {
          */
 
         // 나의 여행 스레드 조회
-        fun getMyThreads(callback: (List<ThreadData>?) -> Unit) {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val response = myService.getMyThreads()  // API 호출
-                    if (response.isSuccessful) {
-                        val body = response.body()
-                        withContext(Dispatchers.Main) {
-                            if (body != null) {
-                                // 성공적으로 데이터를 가져온 경우
-                                Log.d("MyRepository", "나의 스레드 조회 성공: ${body.result}")
-                                callback(body.result)  // 응답 결과를 callback으로 전달
-                            } else {
-                                // 응답 본문이 비어있을 때
-                                Log.e("MyRepository", "나의 스레드 조회 실패: 응답 본문이 없음")
-                                callback(null)
-                            }
-                        }
-                    } else {
-                        // 응답이 실패한 경우
-                        Log.e("MyRepository", "나의 스레드 조회 실패: ${response.errorBody()?.string()}")
-                        withContext(Dispatchers.Main) {
-                            callback(null)
-                        }
-                    }
-                } catch (e: Exception) {
-                    // 네트워크 요청 중 오류가 발생한 경우
-                    Log.e("MyRepository", "나의 스레드 요청 실패: ${e.message}")
-                    withContext(Dispatchers.Main) {
-                        callback(null)
-                    }
+        suspend fun getMyThreads(token: String): List<ThreadData>? {
+            return try {
+                val response = myService.getMyThreads(token)
+
+                Log.d("API_CALL", "응답 코드: ${response.code()}") // ✅ HTTP 응답 코드 확인
+                Log.d("API_CALL", "응답 바디: ${response.errorBody()?.string()}") // ✅ 에러 발생 시 바디 확인
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    Log.d("API_CALL", "응답 파싱된 데이터: $body") // ✅ JSON이 올바르게 변환되었는지 확인
+                    body?.result
+                } else {
+                    Log.e("API_ERROR", "API 요청 실패: ${response.errorBody()?.string()}")
+                    null
                 }
+            } catch (e: Exception) {
+                Log.e("API_ERROR", "네트워크 오류: ${e.message}")
+                null
             }
         }
+
+
+
 
 
         //사용자 정보 호출
         fun getUserInfo(callback: (UserInfo?) -> Unit) {
             myService.getUserInfo().enqueue(object : Callback<UserInfoResponse> {
-                override fun onResponse(call: Call<UserInfoResponse>, response: Response<UserInfoResponse>) {
+                override fun onResponse(
+                    call: Call<UserInfoResponse>,
+                    response: Response<UserInfoResponse>
+                ) {
                     if (response.isSuccessful && response.body()?.isSuccess == true) {
                         val userInfo = response.body()?.userInfo
                         Log.d("MyRepository", "사용자 정보 조회 성공: $userInfo")
@@ -212,9 +214,5 @@ class MyRepository {
                 }
             })
         }
-
-
-
-
     }
 }

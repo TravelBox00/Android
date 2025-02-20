@@ -2,7 +2,9 @@ package com.example.travelbox.data.repository.my
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MyInterface {
 
@@ -37,9 +39,11 @@ interface MyInterface {
     : Call<UserResponse>
      */
 
-    //여행기록
-    @GET("/thread/my")
-    suspend fun getMyThreads(): Response<StoryResponse>
+        @GET("/thread/my")
+        suspend fun getMyThreads(
+            @Header("Authorization") token: String,
+            @Query("cursor") cursor: String? = null
+        ): Response<StoryResponse>
 
     //사용자 정보 불러오기
     @GET("/users/info")
