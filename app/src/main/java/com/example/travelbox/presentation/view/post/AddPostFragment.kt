@@ -130,9 +130,9 @@ class AddPostFragment : Fragment() {
         }
 
         // 노래 검색 버튼 클릭 리스너
-        binding.btnAddSong.setOnClickListener {
-            getSpotifySongUrl()
-        }
+//        binding.btnAddSong.setOnClickListener {
+//           getSpotifySongUrl()
+//        }
 
         // 업로드 버튼 클릭 리스너
         binding.btnUpload.setOnClickListener {
@@ -257,23 +257,23 @@ class AddPostFragment : Fragment() {
     }
 
     // Spotify 노래 Url 얻기
-    private fun getSpotifySongUrl() {
-        val songName = binding.etSong.text.toString().trim()
-        if (songName.isNotEmpty()) {
-            addPostRepository.getSpotifySong(songName) { songUrl ->
-                requireActivity().runOnUiThread {
-                    if (songUrl != null) {
-                        binding.etSong.setText(songUrl)
-                    } else {
-                        Toast.makeText(requireContext(), "노래를 찾을 수 없습니다.", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            }
-        } else {
-            Toast.makeText(requireContext(), "노래 제목을 입력하세요.", Toast.LENGTH_SHORT).show()
-        }
-    }
+//    private fun getSpotifySongUrl() {
+//        val songName = binding.etSong.text.toString().trim()
+//        if (songName.isNotEmpty()) {
+//            addPostRepository.getSpotifySong(songName) { songUrl ->
+//                requireActivity().runOnUiThread {
+//                    if (songUrl != null) {
+//                        binding.etSong.setText(songUrl)
+//                    } else {
+//                        Toast.makeText(requireContext(), "노래를 찾을 수 없습니다.", Toast.LENGTH_SHORT)
+//                            .show()
+//                    }
+//                }
+//            }
+//        } else {
+//            Toast.makeText(requireContext(), "노래 제목을 입력하세요.", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
     // 게시글 업로드 버튼 클릭 시 호출
     private fun onAddPostClick() {
