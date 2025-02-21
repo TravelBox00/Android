@@ -83,14 +83,6 @@ class SearchPostFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val topImages = listOf(postList[0].imageURL, postList[1].imageURL)
-        val sharedViewModel = ViewModelProvider(requireActivity()).get(PostSharedViewModel::class.java)
-        sharedViewModel.setTopImages(topImages)
-
-//        searchPostViewModel.posts.observe(viewLifecycleOwner) { posts ->
-//            Log.d("SearchPostFragment", "ViewModel에서 받은 데이터: $posts")
-//        }
-
         val adapter = SearchPostAdapter(postList)
 
         adapter.setItemClickListener(object :  SearchPostAdapter.OnItemClickListener{
