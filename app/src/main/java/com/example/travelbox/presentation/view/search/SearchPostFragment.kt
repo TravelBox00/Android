@@ -1,17 +1,25 @@
 package com.example.travelbox.presentation.view.search
 
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelbox.R
+import com.example.travelbox.data.network.ApiNetwork
+import com.example.travelbox.data.repository.search.ThreadPost
 import com.example.travelbox.databinding.FragmentSearchPostBinding
-import com.example.travelbox.presentation.view.home.HomeFragment
+import com.example.travelbox.presentation.view.home.DetailPostActivity
 import com.example.travelbox.presentation.view.post.AddPostFragment
+import com.example.travelbox.presentation.viewmodel.PostSharedViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,6 +34,9 @@ private const val ARG_PARAM2 = "param2"
 class SearchPostFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchPostBinding
+    private lateinit var searchPostViewModel: SearchPostViewModel
+    private lateinit var postList: List<ThreadPost>
+    private var userTag: String? = "testuser1234"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,13 +48,13 @@ class SearchPostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSearchPostBinding.inflate(inflater, container, false)
+        searchPostViewModel = ViewModelProvider(requireActivity()).get(SearchPostViewModel::class.java)
 
-        // recylcer 함수 호출
-        postGridRecycler()
+        // userTag 수신
+        userTag = ApiNetwork.getUserTag()
 
-        // 뒤로 가기 버튼 클릭 시
+        // 뒤로 가기 버튼 클릭 리스너
         binding.ivBack.setOnClickListener {
-            val homeFragment = HomeFragment() // HomeFragment 객체 생성
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, SearchFragment())
                 .commit()
@@ -57,41 +68,58 @@ class SearchPostFragment : Fragment() {
                 .commit()
         }
 
+        // ViewModel에서 데이터 가져오기
+        searchPostViewModel.posts.observe(viewLifecycleOwner, Observer { posts ->
+            if (posts.isNotEmpty()) {
+                postList = posts
+                setupRecyclerView()
+            } else {
+                Toast.makeText(requireContext(), "게시물이 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
+
         return binding.root
 
     }
 
-    private fun postGridRecycler() {
+    private fun setupRecyclerView() {
+        val adapter = SearchPostAdapter(postList)
 
-        val itemList = mutableListOf<SearchRecyclerModel>()
+        adapter.setItemClickListener(object :  SearchPostAdapter.OnItemClickListener{
 
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex1, "2025.01.25.", "해유관에서 물고기랑"))
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex2, "2025.01.25.", "여우 신사는 처음이지?"))
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex1, "2025.01.26.", "물고기랑22"))
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex1, "2025.01.27.", "물고기랑33"))
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex1, "2025.01.26.", "물고기랑22"))
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex1, "2025.01.27.", "물고기랑44"))
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex1, "2025.01.26.", "물고기랑55"))
-        itemList.add(SearchRecyclerModel(R.drawable.post_ex1, "2025.01.27.", "물고기랑66"))
+            override fun onItemClick(position: Int) {
+                val selectedItem = postList[position]
+
+                Log.d("SearchPostFragment", "선택된 post의 singInfo: ${selectedItem.singInfo}")
+
+                val intent = Intent(requireContext(), DetailPostActivity::class.java).apply {
+                    putExtra("image", selectedItem.imageURL)
+
+                    putExtra("id", selectedItem.userTag)
+                    putExtra("title", selectedItem.postContent)
+                    putExtra("threadId", selectedItem.threadId)
+
+                    putExtra("singInfo", selectedItem.singInfo)
+
+                    Log.d("BestPostFragment", "보내는 데이터 - Image: ${selectedItem.imageURL}, Id: ${selectedItem.threadId}, Title: ${selectedItem.postContent}, ThreadId: ${selectedItem.threadId}, SingInfo: ${selectedItem.singInfo}")
+                }
 
 
-        val adapter = SearchPostAdapter(itemList)
-        binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 2)
-
-
-        binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                outRect.bottom = 35 // 아이템 간의 간격 35dp
+                startActivity(intent)
             }
         })
 
+        binding.recyclerview.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            this.adapter = adapter
+        }
 
+        binding.recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                outRect.bottom = 50 // 아이템 간의 간격
+                outRect.right= 20
+            }
+        })
     }
 
 }

@@ -10,6 +10,8 @@ data class PostRecyclerModel(
 
 data class CommentRecyclerModel(
 
-    val commentId : String,
-    val content : String
+    val commentNickname : String?,    // user 아이디
+    val commentId : Int,   // commentId
+    val commentContent : String?,
+    val commentVisible : String
 )

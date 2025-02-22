@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.travelbox.R
+import com.example.travelbox.databinding.FragmentBanner1Binding
+import com.example.travelbox.databinding.FragmentHomeBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,16 +20,11 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class Banner1Fragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    lateinit var binding: FragmentBanner1Binding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -35,7 +32,22 @@ class Banner1Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_banner1, container, false)
+        binding = FragmentBanner1Binding.inflate(inflater, container, false)
+
+
+        // 배너 텍스트
+
+        val tvTitle = binding.tvTitle
+
+        val tvDescription = binding.tvDescription
+
+
+        tvTitle.text = "경주"
+        tvDescription.text = "천 년의 시간을 품다"
+
+
+        return binding.root
+
     }
 
     companion object {
